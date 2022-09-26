@@ -1,3 +1,7 @@
+Polybench_benchmark仓库的核心是用Polybench基准测试集(PolyBench/C 4.2.1  beta版本)对循环嵌套级自动混合精度(Loop nesting level automatic mixed precision, LNLAMP)进行指令测试、性能测试和误差测试。
+
+以下是原作者的描述(The following is the original author's description):
+
 * * * * * * * * * * * * * * *
 * PolyBench/C 4.2.1 (beta)  *
 * * * * * * * * * * * * * * *
