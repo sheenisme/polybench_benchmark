@@ -1,0 +1,20 @@
+// Counters must be delimited with ',' including the last one.
+// C/C++ comments are allowed.
+// Both native and standard PAPI events are supported.
+
+/* notes by sheen song
+ * If you meets error "PAPI FAILED Tests", maybe you could use "sudo sh -c 'echo -1 >/proc/sys/kernel/perf_event_paranoid'" 
+ * to fixed it.(Reference link:https://www.jianshu.com/p/7f78c4d4b633)
+ */
+"PAPI_DP_OPS",
+"PAPI_SP_OPS",
+"PAPI_TOT_CYC",
+"PAPI_REF_CYC",
+"PAPI_L1_TCM",
+"PAPI_L2_TCM",
+"PAPI_L3_TCM",
+"PAPI_L2_TCR",
+"PAPI_L2_TCW",
+"PAPI_L3_TCR",
+"PAPI_L3_TCW",
+"PAPI_BR_TKN",

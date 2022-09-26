@@ -1,0 +1,408 @@
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 348742.42715288,	Mean diff = 0.29061869,	Max diff  = 1.86369157,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198799,	Sum diff  = 428712.32254321,	Mean diff = 0.35726027,	Max diff  = 1.95586202,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197801,	Sum diff  = 372853.75910402,	Mean diff = 0.31071147,	Max diff  = 2.04819667,
+运行 check.out of fdtd-2d 0 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 169.42519668,	Mean diff = 0.00014119,	Max diff  = 0.02443652,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198497,	Sum diff  = 164.43162169,	Mean diff = 0.00013703,	Max diff  = 0.02371338,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197766,	Sum diff  = 202.22352902,	Mean diff = 0.00016852,	Max diff  = 0.00281148,
+运行 check.out of fdtd-2d 1 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 168.09038184,	Mean diff = 0.00014008,	Max diff  = 0.02419238,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198519,	Sum diff  = 163.05881309,	Mean diff = 0.00013588,	Max diff  = 0.02347656,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197762,	Sum diff  = 200.72205810,	Mean diff = 0.00016727,	Max diff  = 0.00303775,
+运行 check.out of fdtd-2d 2 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 166.31330216,	Mean diff = 0.00013859,	Max diff  = 0.02394824,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198461,	Sum diff  = 161.68152056,	Mean diff = 0.00013473,	Max diff  = 0.02323812,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197771,	Sum diff  = 198.83719434,	Mean diff = 0.00016570,	Max diff  = 0.00288460,
+运行 check.out of fdtd-2d 3 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 164.85243619,	Mean diff = 0.00013738,	Max diff  = 0.02369922,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198470,	Sum diff  = 160.22291878,	Mean diff = 0.00013352,	Max diff  = 0.02299723,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197776,	Sum diff  = 197.27701379,	Mean diff = 0.00016440,	Max diff  = 0.00256903,
+运行 check.out of fdtd-2d 4 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 163.40341072,	Mean diff = 0.00013617,	Max diff  = 0.02345508,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198483,	Sum diff  = 158.93637296,	Mean diff = 0.00013245,	Max diff  = 0.02275879,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197771,	Sum diff  = 195.64455183,	Mean diff = 0.00016304,	Max diff  = 0.00287408,
+运行 check.out of fdtd-2d 5 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 162.11866318,	Mean diff = 0.00013510,	Max diff  = 0.02316846,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198507,	Sum diff  = 157.50460916,	Mean diff = 0.00013125,	Max diff  = 0.02252034,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197777,	Sum diff  = 194.04872737,	Mean diff = 0.00016171,	Max diff  = 0.00277484,
+运行 check.out of fdtd-2d 6 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 160.65321448,	Mean diff = 0.00013388,	Max diff  = 0.02292432,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198474,	Sum diff  = 156.17940222,	Mean diff = 0.00013015,	Max diff  = 0.02228109,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197776,	Sum diff  = 192.03987080,	Mean diff = 0.00016003,	Max diff  = 0.00293255,
+运行 check.out of fdtd-2d 7 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 159.00097753,	Mean diff = 0.00013250,	Max diff  = 0.02268018,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198466,	Sum diff  = 154.83692710,	Mean diff = 0.00012903,	Max diff  = 0.02204102,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197761,	Sum diff  = 190.64539912,	Mean diff = 0.00015887,	Max diff  = 0.00277284,
+运行 check.out of fdtd-2d 8 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 158.00180236,	Mean diff = 0.00013167,	Max diff  = 0.02243604,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198424,	Sum diff  = 153.19526282,	Mean diff = 0.00012766,	Max diff  = 0.02180176,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197772,	Sum diff  = 188.97799237,	Mean diff = 0.00015748,	Max diff  = 0.00245720,
+运行 check.out of fdtd-2d 9 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 156.37576986,	Mean diff = 0.00013031,	Max diff  = 0.02219189,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198489,	Sum diff  = 151.97648777,	Mean diff = 0.00012665,	Max diff  = 0.02156331,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197763,	Sum diff  = 187.28720864,	Mean diff = 0.00015607,	Max diff  = 0.00249229,
+运行 check.out of fdtd-2d 10 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 154.90653154,	Mean diff = 0.00012909,	Max diff  = 0.02194775,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198480,	Sum diff  = 150.43732515,	Mean diff = 0.00012536,	Max diff  = 0.02132406,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197762,	Sum diff  = 185.37606450,	Mean diff = 0.00015448,	Max diff  = 0.00276128,
+运行 check.out of fdtd-2d 11 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 153.55929960,	Mean diff = 0.00012797,	Max diff  = 0.02170361,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198468,	Sum diff  = 149.14814766,	Mean diff = 0.00012429,	Max diff  = 0.02108398,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197774,	Sum diff  = 183.93314988,	Mean diff = 0.00015328,	Max diff  = 0.00253251,
+运行 check.out of fdtd-2d 12 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 152.11947549,	Mean diff = 0.00012677,	Max diff  = 0.02145947,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198455,	Sum diff  = 147.71756886,	Mean diff = 0.00012310,	Max diff  = 0.02084473,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197764,	Sum diff  = 182.44271316,	Mean diff = 0.00015204,	Max diff  = 0.00245352,
+运行 check.out of fdtd-2d 13 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 150.54525516,	Mean diff = 0.00012545,	Max diff  = 0.02121533,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198450,	Sum diff  = 146.54094650,	Mean diff = 0.00012212,	Max diff  = 0.02060628,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197758,	Sum diff  = 180.56753077,	Mean diff = 0.00015047,	Max diff  = 0.00249114,
+运行 check.out of fdtd-2d 14 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 149.09529728,	Mean diff = 0.00012425,	Max diff  = 0.02097119,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198430,	Sum diff  = 145.11481053,	Mean diff = 0.00012093,	Max diff  = 0.02036377,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197777,	Sum diff  = 179.20848969,	Mean diff = 0.00014934,	Max diff  = 0.00259006,
+运行 check.out of fdtd-2d 15 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 147.90325893,	Mean diff = 0.00012325,	Max diff  = 0.02072705,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198421,	Sum diff  = 143.49822552,	Mean diff = 0.00011958,	Max diff  = 0.02012695,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197763,	Sum diff  = 177.37876272,	Mean diff = 0.00014782,	Max diff  = 0.00249627,
+运行 check.out of fdtd-2d 16 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 146.55232251,	Mean diff = 0.00012213,	Max diff  = 0.02048291,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198457,	Sum diff  = 142.35655347,	Mean diff = 0.00011863,	Max diff  = 0.01988851,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197773,	Sum diff  = 176.20635483,	Mean diff = 0.00014684,	Max diff  = 0.00304719,
+运行 check.out of fdtd-2d 17 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 145.31135101,	Mean diff = 0.00012109,	Max diff  = 0.02023877,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198432,	Sum diff  = 141.14458060,	Mean diff = 0.00011762,	Max diff  = 0.01964844,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197778,	Sum diff  = 174.54611884,	Mean diff = 0.00014546,	Max diff  = 0.00248553,
+运行 check.out of fdtd-2d 18 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 143.76143366,	Mean diff = 0.00011980,	Max diff  = 0.01999463,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198422,	Sum diff  = 139.86939382,	Mean diff = 0.00011656,	Max diff  = 0.01940918,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197762,	Sum diff  = 172.83627167,	Mean diff = 0.00014403,	Max diff  = 0.00328579,
+运行 check.out of fdtd-2d 19 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 142.48957033,	Mean diff = 0.00011874,	Max diff  = 0.01975049,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198417,	Sum diff  = 138.38928122,	Mean diff = 0.00011532,	Max diff  = 0.01916992,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197761,	Sum diff  = 171.16794420,	Mean diff = 0.00014264,	Max diff  = 0.00252665,
+运行 check.out of fdtd-2d 20 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 141.13965681,	Mean diff = 0.00011762,	Max diff  = 0.01950635,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198463,	Sum diff  = 136.92920559,	Mean diff = 0.00011411,	Max diff  = 0.01893148,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197761,	Sum diff  = 169.70535658,	Mean diff = 0.00014142,	Max diff  = 0.00253495,
+运行 check.out of fdtd-2d 21 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 139.82791283,	Mean diff = 0.00011652,	Max diff  = 0.01926221,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198392,	Sum diff  = 135.68399947,	Mean diff = 0.00011307,	Max diff  = 0.01869222,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197763,	Sum diff  = 168.07438306,	Mean diff = 0.00014006,	Max diff  = 0.00268706,
+运行 check.out of fdtd-2d 22 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 138.52360770,	Mean diff = 0.00011544,	Max diff  = 0.01901709,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198424,	Sum diff  = 134.28024185,	Mean diff = 0.00011190,	Max diff  = 0.01845215,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197761,	Sum diff  = 166.31544550,	Mean diff = 0.00013860,	Max diff  = 0.00246186,
+运行 check.out of fdtd-2d 23 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 137.21471850,	Mean diff = 0.00011435,	Max diff  = 0.01876904,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198432,	Sum diff  = 133.01079170,	Mean diff = 0.00011084,	Max diff  = 0.01821289,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197768,	Sum diff  = 164.72724036,	Mean diff = 0.00013727,	Max diff  = 0.00243981,
+运行 check.out of fdtd-2d 24 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 135.95990570,	Mean diff = 0.00011330,	Max diff  = 0.01852393,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198406,	Sum diff  = 131.84347064,	Mean diff = 0.00010987,	Max diff  = 0.01797445,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197773,	Sum diff  = 163.71385097,	Mean diff = 0.00013643,	Max diff  = 0.00254573,
+运行 check.out of fdtd-2d 25 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198996,	Sum diff  = 134.60738561,	Mean diff = 0.00011217,	Max diff  = 0.01827588,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198387,	Sum diff  = 130.58739801,	Mean diff = 0.00010882,	Max diff  = 0.01773193,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197764,	Sum diff  = 161.88439646,	Mean diff = 0.00013490,	Max diff  = 0.00244761,
+运行 check.out of fdtd-2d 26 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 133.15234619,	Mean diff = 0.00011096,	Max diff  = 0.01803076,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198442,	Sum diff  = 128.88756899,	Mean diff = 0.00010741,	Max diff  = 0.01749512,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197765,	Sum diff  = 160.55018449,	Mean diff = 0.00013379,	Max diff  = 0.00256981,
+运行 check.out of fdtd-2d 27 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 131.83161233,	Mean diff = 0.00010986,	Max diff  = 0.01778369,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198398,	Sum diff  = 127.78585402,	Mean diff = 0.00010649,	Max diff  = 0.01725667,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197767,	Sum diff  = 158.95150549,	Mean diff = 0.00013246,	Max diff  = 0.00345103,
+运行 check.out of fdtd-2d 28 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 130.48341271,	Mean diff = 0.00010874,	Max diff  = 0.01753760,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198362,	Sum diff  = 126.65405756,	Mean diff = 0.00010555,	Max diff  = 0.01701579,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197756,	Sum diff  = 157.36360712,	Mean diff = 0.00013114,	Max diff  = 0.00255394,
+运行 check.out of fdtd-2d 29 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 129.19785466,	Mean diff = 0.00010766,	Max diff  = 0.01729053,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198394,	Sum diff  = 125.17710252,	Mean diff = 0.00010431,	Max diff  = 0.01677734,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197760,	Sum diff  = 155.87016569,	Mean diff = 0.00012989,	Max diff  = 0.00234469,
+运行 check.out of fdtd-2d 30 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 127.79009259,	Mean diff = 0.00010649,	Max diff  = 0.01704443,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198386,	Sum diff  = 123.83067286,	Mean diff = 0.00010319,	Max diff  = 0.01653890,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197757,	Sum diff  = 154.32219091,	Mean diff = 0.00012860,	Max diff  = 0.00221974,
+运行 check.out of fdtd-2d 31 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 126.63980191,	Mean diff = 0.00010553,	Max diff  = 0.01675977,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198392,	Sum diff  = 122.62904131,	Mean diff = 0.00010219,	Max diff  = 0.01629964,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197754,	Sum diff  = 152.91041302,	Mean diff = 0.00012743,	Max diff  = 0.00250418,
+运行 check.out of fdtd-2d 32 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 125.47216159,	Mean diff = 0.00010456,	Max diff  = 0.01651563,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198376,	Sum diff  = 121.24937462,	Mean diff = 0.00010104,	Max diff  = 0.01605957,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197752,	Sum diff  = 151.49719466,	Mean diff = 0.00012625,	Max diff  = 0.00225426,
+运行 check.out of fdtd-2d 33 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 124.00366097,	Mean diff = 0.00010334,	Max diff  = 0.01627148,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198353,	Sum diff  = 120.12146832,	Mean diff = 0.00010010,	Max diff  = 0.01582031,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197764,	Sum diff  = 150.01036356,	Mean diff = 0.00012501,	Max diff  = 0.00213132,
+运行 check.out of fdtd-2d 34 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 122.78073885,	Mean diff = 0.00010232,	Max diff  = 0.01602734,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198333,	Sum diff  = 118.73909313,	Mean diff = 0.00009895,	Max diff  = 0.01558187,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197762,	Sum diff  = 148.50152410,	Mean diff = 0.00012375,	Max diff  = 0.00221718,
+运行 check.out of fdtd-2d 35 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 121.53251542,	Mean diff = 0.00010128,	Max diff  = 0.01584131,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198311,	Sum diff  = 117.42565680,	Mean diff = 0.00009785,	Max diff  = 0.01534261,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197760,	Sum diff  = 147.20622411,	Mean diff = 0.00012267,	Max diff  = 0.00198124,
+运行 check.out of fdtd-2d 36 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 120.24613320,	Mean diff = 0.00010021,	Max diff  = 0.01553906,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198307,	Sum diff  = 116.09157035,	Mean diff = 0.00009674,	Max diff  = 0.01510254,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197763,	Sum diff  = 145.49452510,	Mean diff = 0.00012125,	Max diff  = 0.00221815,
+运行 check.out of fdtd-2d 37 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 118.90443845,	Mean diff = 0.00009909,	Max diff  = 0.01534814,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198322,	Sum diff  = 114.83437571,	Mean diff = 0.00009570,	Max diff  = 0.01486328,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197740,	Sum diff  = 144.20970124,	Mean diff = 0.00012017,	Max diff  = 0.00225774,
+运行 check.out of fdtd-2d 38 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 117.62279911,	Mean diff = 0.00009802,	Max diff  = 0.01505078,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198320,	Sum diff  = 113.63509512,	Mean diff = 0.00009470,	Max diff  = 0.01462484,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197745,	Sum diff  = 142.59435974,	Mean diff = 0.00011883,	Max diff  = 0.00199825,
+运行 check.out of fdtd-2d 39 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 116.14806033,	Mean diff = 0.00009679,	Max diff  = 0.01485498,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198306,	Sum diff  = 112.28286909,	Mean diff = 0.00009357,	Max diff  = 0.01438232,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197745,	Sum diff  = 141.23003801,	Mean diff = 0.00011769,	Max diff  = 0.00216064,
+运行 check.out of fdtd-2d 40 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 115.07825288,	Mean diff = 0.00009590,	Max diff  = 0.01456250,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198308,	Sum diff  = 111.20737166,	Mean diff = 0.00009267,	Max diff  = 0.01414551,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197744,	Sum diff  = 139.91217180,	Mean diff = 0.00011659,	Max diff  = 0.00230187,
+运行 check.out of fdtd-2d 41 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 113.63097824,	Mean diff = 0.00009469,	Max diff  = 0.01436182,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198311,	Sum diff  = 109.83210023,	Mean diff = 0.00009153,	Max diff  = 0.01390706,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197747,	Sum diff  = 138.11450402,	Mean diff = 0.00011510,	Max diff  = 0.00203111,
+运行 check.out of fdtd-2d 42 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 112.42384994,	Mean diff = 0.00009369,	Max diff  = 0.01407422,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198309,	Sum diff  = 108.63663181,	Mean diff = 0.00009053,	Max diff  = 0.01366699,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197757,	Sum diff  = 137.02507706,	Mean diff = 0.00011419,	Max diff  = 0.00203803,
+运行 check.out of fdtd-2d 43 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 111.19918963,	Mean diff = 0.00009267,	Max diff  = 0.01383008,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198296,	Sum diff  = 107.42574012,	Mean diff = 0.00008952,	Max diff  = 0.01342773,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197752,	Sum diff  = 135.28575185,	Mean diff = 0.00011274,	Max diff  = 0.00207480,
+运行 check.out of fdtd-2d 44 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 110.00048338,	Mean diff = 0.00009167,	Max diff  = 0.01358691,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198254,	Sum diff  = 106.26361937,	Mean diff = 0.00008855,	Max diff  = 0.01318848,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197755,	Sum diff  = 134.16485002,	Mean diff = 0.00011180,	Max diff  = 0.00234291,
+运行 check.out of fdtd-2d 45 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 108.62408145,	Mean diff = 0.00009052,	Max diff  = 0.01334277,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198262,	Sum diff  = 104.97871334,	Mean diff = 0.00008748,	Max diff  = 0.01295003,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197748,	Sum diff  = 132.46989787,	Mean diff = 0.00011039,	Max diff  = 0.00220378,
+运行 check.out of fdtd-2d 46 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 107.44357108,	Mean diff = 0.00008954,	Max diff  = 0.01309863,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198241,	Sum diff  = 103.65876522,	Mean diff = 0.00008638,	Max diff  = 0.01271077,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197743,	Sum diff  = 131.21496964,	Mean diff = 0.00010935,	Max diff  = 0.00209094,
+运行 check.out of fdtd-2d 47 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 106.02665121,	Mean diff = 0.00008836,	Max diff  = 0.01285254,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198298,	Sum diff  = 102.58443566,	Mean diff = 0.00008549,	Max diff  = 0.01247070,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197742,	Sum diff  = 129.63108514,	Mean diff = 0.00010803,	Max diff  = 0.00190805,
+运行 check.out of fdtd-2d 48 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198995,	Sum diff  = 104.89772777,	Mean diff = 0.00008741,	Max diff  = 0.01260547,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198324,	Sum diff  = 101.31832943,	Mean diff = 0.00008443,	Max diff  = 0.01223145,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197749,	Sum diff  = 128.33613563,	Mean diff = 0.00010695,	Max diff  = 0.00196505,
+运行 check.out of fdtd-2d 49 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 103.49451260,	Mean diff = 0.00008625,	Max diff  = 0.01235937,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198242,	Sum diff  = 99.96420920,	Mean diff = 0.00008330,	Max diff  = 0.01199300,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197746,	Sum diff  = 127.00125636,	Mean diff = 0.00010583,	Max diff  = 0.00206951,
+运行 check.out of fdtd-2d 50 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 102.25765483,	Mean diff = 0.00008521,	Max diff  = 0.01211230,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198269,	Sum diff  = 98.72008666,	Mean diff = 0.00008227,	Max diff  = 0.01175049,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197744,	Sum diff  = 125.55197699,	Mean diff = 0.00010463,	Max diff  = 0.00189264,
+运行 check.out of fdtd-2d 51 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 101.17867035,	Mean diff = 0.00008432,	Max diff  = 0.01186621,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198225,	Sum diff  = 97.66165044,	Mean diff = 0.00008138,	Max diff  = 0.01151367,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197726,	Sum diff  = 124.20951231,	Mean diff = 0.00010351,	Max diff  = 0.00207229,
+运行 check.out of fdtd-2d 52 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 99.68949240,	Mean diff = 0.00008307,	Max diff  = 0.01161914,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198235,	Sum diff  = 96.31941175,	Mean diff = 0.00008027,	Max diff  = 0.01127523,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197736,	Sum diff  = 122.65075899,	Mean diff = 0.00010221,	Max diff  = 0.00206351,
+运行 check.out of fdtd-2d 53 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 98.48856815,	Mean diff = 0.00008207,	Max diff  = 0.01137305,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198188,	Sum diff  = 95.32812804,	Mean diff = 0.00007944,	Max diff  = 0.01103434,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197738,	Sum diff  = 121.36702920,	Mean diff = 0.00010114,	Max diff  = 0.00169718,
+运行 check.out of fdtd-2d 54 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 97.29734799,	Mean diff = 0.00008108,	Max diff  = 0.01112598,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198227,	Sum diff  = 93.83016383,	Mean diff = 0.00007819,	Max diff  = 0.01079590,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197750,	Sum diff  = 119.82464885,	Mean diff = 0.00009985,	Max diff  = 0.00201401,
+运行 check.out of fdtd-2d 55 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 95.90560699,	Mean diff = 0.00007992,	Max diff  = 0.01087988,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198208,	Sum diff  = 92.71484037,	Mean diff = 0.00007726,	Max diff  = 0.01055745,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197746,	Sum diff  = 118.56738223,	Mean diff = 0.00009881,	Max diff  = 0.00187350,
+运行 check.out of fdtd-2d 56 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 94.62663876,	Mean diff = 0.00007886,	Max diff  = 0.01059619,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198213,	Sum diff  = 91.58901377,	Mean diff = 0.00007632,	Max diff  = 0.01031820,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197740,	Sum diff  = 116.92771360,	Mean diff = 0.00009744,	Max diff  = 0.00176475,
+运行 check.out of fdtd-2d 57 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 93.44901023,	Mean diff = 0.00007787,	Max diff  = 0.01035205,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198184,	Sum diff  = 90.08744393,	Mean diff = 0.00007507,	Max diff  = 0.01007812,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197726,	Sum diff  = 115.47042171,	Mean diff = 0.00009623,	Max diff  = 0.00179159,
+运行 check.out of fdtd-2d 58 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 92.11554903,	Mean diff = 0.00007676,	Max diff  = 0.01010791,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198147,	Sum diff  = 88.76294304,	Mean diff = 0.00007397,	Max diff  = 0.00983887,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197732,	Sum diff  = 113.86027043,	Mean diff = 0.00009488,	Max diff  = 0.00202655,
+运行 check.out of fdtd-2d 59 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 90.79130122,	Mean diff = 0.00007566,	Max diff  = 0.00986377,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198188,	Sum diff  = 87.64746432,	Mean diff = 0.00007304,	Max diff  = 0.00960042,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197744,	Sum diff  = 112.53848305,	Mean diff = 0.00009378,	Max diff  = 0.00168566,
+运行 check.out of fdtd-2d 60 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 89.22356017,	Mean diff = 0.00007435,	Max diff  = 0.00961963,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198159,	Sum diff  = 86.30744679,	Mean diff = 0.00007192,	Max diff  = 0.00936117,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197723,	Sum diff  = 111.14788711,	Mean diff = 0.00009262,	Max diff  = 0.00198302,
+运行 check.out of fdtd-2d 61 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198996,	Sum diff  = 88.10832700,	Mean diff = 0.00007342,	Max diff  = 0.00937549,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198089,	Sum diff  = 85.14418889,	Mean diff = 0.00007095,	Max diff  = 0.00912109,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197731,	Sum diff  = 109.50694232,	Mean diff = 0.00009126,	Max diff  = 0.00162291,
+运行 check.out of fdtd-2d 62 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 86.84377510,	Mean diff = 0.00007237,	Max diff  = 0.00913135,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198085,	Sum diff  = 83.80500522,	Mean diff = 0.00006984,	Max diff  = 0.00888184,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197745,	Sum diff  = 108.09408439,	Mean diff = 0.00009008,	Max diff  = 0.00205638,
+运行 check.out of fdtd-2d 63 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 85.41047757,	Mean diff = 0.00007118,	Max diff  = 0.00888721,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198145,	Sum diff  = 82.53948023,	Mean diff = 0.00006878,	Max diff  = 0.00864339,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197734,	Sum diff  = 106.41166307,	Mean diff = 0.00008868,	Max diff  = 0.00167909,
+运行 check.out of fdtd-2d 64 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 84.16409592,	Mean diff = 0.00007014,	Max diff  = 0.00864307,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198124,	Sum diff  = 81.30404599,	Mean diff = 0.00006775,	Max diff  = 0.00840088,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197749,	Sum diff  = 104.85427775,	Mean diff = 0.00008738,	Max diff  = 0.00194496,
+运行 check.out of fdtd-2d 65 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 82.68459860,	Mean diff = 0.00006890,	Max diff  = 0.00839893,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198112,	Sum diff  = 79.81954177,	Mean diff = 0.00006652,	Max diff  = 0.00816406,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197738,	Sum diff  = 103.28114107,	Mean diff = 0.00008607,	Max diff  = 0.00171996,
+运行 check.out of fdtd-2d 66 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 81.31767523,	Mean diff = 0.00006776,	Max diff  = 0.00815479,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198098,	Sum diff  = 78.58745878,	Mean diff = 0.00006549,	Max diff  = 0.00792562,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197729,	Sum diff  = 101.83928572,	Mean diff = 0.00008487,	Max diff  = 0.00158744,
+运行 check.out of fdtd-2d 67 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198996,	Sum diff  = 79.69620752,	Mean diff = 0.00006641,	Max diff  = 0.00791064,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198067,	Sum diff  = 77.28825852,	Mean diff = 0.00006441,	Max diff  = 0.00768555,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197708,	Sum diff  = 100.22045629,	Mean diff = 0.00008352,	Max diff  = 0.00163191,
+运行 check.out of fdtd-2d 68 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 78.44453535,	Mean diff = 0.00006537,	Max diff  = 0.00766650,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198040,	Sum diff  = 75.91491814,	Mean diff = 0.00006326,	Max diff  = 0.00744629,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197733,	Sum diff  = 98.45766441,	Mean diff = 0.00008205,	Max diff  = 0.00159235,
+运行 check.out of fdtd-2d 69 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 77.05908154,	Mean diff = 0.00006422,	Max diff  = 0.00742236,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198026,	Sum diff  = 74.56895024,	Mean diff = 0.00006214,	Max diff  = 0.00720703,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197727,	Sum diff  = 96.93589365,	Mean diff = 0.00008078,	Max diff  = 0.00161104,
+运行 check.out of fdtd-2d 70 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 75.68781650,	Mean diff = 0.00006307,	Max diff  = 0.00717822,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198071,	Sum diff  = 73.17972963,	Mean diff = 0.00006098,	Max diff  = 0.00696859,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197727,	Sum diff  = 95.18667268,	Mean diff = 0.00007932,	Max diff  = 0.00161701,
+运行 check.out of fdtd-2d 71 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 74.17578394,	Mean diff = 0.00006181,	Max diff  = 0.00693408,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198051,	Sum diff  = 71.86720058,	Mean diff = 0.00005989,	Max diff  = 0.00672933,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197727,	Sum diff  = 93.68483004,	Mean diff = 0.00007807,	Max diff  = 0.00145971,
+运行 check.out of fdtd-2d 72 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 72.69619022,	Mean diff = 0.00006058,	Max diff  = 0.00668799,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198053,	Sum diff  = 70.40917093,	Mean diff = 0.00005867,	Max diff  = 0.00648926,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197715,	Sum diff  = 91.81807328,	Mean diff = 0.00007652,	Max diff  = 0.00145432,
+运行 check.out of fdtd-2d 73 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 71.15360492,	Mean diff = 0.00005929,	Max diff  = 0.00644092,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197976,	Sum diff  = 69.03526405,	Mean diff = 0.00005753,	Max diff  = 0.00625000,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197734,	Sum diff  = 90.18583080,	Mean diff = 0.00007515,	Max diff  = 0.00137593,
+运行 check.out of fdtd-2d 74 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198996,	Sum diff  = 69.77429061,	Mean diff = 0.00005815,	Max diff  = 0.00619482,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197975,	Sum diff  = 67.52486256,	Mean diff = 0.00005627,	Max diff  = 0.00601156,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197724,	Sum diff  = 88.48107382,	Mean diff = 0.00007373,	Max diff  = 0.00152691,
+运行 check.out of fdtd-2d 75 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 68.29612625,	Mean diff = 0.00005691,	Max diff  = 0.00594775,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1198006,	Sum diff  = 66.11322181,	Mean diff = 0.00005509,	Max diff  = 0.00576904,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197695,	Sum diff  = 86.71814514,	Mean diff = 0.00007227,	Max diff  = 0.00145492,
+运行 check.out of fdtd-2d 76 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198996,	Sum diff  = 66.69577423,	Mean diff = 0.00005558,	Max diff  = 0.00570166,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197947,	Sum diff  = 64.62684292,	Mean diff = 0.00005386,	Max diff  = 0.00553223,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197709,	Sum diff  = 84.85776699,	Mean diff = 0.00007071,	Max diff  = 0.00146769,
+运行 check.out of fdtd-2d 77 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 65.09167618,	Mean diff = 0.00005424,	Max diff  = 0.00545459,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197859,	Sum diff  = 63.03348514,	Mean diff = 0.00005253,	Max diff  = 0.00529378,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197715,	Sum diff  = 82.78931455,	Mean diff = 0.00006899,	Max diff  = 0.00155431,
+运行 check.out of fdtd-2d 78 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 63.55844708,	Mean diff = 0.00005297,	Max diff  = 0.00520850,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197887,	Sum diff  = 61.61528255,	Mean diff = 0.00005135,	Max diff  = 0.00505290,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197710,	Sum diff  = 81.18214364,	Mean diff = 0.00006765,	Max diff  = 0.00130828,
+运行 check.out of fdtd-2d 79 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 61.90256505,	Mean diff = 0.00005159,	Max diff  = 0.00496143,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197858,	Sum diff  = 60.00483988,	Mean diff = 0.00005000,	Max diff  = 0.00481445,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197707,	Sum diff  = 79.33756873,	Mean diff = 0.00006611,	Max diff  = 0.00152866,
+运行 check.out of fdtd-2d 80 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 60.18816327,	Mean diff = 0.00005016,	Max diff  = 0.00471533,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197888,	Sum diff  = 58.36792306,	Mean diff = 0.00004864,	Max diff  = 0.00457601,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197707,	Sum diff  = 77.17680079,	Mean diff = 0.00006431,	Max diff  = 0.00141884,
+运行 check.out of fdtd-2d 81 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198996,	Sum diff  = 58.53169879,	Mean diff = 0.00004878,	Max diff  = 0.00443164,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197904,	Sum diff  = 56.82390124,	Mean diff = 0.00004735,	Max diff  = 0.00433675,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197705,	Sum diff  = 75.21608271,	Mean diff = 0.00006268,	Max diff  = 0.00130022,
+运行 check.out of fdtd-2d 82 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 56.86309412,	Mean diff = 0.00004739,	Max diff  = 0.00418750,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197777,	Sum diff  = 55.07620683,	Mean diff = 0.00004590,	Max diff  = 0.00409668,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197706,	Sum diff  = 73.04405308,	Mean diff = 0.00006087,	Max diff  = 0.00119869,
+运行 check.out of fdtd-2d 83 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 55.11254739,	Mean diff = 0.00004593,	Max diff  = 0.00394336,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197806,	Sum diff  = 53.43937670,	Mean diff = 0.00004453,	Max diff  = 0.00385742,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197715,	Sum diff  = 70.97943751,	Mean diff = 0.00005915,	Max diff  = 0.00120866,
+运行 check.out of fdtd-2d 84 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 53.23981415,	Mean diff = 0.00004437,	Max diff  = 0.00369922,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197728,	Sum diff  = 51.73540563,	Mean diff = 0.00004311,	Max diff  = 0.00361898,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197696,	Sum diff  = 68.75685210,	Mean diff = 0.00005730,	Max diff  = 0.00111709,
+运行 check.out of fdtd-2d 85 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 51.34393271,	Mean diff = 0.00004279,	Max diff  = 0.00345508,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197656,	Sum diff  = 49.88270179,	Mean diff = 0.00004157,	Max diff  = 0.00337972,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197689,	Sum diff  = 66.55435363,	Mean diff = 0.00005546,	Max diff  = 0.00104055,
+运行 check.out of fdtd-2d 86 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198994,	Sum diff  = 49.41228136,	Mean diff = 0.00004118,	Max diff  = 0.00321094,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197644,	Sum diff  = 48.02049756,	Mean diff = 0.00004002,	Max diff  = 0.00313965,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197685,	Sum diff  = 64.13148848,	Mean diff = 0.00005344,	Max diff  = 0.00101855,
+运行 check.out of fdtd-2d 87 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198999,	Sum diff  = 47.42186076,	Mean diff = 0.00003952,	Max diff  = 0.00296680,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197626,	Sum diff  = 46.08484293,	Mean diff = 0.00003840,	Max diff  = 0.00290039,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197699,	Sum diff  = 61.70521794,	Mean diff = 0.00005142,	Max diff  = 0.00099761,
+运行 check.out of fdtd-2d 88 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 45.38221559,	Mean diff = 0.00003782,	Max diff  = 0.00272266,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197544,	Sum diff  = 44.13326803,	Mean diff = 0.00003678,	Max diff  = 0.00266195,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197677,	Sum diff  = 59.18305659,	Mean diff = 0.00004932,	Max diff  = 0.00099305,
+运行 check.out of fdtd-2d 89 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1199000,	Sum diff  = 43.19975943,	Mean diff = 0.00003600,	Max diff  = 0.00247852,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197509,	Sum diff  = 42.10464203,	Mean diff = 0.00003509,	Max diff  = 0.00241943,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197673,	Sum diff  = 56.53706803,	Mean diff = 0.00004711,	Max diff  = 0.00089244,
+运行 check.out of fdtd-2d 90 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198998,	Sum diff  = 40.92941257,	Mean diff = 0.00003411,	Max diff  = 0.00223437,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197460,	Sum diff  = 39.86840889,	Mean diff = 0.00003322,	Max diff  = 0.00218262,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197667,	Sum diff  = 53.64677443,	Mean diff = 0.00004471,	Max diff  = 0.00088319,
+运行 check.out of fdtd-2d 91 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 38.63355135,	Mean diff = 0.00003219,	Max diff  = 0.00199023,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197304,	Sum diff  = 37.60690728,	Mean diff = 0.00003134,	Max diff  = 0.00194417,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197666,	Sum diff  = 50.75443566,	Mean diff = 0.00004230,	Max diff  = 0.00077857,
+运行 check.out of fdtd-2d 92 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198996,	Sum diff  = 36.10863253,	Mean diff = 0.00003009,	Max diff  = 0.00174609,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197294,	Sum diff  = 35.19736877,	Mean diff = 0.00002933,	Max diff  = 0.00170410,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197644,	Sum diff  = 47.66362215,	Mean diff = 0.00003972,	Max diff  = 0.00087396,
+运行 check.out of fdtd-2d 93 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198995,	Sum diff  = 33.44204582,	Mean diff = 0.00002787,	Max diff  = 0.00150195,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1197146,	Sum diff  = 32.55234448,	Mean diff = 0.00002713,	Max diff  = 0.00146484,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197626,	Sum diff  = 44.24082009,	Mean diff = 0.00003687,	Max diff  = 0.00069335,
+运行 check.out of fdtd-2d 94 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198993,	Sum diff  = 30.45757857,	Mean diff = 0.00002538,	Max diff  = 0.00125781,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1196941,	Sum diff  = 29.73645199,	Mean diff = 0.00002478,	Max diff  = 0.00122559,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197617,	Sum diff  = 40.56066641,	Mean diff = 0.00003380,	Max diff  = 0.00072317,
+运行 check.out of fdtd-2d 95 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198995,	Sum diff  = 27.40052350,	Mean diff = 0.00002283,	Max diff  = 0.00101367,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1196724,	Sum diff  = 26.65346868,	Mean diff = 0.00002221,	Max diff  = 0.00098714,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197588,	Sum diff  = 36.52624735,	Mean diff = 0.00003044,	Max diff  = 0.00055809,
+运行 check.out of fdtd-2d 96 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198995,	Sum diff  = 23.88199271,	Mean diff = 0.00001990,	Max diff  = 0.00076953,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1196523,	Sum diff  = 23.24367863,	Mean diff = 0.00001937,	Max diff  = 0.00074788,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197540,	Sum diff  = 31.91967472,	Mean diff = 0.00002660,	Max diff  = 0.00051611,
+运行 check.out of fdtd-2d 97 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198997,	Sum diff  = 19.61436296,	Mean diff = 0.00001635,	Max diff  = 0.00052344,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1196006,	Sum diff  = 19.10469515,	Mean diff = 0.00001592,	Max diff  = 0.00050781,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197511,	Sum diff  = 26.44018966,	Mean diff = 0.00002203,	Max diff  = 0.00042014,
+运行 check.out of fdtd-2d 98 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 1198988,	Sum diff  = 14.40371828,	Mean diff = 0.00001200,	Max diff  = 0.00027637,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 1195032,	Sum diff  = 13.88565452,	Mean diff = 0.00001157,	Max diff  = 0.00026855,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 1197453,	Sum diff  = 19.56828860,	Mean diff = 0.00001631,	Max diff  = 0.00028684,
+运行 check.out of fdtd-2d 99 完成!
+ AMP  Correctness is ,	Array(ex) result,	Num diff  = 0,	Sum diff  = 0.00000000,	Mean diff = 0.00000000,	Max diff  = 0.00000000,
+ AMP  Correctness is ,	Array(ey) result,	Num diff  = 0,	Sum diff  = 0.00000000,	Mean diff = 0.00000000,	Max diff  = 0.00000000,
+ AMP  Correctness is ,	Array(hz) result,	Num diff  = 0,	Sum diff  = 0.00000000,	Mean diff = 0.00000000,	Max diff  = 0.00000000,
+Float Correctness is ,	Array(ex) result,	Num diff  = 1199992,	Sum diff  = 170.71516286,	Mean diff = 0.00014226,	Max diff  = 0.02461963,
+Float Correctness is ,	Array(ey) result,	Num diff  = 1198488,	Sum diff  = 165.80217874,	Mean diff = 0.00013817,	Max diff  = 0.02395589,
+Float Correctness is ,	Array(hz) result,	Num diff  = 1199960,	Sum diff  = 204.30954348,	Mean diff = 0.00017026,	Max diff  = 0.00282395,
+运行 check.out of fdtd-2d 100 完成!
+
