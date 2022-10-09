@@ -59,8 +59,8 @@ static void print_array(int n, int m, DATA_TYPE POLYBENCH_4D(A, M, N, N, N, m, n
 static void kernel_3d7pt(int tsteps, int n, int m, DATA_TYPE POLYBENCH_4D(A, M, N, N, N, m, n, n, n))
 {
     int t, i, j, k;
-    DATA_TYPE alpha = SCALAR_VAL(0.09876);
-    DATA_TYPE beta = SCALAR_VAL(0.08765);
+    DATA_TYPE alpha = SCALAR_VAL(0.0876);
+    DATA_TYPE beta = SCALAR_VAL(0.0765);
 
 #pragma scop
     for (t = 0; t < _PB_TSTEPS - 1; t++)
