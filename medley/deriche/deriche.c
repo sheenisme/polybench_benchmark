@@ -75,16 +75,18 @@ static void kernel_deriche(int w, int h, DATA_TYPE alpha,
     DATA_TYPE a1, a2, a3, a4, a5, a6, a7, a8;
     DATA_TYPE b1, b2, c1, c2;
 
+    DATA_TYPE two = SCALAR_VAL(2.0);
     DATA_TYPE one = SCALAR_VAL(1.0);
     DATA_TYPE zero = SCALAR_VAL(0.0);
+    DATA_TYPE neg_two = SCALAR_VAL(-2.0);
 
-    k = (one - EXP_FUN(-alpha)) * (one - EXP_FUN(-alpha)) / (one + SCALAR_VAL(2.0) * alpha * EXP_FUN(-alpha) - EXP_FUN(SCALAR_VAL(2.0) * alpha));
+    k = (one - EXP_FUN(-alpha)) * (one - EXP_FUN(-alpha)) / (one + two * alpha * EXP_FUN(-alpha) - EXP_FUN(two * alpha));
     a1 = a5 = k;
     a2 = a6 = k * EXP_FUN(-alpha) * (alpha - one);
     a3 = a7 = k * EXP_FUN(-alpha) * (alpha + one);
-    a4 = a8 = -k * EXP_FUN(SCALAR_VAL(-2.0) * alpha);
-    b1 = POW_FUN(SCALAR_VAL(2.0), -alpha);
-    b2 = -EXP_FUN(SCALAR_VAL(-2.0) * alpha);
+    a4 = a8 = -k * EXP_FUN(neg_two * alpha);
+    b1 = POW_FUN(two, -alpha);
+    b2 = -EXP_FUN(neg_two * alpha);
     c1 = c2 = 1;
 
 #pragma scop
