@@ -18,14 +18,17 @@
 #include "heat-2d.h"
 
 /* Array initialization. */
-static void init_array(int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n)) {
+static void init_array(int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n))
+{
     int i, j, k;
     const int BASE = 1024;
 
     srand(42); // seed with a constant value to verify results
 
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
             A[0][i][j] = (DATA_TYPE)(rand() % BASE);
         }
     }
@@ -33,13 +36,15 @@ static void init_array(int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n)
 
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
-static void print_array(int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n)) {
+static void print_array(int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n))
+{
     int i, j, k;
 
     POLYBENCH_DUMP_START;
     POLYBENCH_DUMP_BEGIN("A");
     for (i = 0; i < n; i++)
-        for (j = 0; j < n; j++) {
+        for (j = 0; j < n; j++)
+        {
             if ((i * n + j) % 20 == 0)
                 fprintf(POLYBENCH_DUMP_TARGET, "\n");
             fprintf(POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, A[(_PB_TSTEPS - 1) % 2][i][j]);
@@ -50,15 +55,19 @@ static void print_array(int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n
 
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
-static void kernel_heat_2d(int tsteps, int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n)) {
+static void kernel_heat_2d(int tsteps, int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N, N, m, n, n))
+{
     int t, i, j, k;
     DATA_TYPE v1 = SCALAR_VAL(0.125);
     DATA_TYPE v2 = SCALAR_VAL(2.0);
 
 #pragma scop
-    for (int t = 0; t < _PB_TSTEPS - 1; t++) {
-        for (int i = 1; i < _PB_N - 1; i++) {
-            for (int j = 1; j < _PB_N - 1; j++) {
+    for (int t = 0; t < _PB_TSTEPS - 1; t++)
+    {
+        for (int i = 1; i < _PB_N - 1; i++)
+        {
+            for (int j = 1; j < _PB_N - 1; j++)
+            {
                 A[(t + 1) % 2][i][j] = v1 * (A[t % 2][i + 1][j] - v2 * A[t % 2][i][j] + A[t % 2][i - 1][j]) +
                                        v1 * (A[t % 2][i][j + 1] - v2 * A[t % 2][i][j] + A[t % 2][i][j - 1]) +
                                        A[t % 2][i][j];
@@ -68,7 +77,8 @@ static void kernel_heat_2d(int tsteps, int n, int m, DATA_TYPE POLYBENCH_3D(A, M
 #pragma endscop
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     /* Retrieve problem size. */
     int tsteps = TSTEPS;
     int m = M;
