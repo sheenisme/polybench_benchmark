@@ -23,8 +23,13 @@
 ./medley/floyd-warshall/floyd-warshall.c
 ./medley/nussinov/nussinov.c
 ./stencils/adi/adi.c
+./stencils/fdtd-1d/fdtd-1d.c
 ./stencils/fdtd-2d/fdtd-2d.c
+./stencils/heat-1d/heat-1d.c
+./stencils/heat-2d/heat-2d.c
 ./stencils/heat-3d/heat-3d.c
 ./stencils/jacobi-1d/jacobi-1d.c
 ./stencils/jacobi-2d/jacobi-2d.c
 ./stencils/seidel-2d/seidel-2d.c
+./stencils/3d7pt/3d7pt.c
+./stencils/3d27pt/3d27pt.c
