@@ -20,9 +20,9 @@ gramschmidt	linear-algebra/solvers	double	FALSE	M N	20 30	60 80	200 240	1000 120
 lu	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
 ludcmp	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
 trisolv	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
-deriche	medley	double	FALSE	W H	64 64	192 128	720 480	4096 2160	7680 4320
+deriche	medley	float	FALSE	W H	64 64	192 128	720 480	4096 2160	7680 4320
 floyd-warshall	medley	double	TRUE	N	60	180	500	2800	5600
-nussinov	medley	double	TRUE	N	60	180	500	2500	5500
+nussinov	medley	int	TRUE	N	60	180	500	2500	5500
 adi	stencils	double	FALSE	TSTEPS N	20 20	40 60	100 200	500 1000	1000 2000
 fdtd-1d	stencils	double	FALSE	TSTEPS N	20 30	40 80 	100 40	500 2000	800000 50000
 fdtd-2d	stencils	double	FALSE	TMAX NX NY	20 20 30	40 60 80	100 200 240	500 1000 1200	1000 2000 2600
