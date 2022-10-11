@@ -38,7 +38,8 @@ my %categories = (
 my %extra_flags = (
    'cholesky' => '-lm',
    'gramschmidt' => '-lm',
-   'correlation' => '-lm'
+   'correlation' => '-lm',
+   'deriche' => '-lm'
 );
 
 foreach $key (keys %categories) {
