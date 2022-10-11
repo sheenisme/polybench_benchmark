@@ -61,11 +61,23 @@ include $configFile
 
 EXTRA_FLAGS=$extra_flags{$kernel}
 
-$kernel: $kernel.c $kernel.h
-	\${VERBOSE} \${CC} -o $kernel $kernel.c \${CFLAGS} -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+RATE ?= 50
+
+double: $kernel.c $kernel.h
+	\${VERBOSE} \${CC} -o $kernel-double.exe $kernel.c \${CFLAGS} \${POLY_ARGS} -DNO_PENCIL_KILL -DDATA_TYPE_IS_DOUBLE=1 -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+
+float: $kernel.c $kernel.h
+	\${VERBOSE} \${CC} -o $kernel-float.exe  $kernel.c \${CFLAGS} \${POLY_ARGS} -DNO_PENCIL_KILL -DDATA_TYPE_IS_FLOAT=1  -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+
+amp: pre-amp $kernel.amp_\${RATE}.c $kernel.h
+	\${VERBOSE} \${CC} -o $kernel-\${RATE}.exe $kernel.amp_\${RATE}.c \${CFLAGS} \${POLY_ARGS} -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+
+pre-amp: $kernel.c
+	ppcg --target c -R \${RATE} $kernel.c -o $kernel.amp_\${RATE}.c > /dev/null 2>&1
 
 clean:
-	@ rm -f $kernel
+	@ rm -f $kernel-*.exe
+	@ rm -f $kernel.amp_*.c
 
 EOF
 
@@ -81,7 +93,8 @@ open FILE, '>'.$TARGET_DIR.'/config.mk';
 
 print FILE << "EOF";
 CC=gcc
-CFLAGS=-O2 -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_USE_C99_PROTO
+CFLAGS=-O2 
+POLY_ARGS=-DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_USE_C99_PROTO
 EOF
 
 close FILE;

@@ -1,3 +1,6 @@
+*.exe
+Makefile
+
 my_ppcg_benchmark/obj/*.out
 
 my_ppcg_benchmark/output/amp_ppcg/*_result
