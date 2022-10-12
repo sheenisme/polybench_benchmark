@@ -42,8 +42,8 @@ foreach $cat (@categories) {
 
         my $kernel = $dir;
         my $targetDir = $target.'/'.$dir;
-        my $command = "ulimit -s 8388608; cd $targetDir; make clean; make amp; ./$kernel-50.exe";
-	$command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
+        my $command = "ulimit -s 8388608; cd $targetDir; make clean; make amp RATE=50; ./$kernel-50.exe";
+           $command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
         print($command."\n");
         system($command);
    }
