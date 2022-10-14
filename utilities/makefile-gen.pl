@@ -64,21 +64,24 @@ EXTRA_FLAGS=$extra_flags{$kernel}
 
 RATE ?= 50
 
-double: $kernel.c $kernel.h
-	\${VERBOSE} \${CC} -o $kernel-double.exe $kernel.c \${CFLAGS} \${POLY_ARGS} -DNO_PENCIL_KILL -DDATA_TYPE_IS_DOUBLE=1 -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+double: pre-ppcg $kernel-ppcg.c $kernel.h
+	\${VERBOSE} \${CC} -o $kernel-ppcg-double.exe $kernel-ppcg.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLY_ARGS} -DDATA_TYPE_IS_DOUBLE=1 -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
 
-float: $kernel.c $kernel.h
-	\${VERBOSE} \${CC} -o $kernel-float.exe  $kernel.c \${CFLAGS} \${POLY_ARGS} -DNO_PENCIL_KILL -DDATA_TYPE_IS_FLOAT=1  -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+float: pre-ppcg $kernel-ppcg.c $kernel.h
+	\${VERBOSE} \${CC} -o $kernel-ppcg-float.exe  $kernel-ppcg.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLY_ARGS} -DDATA_TYPE_IS_FLOAT=1  -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
 
-amp: pre-amp $kernel.amp_\${RATE}.c $kernel.h
-	\${VERBOSE} \${CC} -o $kernel-\${RATE}.exe $kernel.amp_\${RATE}.c \${CFLAGS} \${POLY_ARGS} -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+amp: pre-amp $kernel-amp_\${RATE}.c $kernel.h
+	\${VERBOSE} \${CC} -o $kernel-amp_\${RATE}.exe $kernel-amp_\${RATE}.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLY_ARGS} -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
 
 pre-amp: $kernel.c
-	ppcg --target c -R \${RATE} $kernel.c -o $kernel.amp_\${RATE}.c > /dev/null 2>&1
+	ppcg --target c \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} $kernel.c -o $kernel-amp_\${RATE}.c > /dev/null 2>&1
+
+pre-ppcg:
+	ppcg --target c \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision $kernel.c -o $kernel-ppcg.c > /dev/null 2>&1
 
 clean:
 	@ rm -f $kernel-*.exe
-	@ rm -f $kernel.amp_*.c
+	@ rm -f $kernel-*.c
 
 EOF
 
@@ -95,7 +98,10 @@ open FILE, '>'.$TARGET_DIR.'/config.mk';
 print FILE << "EOF";
 CC=gcc
 CFLAGS=-O2 
-POLY_ARGS=-DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_USE_C99_PROTO
+CC_OPENMP_FLAGS=
+POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_USE_C99_PROTO
+PPCG_TILE_FLAGS=
+PPCG_OPENMP_FLAGS=
 EOF
 
 close FILE;

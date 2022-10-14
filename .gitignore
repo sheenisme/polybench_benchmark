@@ -1,5 +1,6 @@
 *.exe
 Makefile
+run.log
 
 my_ppcg_benchmark/obj/*.out
 
