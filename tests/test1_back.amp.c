@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <stdio.h>
 // clang-format off
 /*
  * gaussian-sp.sdsl.c: This file is part of the SDSLC project.
@@ -79,16 +81,36 @@ int main(int argc, char *argv[]) {
 	}
 
     gettimeofday(&start, 0);
-#pragma scop
-	for (int t = 5; t < 2046; t++) {
-		for (int i = t; i < 2047; i++) {
-			for (int j = 6; j < 2048; j++) {
-				a[t][i][j] = (aref[t][i][j] + 1)*2;
+	/* ppcg generated CPU code with AMP */
+	int count1=0,count2=0;
+	float amp_lower_a[2041][1735][2042];
+	float amp_lower_aref[2041][1735][2042];
+	
+	  for (int c0 = 5; c0 <= 2045; c0 += 1)
+	    for (int c1 = c0; c1 <= c0 - (3 * c0 + 21) / 20 + 307; c1 += 1)
+	      for (int c2 = 6; c2 <= 2047; c2 += 1)
+		  {
+		   		a[c0][c1][c2] = ((aref[c0][c1][c2] + 1) * 2);
+				count1++;
+		  }
+	  // amp_kernel
+	  // amp_lower
+	    for (int c0 = 0; c0 <= 2040; c0 += 1)
+	      for (int c1 = c0 - (3 * c0 + 16) / 20; c1 <= 1734; c1 += 1)
+	        for (int c2 = 0; c2 <= 2041; c2 += 1)
+	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 5][c1 + 312][c2 + 6];
+	    for (int c0 = 5; c0 <= 2045; c0 += 1)
+	      for (int c1 = c0 - (3 * c0 + 21) / 20 + 308; c1 <= 2046; c1 += 1)
+	        for (int c2 = 6; c2 <= 2047; c2 += 1){
+				amp_lower_a[c0 - 5][c1 - 312][c2 - 6] = ((amp_lower_aref[c0 - 5][c1 - 312][c2 - 6] + 1) * 2);
+				count2++;
 			}
-		}
-    }
-#pragma endscop
+	    for (int c0 = 0; c0 <= 2040; c0 += 1)
+	      for (int c1 = c0 - (3 * c0 + 16) / 20; c1 <= 1734; c1 += 1)
+	        for (int c2 = 0; c2 <= 2041; c2 += 1)
+	          a[c0 + 5][c1 + 312][c2 + 6] = (double)amp_lower_a[c0][c1][c2];
     gettimeofday(&end, 0);
+	printf("\n count1 = %d, count2 = %d. count1\\count2 = %.2f .\n", count1, count2,(count1 * 1.0) /(count2 * 1.0));
 	for (int t = 0; t < T; t++) {
 		for (int i = 2; i < H; i++) {
 			for (int j = 2; j < W; j++) {

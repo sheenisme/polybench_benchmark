@@ -83,29 +83,28 @@ int main(int argc, char *argv[]) {
     gettimeofday(&start, 0);
 	/* ppcg generated CPU code with AMP */
 	
-	#define ppcg_min(x,y)    (x < y ? x : y)
-	float amp_lower_a[2044][2044][2044];
-	float amp_lower_aref[2044][2044][2044];
+	float amp_lower_a[2041][1735][2042];
+	float amp_lower_aref[2041][1735][2042];
 	{
-	  for (int c0 = 2; c0 <= 1024; c0 += 1)
-	    for (int c1 = 2 * c0 - 2; c1 <= 2046; c1 += 1)
-	      for (int c2 = c0; c2 <= 2046; c2 += 1)
+	  for (int c0 = 5; c0 <= 2045; c0 += 1)
+	    for (int c1 = c0; c1 <= c0 - (3 * c0 + 21) / 20 + 307; c1 += 1)
+	      for (int c2 = 6; c2 <= 2047; c2 += 1)
 	        a[c0][c1][c2] = ((aref[c0][c1][c2] + 1) * 2);
 	  // amp_kernel
 	  // amp_lower
 	  {
-	    for (int c0 = 0; c0 <= 2043; c0 += 1)
-	      for (int c1 = c0; c1 <= ppcg_min(2043, 2 * c0); c1 += 1)
-	        for (int c2 = c0; c2 <= 2043; c2 += 1)
-	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 3][c1 + 3][c2 + 3];
-	    for (int c0 = 3; c0 <= 2046; c0 += 1)
-	      for (int c1 = c0; c1 <= ppcg_min(2046, 2 * c0 - 3); c1 += 1)
-	        for (int c2 = c0; c2 <= 2046; c2 += 1)
-	          amp_lower_a[c0 - 3][c1 - 3][c2 - 3] = ((amp_lower_aref[c0 - 3][c1 - 3][c2 - 3] + 1) * 2);
-	    for (int c0 = 0; c0 <= 2043; c0 += 1)
-	      for (int c1 = c0; c1 <= ppcg_min(2043, 2 * c0); c1 += 1)
-	        for (int c2 = c0; c2 <= 2043; c2 += 1)
-	          a[c0 + 3][c1 + 3][c2 + 3] = (double)amp_lower_a[c0][c1][c2];
+	    for (int c0 = 0; c0 <= 2040; c0 += 1)
+	      for (int c1 = c0 - (3 * c0 + 16) / 20; c1 <= 1734; c1 += 1)
+	        for (int c2 = 0; c2 <= 2041; c2 += 1)
+	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 5][c1 + 312][c2 + 6];
+	    for (int c0 = 5; c0 <= 2045; c0 += 1)
+	      for (int c1 = c0 - (3 * c0 + 21) / 20 + 308; c1 <= 2046; c1 += 1)
+	        for (int c2 = 6; c2 <= 2047; c2 += 1)
+	          amp_lower_a[c0 - 5][c1 - 312][c2 - 6] = ((amp_lower_aref[c0 - 5][c1 - 312][c2 - 6] + 1) * 2);
+	    for (int c0 = 0; c0 <= 2040; c0 += 1)
+	      for (int c1 = c0 - (3 * c0 + 16) / 20; c1 <= 1734; c1 += 1)
+	        for (int c2 = 0; c2 <= 2041; c2 += 1)
+	          a[c0 + 5][c1 + 312][c2 + 6] = (double)amp_lower_a[c0][c1][c2];
 	  }
 	}
     gettimeofday(&end, 0);
