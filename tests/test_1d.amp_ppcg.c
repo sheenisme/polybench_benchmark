@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 
     unsigned long int upper = 0;
     unsigned long int lower = 0;
+    unsigned long int total = 0;
 
     // Initialize arrays
     for (int i = 0; i < M; i++)
@@ -84,28 +85,35 @@ int main(int argc, char *argv[])
     gettimeofday(&start, 0);
     {
         /* ppcg generated CPU code with AMP */
-        
-        float amp_lower_a[60];
+
+        float amp_lower_a[96];
         float amp_lower_alpha;
+        unsigned long amp_lower_total;
         {
-          for (int c0 = 7; c0 <= 67; c0 += 1)
-          {
+          for (int c0 = 7; c0 <= 31; c0 += 1)
             a[c0] += alpha;
+          for (int c0 = 7; c0 <= 31; c0 += 1)
+          {
+            total++;
             upper++;
           }
           // amp_kernel
           // amp_lower
           {
-            for (int c0 = 0; c0 <= 59; c0 += 1)
-              amp_lower_a[c0] = (float)a[c0 + 68];
+            for (int c0 = 0; c0 <= 95; c0 += 1)
+              amp_lower_a[c0] = (float)a[c0 + 32];
             amp_lower_alpha = (float)alpha;
-            for (int c0 = 68; c0 <= 127; c0 += 1)
+            amp_lower_total = (unsigned long)total;
+            for (int c0 = 32; c0 <= 127; c0 += 1)
+              amp_lower_a[c0 - 32] += amp_lower_alpha;
+            for (int c0 = 32; c0 <= 127; c0 += 1)
             {
-              amp_lower_a[c0 - 68] += amp_lower_alpha;
+              amp_lower_total++;
               lower++;
             }
-            for (int c0 = 0; c0 <= 59; c0 += 1)
-              a[c0 + 68] = (double)amp_lower_a[c0];
+            total = (unsigned long)amp_lower_total;
+            for (int c0 = 0; c0 <= 95; c0 += 1)
+              a[c0 + 32] = (double)amp_lower_a[c0];
           }
         }
     }
@@ -123,7 +131,7 @@ int main(int argc, char *argv[])
     printf("Time taken =  %7.5lfms\n", tdiff * 1.0e3);
 
     // print domain size of upper and lower
-    printf("upper count is : %lu, lower count is : %lu. \n", upper, lower);
+    printf("total is: %lu, upper count is : %lu, lower count is : %lu. \n", total, upper, lower);
 
     return 0;
 }

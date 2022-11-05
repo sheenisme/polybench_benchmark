@@ -72,6 +72,10 @@ int main(int argc, char *argv[])
     double a[M][N];
     double alpha = 3.131415926;
 
+    unsigned long int upper = 0;
+    unsigned long int lower = 0;
+    unsigned long int total = 0;
+
     // Initialize arrays
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
@@ -82,7 +86,10 @@ int main(int argc, char *argv[])
 #pragma scop
         for (int i = A; i < M; i++)
             for (int j = i; j < N; j++)
+            {
                 a[i][j] *= alpha;
+                total++;
+            }
 #pragma endscop
     }
     gettimeofday(&end, 0);
@@ -98,6 +105,9 @@ int main(int argc, char *argv[])
 
     // print time difference (ms)
     printf("Time taken =  %7.5lfms\n", tdiff * 1.0e3);
+
+    // print domain size of upper and lower
+    printf("total is: %lu, upper count is : %lu, lower count is : %lu. \n", total, upper, lower);
 
     return 0;
 }

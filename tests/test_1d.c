@@ -72,6 +72,10 @@ int main(int argc, char *argv[])
     double a[M];
     double alpha = 3.131415926;
 
+    unsigned long int upper = 0;
+    unsigned long int lower = 0;
+    unsigned long int total = 0;
+
     // Initialize arrays
     for (int i = 0; i < M; i++)
         a[i] = i * 1.0 / 3.1314;
@@ -82,6 +86,7 @@ int main(int argc, char *argv[])
         for (int i = A; i < M; i++)
         {
             a[i] += alpha;
+            total++;
         }
 #pragma endscop
     }
@@ -97,6 +102,9 @@ int main(int argc, char *argv[])
 
     // print time difference (ms)
     printf("Time taken =  %7.5lfms\n", tdiff * 1.0e3);
+
+    // print domain size of upper and lower
+    printf("total is: %lu, upper count is : %lu, lower count is : %lu. \n", total, upper, lower);
 
     return 0;
 }

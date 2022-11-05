@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 
     unsigned long int upper = 0;
     unsigned long int lower = 0;
+    unsigned long int total = 0;
 
     // Initialize arrays
     for (int i = 0; i < M; i++)
@@ -85,33 +86,41 @@ int main(int argc, char *argv[])
     gettimeofday(&start, 0);
     {
         /* ppcg generated CPU code with AMP */
-        
-        float amp_lower_a[121][62];
+
+        float amp_lower_a[121][100];
         float amp_lower_alpha;
+        unsigned long amp_lower_total;
         {
           for (int c0 = 7; c0 <= 127; c0 += 1)
-            for (int c1 = c0; c1 <= (c0 + 1) / 2 + 65; c1 += 1)
-            {
+            for (int c1 = c0; c1 <= c0 - (c0 + 3) / 5 + 26; c1 += 1)
               a[c0][c1] *= alpha;
+          for (int c0 = 7; c0 <= 127; c0 += 1)
+            for (int c1 = c0; c1 <= c0 - (c0 + 3) / 5 + 26; c1 += 1)
+            {
+              total++;
               upper++;
             }
-
           // amp_kernel
           // amp_lower
           {
             for (int c0 = 0; c0 <= 120; c0 += 1)
-              for (int c1 = c0 / 2; c1 <= 61; c1 += 1)
-                amp_lower_a[c0][c1] = (float)a[c0 + 7][c1 + 70];
+              for (int c1 = c0 - (c0 + 5) / 5 + 1; c1 <= 99; c1 += 1)
+                amp_lower_a[c0][c1] = (float)a[c0 + 7][c1 + 32];
             amp_lower_alpha = (float)alpha;
+            amp_lower_total = (unsigned long)total;
             for (int c0 = 7; c0 <= 127; c0 += 1)
-              for (int c1 = (c0 + 1) / 2 + 66; c1 <= 131; c1 += 1)
+              for (int c1 = c0 - (c0 + 3) / 5 + 27; c1 <= 131; c1 += 1)
+                amp_lower_a[c0 - 7][c1 - 32] *= amp_lower_alpha;
+            for (int c0 = 7; c0 <= 127; c0 += 1)
+              for (int c1 = c0 - (c0 + 3) / 5 + 27; c1 <= 131; c1 += 1)
               {
-                amp_lower_a[c0 - 7][c1 - 70] *= amp_lower_alpha;
+                amp_lower_total++;
                 lower++;
               }
+            total = (unsigned long)amp_lower_total;
             for (int c0 = 0; c0 <= 120; c0 += 1)
-              for (int c1 = c0 / 2; c1 <= 61; c1 += 1)
-                a[c0 + 7][c1 + 70] = (double)amp_lower_a[c0][c1];
+              for (int c1 = c0 - (c0 + 5) / 5 + 1; c1 <= 99; c1 += 1)
+                a[c0 + 7][c1 + 32] = (double)amp_lower_a[c0][c1];
           }
         }
     }
@@ -130,7 +139,7 @@ int main(int argc, char *argv[])
     printf("Time taken =  %7.5lfms\n", tdiff * 1.0e3);
 
     // print domain size of upper and lower
-    printf("upper count is : %lu, lower count is : %lu. \n", upper, lower);
+    printf("total is: %lu, upper count is : %lu, lower count is : %lu. \n", total, upper, lower);
 
     return 0;
 }
