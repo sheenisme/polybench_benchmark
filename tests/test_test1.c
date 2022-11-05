@@ -1,22 +1,4 @@
 // clang-format off
-/*
- * gaussian-sp.sdsl.c: This file is part of the SDSLC project.
- *
- * SDSLC: A compiler for high performance stencil computations
- *
- * Copyright (C) 2011-2013 Ohio State University
- *
- * This program can be redistributed and/or modified under the terms
- * of the license specified in the LICENSE.txt file at the root of the
- * project.
- *
- * Contact: P Sadayappan <saday@cse.ohio-state.edu>
- */
-
-/*
- * @file: gaussian-sp.sdsl.c
- * @author: Tom Henretty <henretty@cse.ohio-state.edu>
- */
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
