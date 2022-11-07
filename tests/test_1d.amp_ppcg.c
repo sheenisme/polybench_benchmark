@@ -85,35 +85,29 @@ int main(int argc, char *argv[])
     gettimeofday(&start, 0);
     {
         /* ppcg generated CPU code with AMP */
-
-        float amp_lower_a[96];
+        
+        float amp_lower_a[61];
         float amp_lower_alpha;
         unsigned long amp_lower_total;
         {
-          for (int c0 = 7; c0 <= 31; c0 += 1)
+          for (int c0 = 7; c0 <= 67; c0 += 1)
             a[c0] += alpha;
-          for (int c0 = 7; c0 <= 31; c0 += 1)
-          {
+          for (int c0 = 7; c0 <= 67; c0 += 1)
             total++;
-            upper++;
-          }
           // amp_kernel
           // amp_lower
           {
-            for (int c0 = 0; c0 <= 95; c0 += 1)
-              amp_lower_a[c0] = (float)a[c0 + 32];
+            for (int c0 = 0; c0 <= 60; c0 += 1)
+              amp_lower_a[c0] = (float)a[c0 + 67];
             amp_lower_alpha = (float)alpha;
             amp_lower_total = (unsigned long)total;
-            for (int c0 = 32; c0 <= 127; c0 += 1)
-              amp_lower_a[c0 - 32] += amp_lower_alpha;
-            for (int c0 = 32; c0 <= 127; c0 += 1)
-            {
+            for (int c0 = 67; c0 <= 127; c0 += 1)
+              amp_lower_a[c0 - 67] += amp_lower_alpha;
+            for (int c0 = 67; c0 <= 127; c0 += 1)
               amp_lower_total++;
-              lower++;
-            }
             total = (unsigned long)amp_lower_total;
-            for (int c0 = 0; c0 <= 95; c0 += 1)
-              a[c0 + 32] = (double)amp_lower_a[c0];
+            for (int c0 = 0; c0 <= 60; c0 += 1)
+              a[c0 + 67] = (double)amp_lower_a[c0];
           }
         }
     }

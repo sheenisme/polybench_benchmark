@@ -87,49 +87,43 @@ int main(int argc, char *argv[])
     {
         /* ppcg generated CPU code with AMP */
         
-        float amp_lower_a[121][121];
+        float amp_lower_a[121][245];
         float amp_lower_alpha;
         unsigned long amp_lower_total;
         {
           for (int c0 = 7; c0 <= 127; c0 += 1)
-            for (int c1 = 5; c1 <= (c0 - 1) / 5 + 4; c1 += 1)
+            for (int c1 = 5; c1 <= c0 + 2; c1 += 1)
               a[c0][c1] *= alpha;
           for (int c0 = 7; c0 <= 127; c0 += 1)
-            for (int c1 = 5; c1 <= (c0 - 1) / 5 + 4; c1 += 1)
-            {
+            for (int c1 = 5; c1 <= c0 + 2; c1 += 1)
               total++;
-              upper++;
-            }
           // amp_kernel
           // amp_lower
           {
             for (int c0 = 0; c0 <= 120; c0 += 1)
-              for (int c1 = (c0 + 1) / 5; c1 <= c0; c1 += 1)
-                amp_lower_a[c0][c1] = (float)a[c0 + 7][c1 + 6];
+              for (int c1 = c0; c1 <= 2 * c0 + 4; c1 += 1)
+                amp_lower_a[c0][c1] = (float)a[c0 + 7][c1 + 9];
             amp_lower_alpha = (float)alpha;
             amp_lower_total = (unsigned long)total;
             for (int c0 = 7; c0 <= 127; c0 += 1)
-              for (int c1 = (c0 - 1) / 5 + 5; c1 < c0; c1 += 1)
-                amp_lower_a[c0 - 7][c1 - 6] *= amp_lower_alpha;
+              for (int c1 = c0 + 2; c1 < 2 * c0; c1 += 1)
+                amp_lower_a[c0 - 7][c1 - 9] *= amp_lower_alpha;
             for (int c0 = 7; c0 <= 127; c0 += 1)
-              for (int c1 = (c0 - 1) / 5 + 5; c1 < c0; c1 += 1)
-              {
+              for (int c1 = c0 + 2; c1 < 2 * c0; c1 += 1)
                 amp_lower_total++;
-                lower++;
-              }
             total = (unsigned long)amp_lower_total;
             for (int c0 = 0; c0 <= 120; c0 += 1)
-              for (int c1 = (c0 + 1) / 5; c1 <= c0; c1 += 1)
-                a[c0 + 7][c1 + 6] = (double)amp_lower_a[c0][c1];
+              for (int c1 = c0; c1 <= 2 * c0 + 4; c1 += 1)
+                a[c0 + 7][c1 + 9] = (double)amp_lower_a[c0][c1];
           }
         }
     }
     gettimeofday(&end, 0);
     // print results
-    for (int i = 0; i < M; i++)
-        for (int j = 0; j < N; j++)
-            printf("%lf\t", a[i][j]);
-    printf("\n");
+    // for (int i = 0; i < M; i++)
+    //     for (int j = 0; j < N; j++)
+    //         printf("%lf\t", a[i][j]);
+    // printf("\n");
 
     // calculate time difference
     ts_return = timeval_subtract(&result, &end, &start);

@@ -85,20 +85,19 @@ int main(int argc, char *argv[])
     {
 #pragma scop
         for (int i = A; i < M; i++)
-            for (int j = B; j < i; j++)
+            for (int j = B; j < 2 * i; j++)
             {
                 a[i][j] *= alpha;
                 total++;
             }
-
 #pragma endscop
     }
     gettimeofday(&end, 0);
     // print results
-    for (int i = 0; i < M; i++)
-        for (int j = 0; j < N; j++)
-            printf("%lf\t", a[i][j]);
-    printf("\n");
+    // for (int i = 0; i < M; i++)
+    //     for (int j = 0; j < N; j++)
+    //         printf("%lf\t", a[i][j]);
+    // printf("\n");
 
     // calculate time difference
     ts_return = timeval_subtract(&result, &end, &start);

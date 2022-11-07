@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <stdio.h>
 // clang-format off
 #include <assert.h>
 #include <math.h>
@@ -61,15 +63,32 @@ int main(int argc, char *argv[]) {
 	}
 
     gettimeofday(&start, 0);
-#pragma scop
-	for (int t = 5; t < 2046; t++) {
-		for (int i = 0; i < t; i++) {
-			for (int j = i; j < 2048; j++) {
-				a[t][i][j] = (aref[t][i][j] + 1)*2;
-			}
-		}
-    }
-#pragma endscop
+	/* ppcg generated CPU code with AMP */
+	
+	float amp_lower_a[2041][2045][1025];
+	float amp_lower_aref[2041][2045][1025];
+	{
+	  for (int c0 = 5; c0 <= 2045; c0 += 1)
+	    for (int c1 = 0; c1 < c0; c1 += 1)
+	      for (int c2 = c1; c2 <= (c1 + 1) / 2 + 1023; c2 += 1)
+	        a[c0][c1][c2] = ((aref[c0][c1][c2] + 1) * 2);
+	  // amp_kernel
+	  // amp_lower
+	  {
+	    for (int c0 = 0; c0 <= 2040; c0 += 1)
+	      for (int c1 = 0; c1 <= c0 + 4; c1 += 1)
+	        for (int c2 = (c1 + 1) / 2; c2 <= 1024; c2 += 1)
+	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 5][c1][c2 + 1023];
+	    for (int c0 = 5; c0 <= 2045; c0 += 1)
+	      for (int c1 = 0; c1 < c0; c1 += 1)
+	        for (int c2 = (c1 + 1) / 2 + 1023; c2 <= 2047; c2 += 1)
+	          amp_lower_a[c0 - 5][c1][c2 - 1023] = ((amp_lower_aref[c0 - 5][c1][c2 - 1023] + 1) * 2);
+	    for (int c0 = 0; c0 <= 2040; c0 += 1)
+	      for (int c1 = 0; c1 <= c0 + 4; c1 += 1)
+	        for (int c2 = (c1 + 1) / 2; c2 <= 1024; c2 += 1)
+	          a[c0 + 5][c1][c2 + 1023] = (double)amp_lower_a[c0][c1][c2];
+	  }
+	}
     gettimeofday(&end, 0);
 	for (int t = 0; t < T; t++) {
 		for (int i = 2; i < H; i++) {

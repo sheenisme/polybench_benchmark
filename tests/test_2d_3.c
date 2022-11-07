@@ -1,6 +1,4 @@
 #include <assert.h>
-#include <stdio.h>
-#include <assert.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,38 +83,14 @@ int main(int argc, char *argv[])
 
     gettimeofday(&start, 0);
     {
-        /* ppcg generated CPU code with AMP */
-        
-        float amp_lower_a[59][59];
-        float amp_lower_alpha;
-        unsigned long amp_lower_total;
-        {
-          for (int c0 = 7; c0 <= 65; c0 += 1)
-            for (int c1 = 2 * c0; c1 <= c0 + 65; c1 += 1)
-              a[c0][c1] *= alpha;
-          for (int c0 = 7; c0 <= 65; c0 += 1)
-            for (int c1 = 2 * c0; c1 <= c0 + 65; c1 += 1)
-              total++;
-          // amp_kernel
-          // amp_lower
-          {
-            for (int c0 = 0; c0 <= 58; c0 += 1)
-              for (int c1 = c0; c1 <= 58; c1 += 1)
-                amp_lower_a[c0][c1] = (float)a[c0 + 7][c1 + 73];
-            amp_lower_alpha = (float)alpha;
-            amp_lower_total = (unsigned long)total;
-            for (int c0 = 7; c0 <= 65; c0 += 1)
-              for (int c1 = c0 + 66; c1 <= 131; c1 += 1)
-                amp_lower_a[c0 - 7][c1 - 73] *= amp_lower_alpha;
-            for (int c0 = 7; c0 <= 65; c0 += 1)
-              for (int c1 = c0 + 66; c1 <= 131; c1 += 1)
-                amp_lower_total++;
-            total = (unsigned long)amp_lower_total;
-            for (int c0 = 0; c0 <= 58; c0 += 1)
-              for (int c1 = c0; c1 <= 58; c1 += 1)
-                a[c0 + 7][c1 + 73] = (double)amp_lower_a[c0][c1];
-          }
-        }
+#pragma scop
+        for (int i = A; i < M; i++)
+            for (int j = 2 * i; j < 6 * i; j++)
+            {
+                a[i][j] *= alpha;
+                total++;
+            }
+#pragma endscop
     }
     gettimeofday(&end, 0);
     // print results
