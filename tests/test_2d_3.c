@@ -23,11 +23,11 @@
 
 // Upper bound M <= N <= K <= L
 #ifndef M
-#define M (128)
+#define M (15)
 #endif
 
 #ifndef N
-#define N (132)
+#define N (139)
 #endif
 
 #ifndef K
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     {
 #pragma scop
         for (int i = A; i < M; i++)
-            for (int j = 2 * i; j < 6 * i; j++)
+            for (int j = 2 * i; 2 * j < 9 * i; j++)
             {
                 a[i][j] *= alpha;
                 total++;

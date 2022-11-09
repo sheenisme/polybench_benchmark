@@ -27,15 +27,15 @@
 #endif
 
 #ifndef N
-#define N (132)
+#define N (257)
 #endif
 
 #ifndef K
-#define K (140)
+#define K (340)
 #endif
 
 #ifndef L
-#define L (149)
+#define L (449)
 #endif
 
 int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *y)

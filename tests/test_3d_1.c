@@ -69,19 +69,52 @@ int main(int argc, char *argv[])
     struct timeval start, end, result;
     double tdiff = 0.0;
 
+    double a[M][N][K];
+    double alpha = 3.131415926;
+
+    unsigned long int upper = 0;
+    unsigned long int lower = 0;
+    unsigned long int total = 0;
+
     // Initialize arrays
+    for (int t = 0; t < M; t++)
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < K; j++)
+                a[t][i][j] = (i * j + 1.101) * (t + 1.1001) / 9.181716151;
 
     gettimeofday(&start, 0);
     {
+#pragma scop
+        for (int t = A; t < M; t++)
+        {
+            for (int i = B; i < t; i++)
+            {
+                for (int j = C; j < K; j++)
+                {
+                    a[t][i][j] = (a[t][i][j] + alpha) * alpha;
+                    total++;
+                }
+            }
+        }
+#pragma endscop
     }
     gettimeofday(&end, 0);
+    // print results
+    // for (int t = 0; t < M; t++)
+    //     for (int i = 0; i < N; i++)
+    //         for (int j = 0; j < K; j++)
+    //             printf("%lf\t", a[t][i][j]);
+    // printf("\n");
 
     // calculate time difference
     ts_return = timeval_subtract(&result, &end, &start);
     tdiff = (double)(result.tv_sec + result.tv_usec * 1.0e-6);
 
     // print time difference (ms)
-    printf("Time taken =  %7.5lfms\t", tdiff * 1.0e3);
+    printf("Time taken =  %7.5lfms\n", tdiff * 1.0e3);
+
+    // print domain size of upper and lower
+    printf("total is: %lu, upper count is : %lu, lower count is : %lu. \n", total, upper, lower);
 
     return 0;
 }

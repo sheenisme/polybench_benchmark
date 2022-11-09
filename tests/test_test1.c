@@ -7,15 +7,15 @@
 //#include <malloc.h>
 // Problem parameters
 #ifndef H
-#define H (2048)
+#define H (128)
 #endif
 
 #ifndef W
-#define W (2048)
+#define W (256)
 #endif
 
 #ifndef T
-#define T (50)
+#define T (10)
 //#define T (1)
 #endif
 
@@ -53,19 +53,27 @@ int main(int argc, char *argv[]) {
     double(*aref)[H][W] = (double(*)[H][W])aref_def;
     double(*a)[H][W] = (double(*)[H][W])a_def;
 
+
+    unsigned long int upper = 0;
+    unsigned long int lower = 0;
+    unsigned long int total = 0;
+
 	// Initialize arrays
-	for (i = 0; i < H; i++) {
-		for (j = 0; j < W; j++) {
-			aref[0][i][j] = sin(i) * cos(j);
-		}
-	}
+    for (int t = 0; t < T; t++) {
+	    for (i = 0; i < H; i++) {
+		    for (j = 0; j < W; j++) {
+			    aref[t][i][j] = sin(i) * cos(j);
+		    }
+	    }
+    }
 
     gettimeofday(&start, 0);
 #pragma scop
-	for (int t = 5; t < 2046; t++) {
-		for (int i = 0; i < t; i++) {
-			for (int j = i; j < 2048; j++) {
-				a[t][i][j] = (aref[t][i][j] + 1)*2;
+	for (int t = 5; t < T; t++) {
+		for (int i = 2 * t; i < 3 *t; i++) {
+			for (int j = t + i; 3 * j < 3 * t + 4 * i; j++) {
+				a[t][i][j] = (aref[t][i][j] + 1.00)*2;
+                total++;
 			}
 		}
     }
@@ -83,7 +91,9 @@ int main(int argc, char *argv[]) {
     ts_return = timeval_subtract(&result, &end, &start);
     tdiff = (double)(result.tv_sec + result.tv_usec * 1.0e-6);
 
-    printf("Time taken =  %7.5lfms\t", tdiff * 1.0e3);
+    printf("Time taken =  %7.5lfms\n", tdiff * 1.0e3);
 
+    // print domain size of upper and lower
+    printf("total is: %lu, upper count is : %lu, lower count is : %lu. \n", total, upper, lower);
 	return 0;
 }

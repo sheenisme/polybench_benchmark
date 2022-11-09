@@ -25,7 +25,7 @@
 
 // Upper bound M <= N <= K <= L
 #ifndef M
-#define M (128)
+#define M (40)
 #endif
 
 #ifndef N
@@ -87,34 +87,34 @@ int main(int argc, char *argv[])
     {
         /* ppcg generated CPU code with AMP */
         
-        float amp_lower_a[121][734];
+        float amp_lower_a[33][100];
         float amp_lower_alpha;
         unsigned long amp_lower_total;
         {
-          for (int c0 = 7; c0 <= 127; c0 += 1)
-            for (int c1 = 2 * c0; c1 < 4 * c0; c1 += 1)
+          for (int c0 = 7; c0 <= 39; c0 += 1)
+            for (int c1 = 2 * c0; c1 < 2 * c0 + (c0 + 1) / 2; c1 += 1)
               a[c0][c1] *= alpha;
-          for (int c0 = 7; c0 <= 127; c0 += 1)
-            for (int c1 = 2 * c0; c1 < 4 * c0; c1 += 1)
+          for (int c0 = 7; c0 <= 39; c0 += 1)
+            for (int c1 = 2 * c0; c1 < 2 * c0 + (c0 + 1) / 2; c1 += 1)
               total++;
           // amp_kernel
           // amp_lower
           {
-            for (int c0 = 0; c0 <= 120; c0 += 1)
-              for (int c1 = 4 * c0; c1 <= 6 * c0 + 13; c1 += 1)
-                amp_lower_a[c0][c1] = (float)a[c0 + 7][c1 + 28];
+            for (int c0 = 0; c0 <= 32; c0 += 1)
+              for (int c1 = 2 * c0 + (c0 + 1) / 2; c1 <= 3 * c0 + 3; c1 += 1)
+                amp_lower_a[c0][c1] = (float)a[c0 + 7][c1 + 17];
             amp_lower_alpha = (float)alpha;
             amp_lower_total = (unsigned long)total;
-            for (int c0 = 7; c0 <= 127; c0 += 1)
-              for (int c1 = 4 * c0; c1 < 6 * c0; c1 += 1)
-                amp_lower_a[c0 - 7][c1 - 28] *= amp_lower_alpha;
-            for (int c0 = 7; c0 <= 127; c0 += 1)
-              for (int c1 = 4 * c0; c1 < 6 * c0; c1 += 1)
+            for (int c0 = 7; c0 <= 39; c0 += 1)
+              for (int c1 = 2 * c0 + c0 / 2; c1 < 3 * c0; c1 += 1)
+                amp_lower_a[c0 - 7][c1 - 17] *= amp_lower_alpha;
+            for (int c0 = 7; c0 <= 39; c0 += 1)
+              for (int c1 = 2 * c0 + c0 / 2; c1 < 3 * c0; c1 += 1)
                 amp_lower_total++;
             total = (unsigned long)amp_lower_total;
-            for (int c0 = 0; c0 <= 120; c0 += 1)
-              for (int c1 = 4 * c0; c1 <= 6 * c0 + 13; c1 += 1)
-                a[c0 + 7][c1 + 28] = (double)amp_lower_a[c0][c1];
+            for (int c0 = 0; c0 <= 32; c0 += 1)
+              for (int c1 = 2 * c0 + (c0 + 1) / 2; c1 <= 3 * c0 + 3; c1 += 1)
+                a[c0 + 7][c1 + 17] = (double)amp_lower_a[c0][c1];
           }
         }
     }

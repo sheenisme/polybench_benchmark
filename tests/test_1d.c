@@ -92,9 +92,9 @@ int main(int argc, char *argv[])
     }
     gettimeofday(&end, 0);
     // print results
-    for (int i = 0; i < M; i++)
-        printf("%lf\t", a[i]);
-    printf("\n");
+    // for (int i = 0; i < M; i++)
+    //     printf("%lf\t", a[i]);
+    // printf("\n");
 
     // calculate time difference
     ts_return = timeval_subtract(&result, &end, &start);

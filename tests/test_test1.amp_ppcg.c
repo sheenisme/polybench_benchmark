@@ -9,15 +9,15 @@
 //#include <malloc.h>
 // Problem parameters
 #ifndef H
-#define H (2048)
+#define H (128)
 #endif
 
 #ifndef W
-#define W (2048)
+#define W (256)
 #endif
 
 #ifndef T
-#define T (50)
+#define T (10)
 //#define T (1)
 #endif
 
@@ -55,38 +55,56 @@ int main(int argc, char *argv[]) {
     double(*aref)[H][W] = (double(*)[H][W])aref_def;
     double(*a)[H][W] = (double(*)[H][W])a_def;
 
+
+    unsigned long int upper = 0;
+    unsigned long int lower = 0;
+    unsigned long int total = 0;
+
 	// Initialize arrays
-	for (i = 0; i < H; i++) {
-		for (j = 0; j < W; j++) {
-			aref[0][i][j] = sin(i) * cos(j);
-		}
-	}
+    for (int t = 0; t < T; t++) {
+	    for (i = 0; i < H; i++) {
+		    for (j = 0; j < W; j++) {
+			    aref[t][i][j] = sin(i) * cos(j);
+		    }
+	    }
+    }
 
     gettimeofday(&start, 0);
 	/* ppcg generated CPU code with AMP */
 	
-	float amp_lower_a[2041][2045][1025];
-	float amp_lower_aref[2041][2045][1025];
+	float amp_lower_a[5][17][26];
+	float amp_lower_aref[5][17][26];
+	unsigned long amp_lower_total;
 	{
-	  for (int c0 = 5; c0 <= 2045; c0 += 1)
-	    for (int c1 = 0; c1 < c0; c1 += 1)
-	      for (int c2 = c1; c2 <= (c1 + 1) / 2 + 1023; c2 += 1)
-	        a[c0][c1][c2] = ((aref[c0][c1][c2] + 1) * 2);
+	  for (int c0 = 5; c0 <= 9; c0 += 1)
+	    for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
+	      for (int c2 = c0 + c1; c2 <= c0 + c1 + (c1 - 1) / 4; c2 += 1)
+	        a[c0][c1][c2] = ((aref[c0][c1][c2] + 1.00) * 2);
+	  for (int c0 = 5; c0 <= 9; c0 += 1)
+	    for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
+	      for (int c2 = c0 + c1; c2 <= c0 + c1 + (c1 - 1) / 4; c2 += 1)
+	      {   total++;   upper++;   }
 	  // amp_kernel
 	  // amp_lower
 	  {
-	    for (int c0 = 0; c0 <= 2040; c0 += 1)
-	      for (int c1 = 0; c1 <= c0 + 4; c1 += 1)
-	        for (int c2 = (c1 + 1) / 2; c2 <= 1024; c2 += 1)
-	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 5][c1][c2 + 1023];
-	    for (int c0 = 5; c0 <= 2045; c0 += 1)
-	      for (int c1 = 0; c1 < c0; c1 += 1)
-	        for (int c2 = (c1 + 1) / 2 + 1023; c2 <= 2047; c2 += 1)
-	          amp_lower_a[c0 - 5][c1][c2 - 1023] = ((amp_lower_aref[c0 - 5][c1][c2 - 1023] + 1) * 2);
-	    for (int c0 = 0; c0 <= 2040; c0 += 1)
-	      for (int c1 = 0; c1 <= c0 + 4; c1 += 1)
-	        for (int c2 = (c1 + 1) / 2; c2 <= 1024; c2 += 1)
-	          a[c0 + 5][c1][c2 + 1023] = (double)amp_lower_a[c0][c1][c2];
+	    for (int c0 = 0; c0 <= 4; c0 += 1)
+	      for (int c1 = 2 * c0; c1 <= 3 * c0 + 4; c1 += 1)
+	        for (int c2 = c0 + c1 + (c1 + 1) / 4; c2 <= c0 + c1 + c1 / 3; c2 += 1)
+	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 5][c1 + 10][c2 + 18];
+	    amp_lower_total = (unsigned long)total;
+	    for (int c0 = 5; c0 <= 9; c0 += 1)
+	      for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
+	        for (int c2 = c0 + c1 + (c1 - 1) / 4 + 1; c2 <= c0 + c1 + (c1 - 1) / 3; c2 += 1)
+	          amp_lower_a[c0 - 5][c1 - 10][c2 - 18] = ((amp_lower_aref[c0 - 5][c1 - 10][c2 - 18] + 1.00) * 2);
+	    for (int c0 = 5; c0 <= 9; c0 += 1)
+	      for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
+	        for (int c2 = c0 + c1 + (c1 - 1) / 4 + 1; c2 <= c0 + c1 + (c1 - 1) / 3; c2 += 1)
+	        {   amp_lower_total++;   lower++;   }
+	    total = (unsigned long)amp_lower_total;
+	    for (int c0 = 0; c0 <= 4; c0 += 1)
+	      for (int c1 = 2 * c0; c1 <= 3 * c0 + 4; c1 += 1)
+	        for (int c2 = c0 + c1 + (c1 + 1) / 4; c2 <= c0 + c1 + c1 / 3; c2 += 1)
+	          a[c0 + 5][c1 + 10][c2 + 18] = (double)amp_lower_a[c0][c1][c2];
 	  }
 	}
     gettimeofday(&end, 0);
@@ -102,7 +120,9 @@ int main(int argc, char *argv[]) {
     ts_return = timeval_subtract(&result, &end, &start);
     tdiff = (double)(result.tv_sec + result.tv_usec * 1.0e-6);
 
-    printf("Time taken =  %7.5lfms\t", tdiff * 1.0e3);
+    printf("Time taken =  %7.5lfms\n", tdiff * 1.0e3);
 
+    // print domain size of upper and lower
+    printf("total is: %lu, upper count is : %lu, lower count is : %lu. \n", total, upper, lower);
 	return 0;
 }
