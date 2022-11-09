@@ -42,7 +42,7 @@ foreach $cat (@categories) {
 
         my $kernel = $dir;
         my $targetDir = $target.'/'.$dir;
-        my $command = "ulimit -s 8388608; cd $targetDir; make clean; make amp RATE=50; ./$kernel-amp_50.exe";
+        my $command = "cd ../scripts; rm -f benchmark_result.log; ./performance_testing.sh $targetDir $kernel";
            $command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
         print($command."\n");
         system($command);

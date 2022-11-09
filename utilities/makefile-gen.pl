@@ -82,6 +82,8 @@ pre-ppcg:
 clean:
 	@ rm -f $kernel-*.exe
 	@ rm -f $kernel-*.c
+	@ rm -f ____tempfile_*.data.polybench
+	@ rm -f avg_*.out
 
 EOF
 
