@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
 
     gettimeofday(&start, 0);
     {
+#pragma scop
         for (int t = A; t < M; t++)
             for (int i = B; i < N; i++)
                 for (int j = C; j < K; j++)
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
                         a[t][i][j][l] = (a[t][i][j][l] + alpha) * alpha;
                         total++;
                     }
+#pragma endscop
     }
     gettimeofday(&end, 0);
     // // print results
