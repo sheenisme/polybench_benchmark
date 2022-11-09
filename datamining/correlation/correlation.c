@@ -113,8 +113,8 @@ static void kernel_correlation(int m, int n,
       corr[j][i] = corr[i][j];
     }
   }
-  corr[_PB_M - 1][_PB_M - 1] = one;
 #pragma endscop
+  corr[_PB_M - 1][_PB_M - 1] = one;
 }
 
 int main(int argc, char **argv)
