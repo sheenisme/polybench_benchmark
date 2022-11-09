@@ -41,7 +41,6 @@ do
     rm -f ${name}_${rate}.amp_ppcg.c
     rm -f ${name}_${rate}.out
     rm -f ${name}_origion.out
-    echo $name $rate 'over!'
-    echo 
+    # echo $name $rate 'over!'
     echo 
 done

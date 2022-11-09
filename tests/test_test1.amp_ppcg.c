@@ -72,39 +72,39 @@ int main(int argc, char *argv[]) {
     gettimeofday(&start, 0);
 	/* ppcg generated CPU code with AMP */
 	
-	float amp_lower_a[5][17][26];
-	float amp_lower_aref[5][17][26];
+	float amp_lower_a[5][17][27];
+	float amp_lower_aref[5][17][27];
 	unsigned long amp_lower_total;
 	{
 	  for (int c0 = 5; c0 <= 9; c0 += 1)
 	    for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
-	      for (int c2 = c0 + c1; c2 <= c0 + c1 + (c1 - 1) / 4; c2 += 1)
+	      for (int c2 = c0 + c1; c2 <= c0 + c1 + (c1 - 1) / 6; c2 += 1)
 	        a[c0][c1][c2] = ((aref[c0][c1][c2] + 1.00) * 2);
 	  for (int c0 = 5; c0 <= 9; c0 += 1)
 	    for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
-	      for (int c2 = c0 + c1; c2 <= c0 + c1 + (c1 - 1) / 4; c2 += 1)
-	      {   total++;   upper++;   }
+	      for (int c2 = c0 + c1; c2 <= c0 + c1 + (c1 - 1) / 6; c2 += 1)
+	        total++;
 	  // amp_kernel
 	  // amp_lower
 	  {
 	    for (int c0 = 0; c0 <= 4; c0 += 1)
 	      for (int c1 = 2 * c0; c1 <= 3 * c0 + 4; c1 += 1)
-	        for (int c2 = c0 + c1 + (c1 + 1) / 4; c2 <= c0 + c1 + c1 / 3; c2 += 1)
-	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 5][c1 + 10][c2 + 18];
+	        for (int c2 = c0 + c1 + (c1 + 3) / 6; c2 <= c0 + c1 + c1 / 3 + 1; c2 += 1)
+	          amp_lower_aref[c0][c1][c2] = (float)aref[c0 + 5][c1 + 10][c2 + 17];
 	    amp_lower_total = (unsigned long)total;
 	    for (int c0 = 5; c0 <= 9; c0 += 1)
 	      for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
-	        for (int c2 = c0 + c1 + (c1 - 1) / 4 + 1; c2 <= c0 + c1 + (c1 - 1) / 3; c2 += 1)
-	          amp_lower_a[c0 - 5][c1 - 10][c2 - 18] = ((amp_lower_aref[c0 - 5][c1 - 10][c2 - 18] + 1.00) * 2);
+	        for (int c2 = c0 + c1 + (c1 - 1) / 6 + 1; c2 <= c0 + c1 + (c1 - 1) / 3; c2 += 1)
+	          amp_lower_a[c0 - 5][c1 - 10][c2 - 17] = ((amp_lower_aref[c0 - 5][c1 - 10][c2 - 17] + 1.00) * 2);
 	    for (int c0 = 5; c0 <= 9; c0 += 1)
 	      for (int c1 = 2 * c0; c1 < 3 * c0; c1 += 1)
-	        for (int c2 = c0 + c1 + (c1 - 1) / 4 + 1; c2 <= c0 + c1 + (c1 - 1) / 3; c2 += 1)
-	        {   amp_lower_total++;   lower++;   }
+	        for (int c2 = c0 + c1 + (c1 - 1) / 6 + 1; c2 <= c0 + c1 + (c1 - 1) / 3; c2 += 1)
+	          amp_lower_total++;
 	    total = (unsigned long)amp_lower_total;
 	    for (int c0 = 0; c0 <= 4; c0 += 1)
 	      for (int c1 = 2 * c0; c1 <= 3 * c0 + 4; c1 += 1)
-	        for (int c2 = c0 + c1 + (c1 + 1) / 4; c2 <= c0 + c1 + c1 / 3; c2 += 1)
-	          a[c0 + 5][c1 + 10][c2 + 18] = (double)amp_lower_a[c0][c1][c2];
+	        for (int c2 = c0 + c1 + (c1 + 3) / 6; c2 <= c0 + c1 + c1 / 3 + 1; c2 += 1)
+	          a[c0 + 5][c1 + 10][c2 + 17] = (double)amp_lower_a[c0][c1][c2];
 	  }
 	}
     gettimeofday(&end, 0);
