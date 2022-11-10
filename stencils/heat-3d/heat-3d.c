@@ -90,6 +90,7 @@ static void kernel_heat_3d(int tsteps,
       }
     }
   }
+  __pencil_kill(B);
 #pragma endscop
 }
 

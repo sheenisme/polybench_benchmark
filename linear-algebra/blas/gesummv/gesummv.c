@@ -88,6 +88,7 @@ static void kernel_gesummv(int n,
       y[i] = B[i][j] * x[j] + y[i];
     }
     y[i] = alpha * tmp[i] + beta * y[i];
+    __pencil_kill(tmp[i]);
   }
 #pragma endscop
 }

@@ -100,7 +100,7 @@ static void kernel_correlation(int m, int n,
       data[i][j] -= mean[j];
       data[i][j] /= SQRT_FUN(float_n) * stddev[j];
     }
-
+  __pencil_kill(stddev, mean, float_n);
   /* Calculate the m * m correlation matrix. */
   for (i = 0; i < _PB_M - 1; i++)
   {
@@ -113,6 +113,7 @@ static void kernel_correlation(int m, int n,
       corr[j][i] = corr[i][j];
     }
   }
+  __pencil_kill(data);
 #pragma endscop
   corr[_PB_M - 1][_PB_M - 1] = one;
 }

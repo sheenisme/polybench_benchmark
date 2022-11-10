@@ -65,6 +65,7 @@ static void kernel_heat_1d(int tsteps, int n, int m, DATA_TYPE POLYBENCH_2D(A, M
             A[(t + 1) % 2][i] = v1 * (A[t % 2][i + 1] - v2 * A[t % 2][i] + A[t % 2][i - 1]);
         }
     }
+    __pencil_kill(A[_PB_TSTEPS % 2]);
 #pragma endscop
 }
 

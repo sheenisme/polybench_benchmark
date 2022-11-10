@@ -96,12 +96,16 @@ static void kernel_3mm(int ni, int nj, int nk, int nl, int nm,
     }
   /* G := E*F */
   for (i = 0; i < _PB_NI; i++)
+  {
     for (j = 0; j < _PB_NL; j++)
     {
       G[i][j] = zero;
       for (k = 0; k < _PB_NJ; ++k)
         G[i][j] += E[i][k] * F[k][j];
     }
+    __pencil_kill(E[i]);
+  }
+  __pencil_kill(F);
 #pragma endscop
 }
 

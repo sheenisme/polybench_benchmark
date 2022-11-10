@@ -130,6 +130,7 @@ static void kernel_adi(int tsteps, int n,
       }
     }
   }
+  __pencil_kill(p, q, v);
 #pragma endscop
 }
 

@@ -76,6 +76,7 @@ static void kernel_jacobi_2d(int tsteps,
       for (j = 1; j < _PB_N - 1; j++)
         A[i][j] = val * (B[i][j] + B[i][j - 1] + B[i][1 + j] + B[1 + i][j] + B[i - 1][j]);
   }
+  __pencil_kill(B);
 #pragma endscop
 }
 

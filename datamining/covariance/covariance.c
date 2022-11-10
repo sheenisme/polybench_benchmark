@@ -79,7 +79,7 @@ static void kernel_covariance(int m, int n,
   for (i = 0; i < _PB_N; i++)
     for (j = 0; j < _PB_M; j++)
       data[i][j] -= mean[j];
-
+  __pencil_kill(mean);
   for (i = 0; i < _PB_M; i++)
     for (j = i; j < _PB_M; j++)
     {
@@ -89,6 +89,7 @@ static void kernel_covariance(int m, int n,
       cov[i][j] /= (float_n - one);
       cov[j][i] = cov[i][j];
     }
+  __pencil_kill(data, float_n);
 #pragma endscop
 }
 

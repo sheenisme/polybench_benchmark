@@ -87,7 +87,9 @@ static void kernel_durbin(int n,
       y[i] = z[i];
     }
     y[k] = alpha;
+    __pencil_kill(z, sum);
   }
+  __pencil_kill(alpha, beta);
 #pragma endscop
 }
 
