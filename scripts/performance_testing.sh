@@ -18,10 +18,11 @@ kernel=$2
 # 设置一些变量,方便后面调用.
 run_time_benchmark="bash $workdir/time_benchmark.sh"
 # echo $run_time_benchmark
-result_file="$workdir/benchmark_result.log"
+result_file="$workdir/results/${kernel}_benchmark_result.log"
 # echo $result_file
 my_rate_list="$workdir/my_rate_list"
-
+# 先删除之前的历史文件
+rm -f ${result_file}
 
 # 设置用户堆栈空间为8G
 ulimit -s 8388608
@@ -38,18 +39,18 @@ make clean;
 
 # 测试低精度的性能
 make float;
-echo ${kernel} float 0                  >> ${result_file};
+echo ${kernel}	float	-1               >> ${result_file};
 ${run_time_benchmark} ./${kernel}-ppcg-float.exe       >> ${result_file};
 
 # 测试混合精度的性能
 cat $my_rate_list | while read rate
 do
     make amp RATE=${rate};
-    echo ${kernel} lnlamp ${rate}      >> ${result_file};
+    echo ${kernel}	lnlamp	${rate}      >> ${result_file};
     ${run_time_benchmark} ./${kernel}-amp_${rate}.exe   >> ${result_file};
 done
 
 # 测试高精度的性能
 make double;
-echo ${kernel} double 100               >> ${result_file};
+echo ${kernel}	double	100              >> ${result_file};
 ${run_time_benchmark} ./${kernel}-ppcg-double.exe       >> ${result_file};
