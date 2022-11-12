@@ -5,7 +5,7 @@
 
 /* Default to LARGE_DATASET. */
 # if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(MEDIUM_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
-#  define LARGE_DATASET
+#define MEDIUM_DATASET
 # endif
 
 # if !defined(TSTEPS) && !defined(M) && !defined(N)
@@ -13,31 +13,31 @@
 #  ifdef MINI_DATASET
 #   define TSTEPS 20
 #   define M 2
-#   define N 40
+#   define N 10
 #  endif 
 
 #  ifdef SMALL_DATASET
 #   define TSTEPS 40
 #   define M 2
-#   define N 120
+#   define N 20
 #  endif 
 
 #  ifdef MEDIUM_DATASET
-#   define TSTEPS 100
+#   define TSTEPS 200
 #   define M 2
-#   define N 400
+#   define N 40
 #  endif 
 
 #  ifdef LARGE_DATASET
-#   define TSTEPS 500
+#   define TSTEPS 1000
 #   define M 2
-#   define N 800
+#   define N 120
 #  endif 
 
 #  ifdef EXTRALARGE_DATASET
-#   define TSTEPS 1000
+#   define TSTEPS 2000
 #   define M 2
-#   define N 4000
+#   define N 200
 #  endif 
 
 

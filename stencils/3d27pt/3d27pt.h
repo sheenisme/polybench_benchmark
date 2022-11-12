@@ -13,31 +13,31 @@
 #  ifdef MINI_DATASET
 #   define TSTEPS 20
 #   define M 2
-#   define N 40
+#   define N 10
 #  endif 
 
 #  ifdef SMALL_DATASET
 #   define TSTEPS 40
 #   define M 1
-#   define N 120
+#   define N 20
 #  endif 
 
 #  ifdef MEDIUM_DATASET
 #   define TSTEPS 100
 #   define M 2
-#   define N 400
+#   define N 40
 #  endif 
 
 #  ifdef LARGE_DATASET
 #   define TSTEPS 500
 #   define M 2
-#   define N 800
+#   define N 120
 #  endif 
 
 #  ifdef EXTRALARGE_DATASET
 #   define TSTEPS 1000
 #   define M 2
-#   define N 4000
+#   define N 200
 #  endif 
 
 
