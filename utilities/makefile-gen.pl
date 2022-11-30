@@ -84,6 +84,7 @@ clean:
 	@ rm -f $kernel-*.c
 	@ rm -f ____tempfile_*.data.polybench
 	@ rm -f avg_*.out
+	@ rm -f ${kernel}_lnlamp.c
 
 EOF
 
@@ -99,7 +100,7 @@ open FILE, '>'.$TARGET_DIR.'/config.mk';
 
 print FILE << "EOF";
 CC=gcc
-CFLAGS=-O3 
+CFLAGS=-g -O3 
 CC_OPENMP_FLAGS=
 POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_STACK_ARRAYS -DPOLYBENCH_USE_C99_PROTO
 PPCG_TILE_FLAGS=
