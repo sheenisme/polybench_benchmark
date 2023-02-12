@@ -85,6 +85,8 @@ clean:
 	@ rm -f ____tempfile_*.data.polybench
 	@ rm -f avg_*.out
 	@ rm -f ${kernel}_lnlamp.c
+	@ rm -f lnlamp_predict_result.png
+	@ rm -f lnlamp_temp_result.txt
 
 EOF
 
