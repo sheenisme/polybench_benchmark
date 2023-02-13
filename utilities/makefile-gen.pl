@@ -87,6 +87,7 @@ clean:
 	@ rm -f ${kernel}_lnlamp.c
 	@ rm -f lnlamp_predict_result.png
 	@ rm -f lnlamp_temp_result.txt
+	@ rm -f lnlamp_internal_usage.py.log
 
 EOF
 
