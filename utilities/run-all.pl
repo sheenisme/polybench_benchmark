@@ -43,7 +43,8 @@ foreach $cat (@categories) {
         my $kernel = $dir;
         my $targetDir = $target.'/'.$dir;
         # my $command = "cd ../scripts; ./performance_testing.sh $targetDir $kernel; ./get_performance_test_results.sh $kernel";
-        my $command = "cd $targetDir; lnlamp $kernel.c";
+        my $command = "cd ../scripts; ./experimental_tests.sh  $targetDir $kernel; ./get_experimental_test_result.sh $kernel";
+        # my $command = "cd $targetDir; lnlamp $kernel.c";
            $command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
         print($command."\n");
         system($command);

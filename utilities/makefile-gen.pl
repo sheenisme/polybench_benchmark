@@ -88,6 +88,10 @@ clean:
 	@ rm -f lnlamp_predict_result.png
 	@ rm -f lnlamp_temp_result.txt
 	@ rm -f lnlamp_internal_usage.py.log
+	@ rm -f ____tempfile_data*.csv
+	@ rm -f ____tempfile_time*.txt
+	@ rm -f ____tempfile_*
+	@ rm -f ____lnlamp_*
 
 EOF
 
@@ -103,9 +107,9 @@ open FILE, '>'.$TARGET_DIR.'/config.mk';
 
 print FILE << "EOF";
 CC=gcc
-CFLAGS=-g -O3 
+CFLAGS=-O3 
 CC_OPENMP_FLAGS=
-POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_STACK_ARRAYS -DPOLYBENCH_USE_C99_PROTO
+POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DPOLYBENCH_USE_C99_PROTO
 PPCG_TILE_FLAGS=
 PPCG_OPENMP_FLAGS=
 EOF
