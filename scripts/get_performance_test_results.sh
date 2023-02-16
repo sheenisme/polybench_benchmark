@@ -12,7 +12,7 @@ fi;
 kernel=$1
 file=./results/${kernel}_benchmark_result.log
 # echo $file
-final_result_file=benchmark_result.log
+final_result_file=benchmark_result_perf—dist.log
 # echo $final_result_file
 
 

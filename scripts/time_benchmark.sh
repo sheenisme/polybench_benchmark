@@ -102,20 +102,20 @@ str=${1##*/}
 str=${str%%.*}
 
 # 跑14次,去掉2个最低和最高值,然后求平均值
-$1 > ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
-$1 >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null > ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
+$1 2> /dev/null >> ____tempfile_${str}.data.polybench;
 
 compute_mean_exec_time "____tempfile_${str}.data.polybench" "$1";
 echo "[INFO] Normalized time: $PROCESSED_TIME";
