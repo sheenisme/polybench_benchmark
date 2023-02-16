@@ -27,7 +27,7 @@ fi;
 # 设置测试性能时的频次
 frequency=10
 readonly frequency
-result_file="$workdir/benchmark_result_perf.log"
+result_file="$workdir/benchmark_result_perf-Reliable.log"
 # echo $result_file
 # 设置要测试的比例
 my_rate_list="$workdir/my_rate_list"

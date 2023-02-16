@@ -25,7 +25,7 @@ fi;
 
 # 设置一些变量,方便后面调用.
 # 设置测试性能时的频次
-frequency=3
+frequency=10
 readonly frequency
 result_file="$workdir/results/${kernel}_benchmark_result.log"
 # echo $result_file
