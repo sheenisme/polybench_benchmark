@@ -102,20 +102,20 @@ str=${1##*/}
 str=${str%%.*}
 
 # 跑14次,去掉2个最低和最高值,然后求平均值
-taskset -c 0 $1 > ____tempfile_${str}.data.polybench;
-taskset -c 0 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 0 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 1 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 1 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 1 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 2 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 2 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 2 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 3 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 3 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 3 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 4 $1 >> ____tempfile_${str}.data.polybench;
-taskset -c 5 $1 >> ____tempfile_${str}.data.polybench;
+$1 > ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
+$1 >> ____tempfile_${str}.data.polybench;
 
 compute_mean_exec_time "____tempfile_${str}.data.polybench" "$1";
 echo "[INFO] Normalized time: $PROCESSED_TIME";
