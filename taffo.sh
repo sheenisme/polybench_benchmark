@@ -351,7 +351,7 @@ fi
 if [[ ${#input_files[@]} -eq 1 ]]; then
   # one input file
   ${CLANG} \
-    $opts -D__TAFFO__ -O1 \
+    $opts -D__TAFFO__ -O0 -Xclang -disable-O0-optnone \
     -c -emit-llvm \
     ${input_files} \
     -S -o "${temporary_dir}/${output_basename}.1.taffotmp.ll" || exit $?
