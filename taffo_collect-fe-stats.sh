@@ -18,8 +18,8 @@ mkdir -p $OUT_DIR
 
 for conf in vra; do
   echo conf = $conf
-  ./compile.sh metrics & wait
-  ./run.sh --times=$NEXEC & wait
-  ./validate.py > $OUT_DIR/${conf}.txt & wait
+  ./taffo_compiler.sh metrics & wait
+  ./taffo_run.sh --times=$NEXEC & wait
+  ./taffo_validate.py > $OUT_DIR/${conf}.txt & wait
   mv results-out $OUT_DIR/${conf}
 done
