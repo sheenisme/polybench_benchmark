@@ -77,7 +77,9 @@ static void kernel_atax(int m, int n,
       tmp[i] = tmp[i] + A[i][j] * x[j];
     for (j = 0; j < _PB_N; j++)
       y[j] = y[j] + A[i][j] * tmp[i];
+#ifndef NO_PENCIL_KILL
     __pencil_kill(tmp[i]);
+#endif
   }
 #pragma endscop
 }

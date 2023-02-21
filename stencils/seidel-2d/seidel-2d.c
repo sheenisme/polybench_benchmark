@@ -64,8 +64,14 @@ static void kernel_seidel_2d(int tsteps,
 #pragma scop
   for (t = 0; t <= _PB_TSTEPS - 1; t++)
     for (i = 1; i <= _PB_N - 2; i++)
-      for (j = 1; j <= _PB_N - 2; j++)
-        A[i][j] = (A[i - 1][j - 1] + A[i - 1][j] + A[i - 1][j + 1] + A[i][j - 1] + A[i][j] + A[i][j + 1] + A[i + 1][j - 1] + A[i + 1][j] + A[i + 1][j + 1]) / val;
+      for (j = 1; j <= _PB_N - 2; j++) {
+         DATA_TYPE  term1 = A[i - 1][j - 1] + A[i - 1][j] + A[i - 1][j + 1] +A[i][j - 1];
+         DATA_TYPE  term2 = A[i][j] + A[i][j + 1] +A[i + 1][j - 1] + A[i + 1][j] + A[i + 1][j + 1];
+         DATA_TYPE  sum = term1 + term2;
+         DATA_TYPE  div = sum / val;
+         A[i][j] = div;
+      }
+      // A[i][j] = (A[i - 1][j - 1] + A[i - 1][j] + A[i - 1][j + 1] + A[i][j - 1] + A[i][j] + A[i][j + 1] + A[i + 1][j - 1] + A[i + 1][j] + A[i + 1][j + 1]) / val;
 #pragma endscop
 }
 

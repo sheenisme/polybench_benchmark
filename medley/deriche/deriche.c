@@ -160,7 +160,9 @@ static void kernel_deriche(int w, int h, DATA_TYPE alpha,
         for (j = 0; j < _PB_H; j++)
         {
             imgOut[i][j] = c2 * (y1[i][j] + y2[i][j]);
+#ifndef NO_PENCIL_KILL
             __pencil_kill(y1[i][j], y2[i][j]);
+#endif
         }
 
 #pragma endscop

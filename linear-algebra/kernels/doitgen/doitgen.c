@@ -79,7 +79,9 @@ void kernel_doitgen(int nr, int nq, int np,
       }
       for (p = 0; p < _PB_NP; p++)
         A[r][q][p] = sum[p];
+#ifndef NO_PENCIL_KILL
       __pencil_kill(sum);
+#endif
     }
 #pragma endscop
 }

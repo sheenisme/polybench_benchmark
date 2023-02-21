@@ -74,7 +74,9 @@ static void kernel_heat_2d(int tsteps, int n, int m, DATA_TYPE POLYBENCH_3D(A, M
             }
         }
     }
+#ifndef NO_PENCIL_KILL
     __pencil_kill(A[_PB_TSTEPS % 2]);
+#endif
 #pragma endscop
 }
 

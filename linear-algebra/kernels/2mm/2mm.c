@@ -98,7 +98,9 @@ static void kernel_2mm(int ni, int nj, int nk, int nl,
       for (k = 0; k < _PB_NJ; ++k)
         D[i][j] += tmp[i][k] * C[k][j];
     }
+#ifndef NO_PENCIL_KILL
     __pencil_kill(tmp[i]);
+#endif
   }
 #pragma endscop
 }

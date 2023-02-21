@@ -100,7 +100,9 @@ static void kernel_symm(int m, int n,
       }
       C[i][j] = beta * C[i][j] + alpha * B[i][j] * A[i][i] + alpha * temp2;
     }
+#ifndef NO_PENCIL_KILL
   __pencil_kill(temp2);
+#endif
 #pragma endscop
 }
 

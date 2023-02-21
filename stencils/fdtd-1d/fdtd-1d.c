@@ -60,7 +60,9 @@ static void kernel_fdtd_1d(int tsteps, int n, DATA_TYPE POLYBENCH_1D(H, N, n),
         for (i = 0; i <= _PB_N - 1; i++)
             H[i] = H[i] - coeff2 * (E[i + 1] - E[i]);
     }
+#ifndef NO_PENCIL_KILL
     __pencil_kill(E);
+#endif
 #pragma endscop
 }
 

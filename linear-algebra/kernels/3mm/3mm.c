@@ -103,9 +103,13 @@ static void kernel_3mm(int ni, int nj, int nk, int nl, int nm,
       for (k = 0; k < _PB_NJ; ++k)
         G[i][j] += E[i][k] * F[k][j];
     }
+#ifndef NO_PENCIL_KILL
     __pencil_kill(E[i]);
+#endif
   }
+#ifndef NO_PENCIL_KILL
   __pencil_kill(F);
+#endif
 #pragma endscop
 }
 

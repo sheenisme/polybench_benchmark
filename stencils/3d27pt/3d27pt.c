@@ -89,7 +89,9 @@ static void kernel_3d27pt(int tsteps, int n, int m, DATA_TYPE POLYBENCH_4D(A, M,
             }
         }
     }
+#ifndef NO_PENCIL_KILL
     __pencil_kill(A[_PB_TSTEPS % 2]);
+#endif
 #pragma endscop
 }
 

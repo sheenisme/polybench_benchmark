@@ -134,7 +134,9 @@ static void kernel_ludcmp(int n,
     for (j = i + 1; j < _PB_N; j++)
       w -= A[i][j] * x[j];
     x[i] = w / A[i][i];
+#ifndef NO_PENCIL_KILL
     __pencil_kill(w, A[i], y[i]);
+#endif
   }
 #pragma endscop
 }

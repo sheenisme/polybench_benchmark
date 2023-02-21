@@ -68,7 +68,9 @@ static void kernel_jacobi_1d(int tsteps, int n, DATA_TYPE POLYBENCH_1D(A, N, n),
     for (i = 1; i < _PB_N - 1; i++)
       A[i] = val * (B[i - 1] + B[i] + B[i + 1]);
   }
+#ifndef NO_PENCIL_KILL
   __pencil_kill(B);
+#endif
 #pragma endscop
 }
 
