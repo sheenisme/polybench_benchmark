@@ -28,7 +28,7 @@ static void init_array(int n,
 
   for (i = 0; i < n; i++)
   {
-    r[i] = (n + 1 - i);
+    r[i] = (DATA_TYPE)(n + 1 - i);
   }
 }
 

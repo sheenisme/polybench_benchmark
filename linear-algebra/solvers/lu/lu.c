@@ -37,21 +37,21 @@ static void init_array(int n,
     A[i][i] = 1;
   }
 
-  /* Make the matrix positive semi-definite. */
-  /* not necessary for LU, but using same code as cholesky */
-  int r, s, t;
-  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, N, N, n, n);
-  for (r = 0; r < n; ++r)
-    for (s = 0; s < n; ++s)
-      (POLYBENCH_ARRAY(B))[r][s] = 0;
-  for (t = 0; t < n; ++t)
-    for (r = 0; r < n; ++r)
-      for (s = 0; s < n; ++s)
-        (POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
-  for (r = 0; r < n; ++r)
-    for (s = 0; s < n; ++s)
-      A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
-  POLYBENCH_FREE_ARRAY(B);
+  // /* Make the matrix positive semi-definite. */
+  // /* not necessary for LU, but using same code as cholesky */
+  // int r, s, t;
+  // POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, N, N, n, n);
+  // for (r = 0; r < n; ++r)
+  //   for (s = 0; s < n; ++s)
+  //     (POLYBENCH_ARRAY(B))[r][s] = 0;
+  // for (t = 0; t < n; ++t)
+  //   for (r = 0; r < n; ++r)
+  //     for (s = 0; s < n; ++s)
+  //       (POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
+  // for (r = 0; r < n; ++r)
+  //   for (s = 0; s < n; ++s)
+  //     A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
+  // POLYBENCH_FREE_ARRAY(B);
 }
 
 /* DCE code. Must scan the entire live-out data.
