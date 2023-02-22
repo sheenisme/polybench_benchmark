@@ -65,10 +65,16 @@ static void kernel_floyd_warshall(int n,
   for (k = 0; k < _PB_N; k++)
   {
     for (i = 0; i < _PB_N; i++)
-      for (j = 0; j < _PB_N; j++)
-        path[i][j] = path[i][j] < path[i][k] + path[k][j]
-                         ? path[i][j]
-                         : path[i][k] + path[k][j];
+      for (j = 0; j < _PB_N; j++){
+        DATA_TYPE tmpa = path[i][k];
+        DATA_TYPE tmpb = path[k][j];
+        DATA_TYPE cond = path[i][j] < path[i][k] + path[k][j];
+        if (cond) {
+          path[i][j] = path[i][j];
+        } else {
+          path[i][j] = tmpa + tmpb;
+        }
+      }
   }
 #pragma endscop
 }
