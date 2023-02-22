@@ -1,5 +1,6 @@
 *.exe
 *_lnlamp.c
+*.ppcg.c
 avg_*.out
 ____tempfile_*.data.polybench
 ____tempfile_data*.csv

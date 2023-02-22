@@ -64,8 +64,8 @@ def ComputeDifference(fix_data, flt_data):
   e_perc = (accerr / accval * 100) if accval > 0 and n > 0 else -1
   e_abs = (accerr / n) if n > 0 else -1
       
-  return {'fix_nofl': fix_nofl, \
-          'flo_nofl': flo_nofl, \
+  return {'amp_nofl': fix_nofl, \
+          'org_nofl': flo_nofl, \
           'e_perc': e_perc,
           'e_abs': e_abs}
           
@@ -76,7 +76,7 @@ def ComputeSpeedups(float_times, fixp_times):
   float_avg = stat.median(float_list)
   fixp_avg = stat.median(fixp_list)
   speedup = float_avg / fixp_avg
-  return {'fix_t': fixp_avg, 'flt_t': float_avg, 'speedup': speedup}
+  return {'amp_t': fixp_avg, 'org_t': float_avg, 'speedup': speedup}
           
           
 def PrettyPrint(table):
