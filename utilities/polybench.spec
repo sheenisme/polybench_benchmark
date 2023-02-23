@@ -18,7 +18,7 @@ cholesky	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
 durbin	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
 gramschmidt	linear-algebra/solvers	double	FALSE	M N	20 30	60 80	200 240	1000 1200	2000 2600
 lu	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
-ludcmp	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
+ludcmp	linear-algebra/solvers	double	FALSE	N	40	120	400	1000	4000
 trisolv	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
 deriche	medley	double	FALSE	W H	64 64	192 128	720 480	4096 2160	7680 4320
 floyd-warshall	medley	double	TRUE	N	60	180	500	2800	5600
