@@ -85,6 +85,9 @@ clean:
 	@ rm -f ____tempfile_*.data.polybench
 	@ rm -f avg_*.out
 	@ rm -f ${kernel}_lnlamp.c
+	@ rm -f ${kernel}_lnlamp.c.no-tile.c
+	@ rm -f ${kernel}.c.ppcg.no-tile.c
+	@ rm -f ${kernel}.c.ppcg.c
 	@ rm -f lnlamp_predict_result.png
 	@ rm -f lnlamp_temp_result.txt
 	@ rm -f lnlamp_internal_usage.py.log
@@ -106,7 +109,7 @@ if ($GEN_CONFIG) {
 open FILE, '>'.$TARGET_DIR.'/config.mk';
 
 print FILE << "EOF";
-CC=gcc
+CC=/media/sheen/文件/ubuntu_code_data/llvm-project/llvm-install/bin/clang
 CFLAGS=-O3 
 CC_OPENMP_FLAGS=
 POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DPOLYBENCH_USE_C99_PROTO
