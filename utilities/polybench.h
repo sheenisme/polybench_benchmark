@@ -52,6 +52,8 @@
 #define POLYBENCH_C99_SELECT(x, y) x
 #endif
 
+/* 修改default */
+#define POLYBENCH_USE_SCALAR_LB
 
 /* Scalar loop bounds in SCoPs. By default, use parametric loop bounds. */
 #ifdef POLYBENCH_USE_SCALAR_LB
