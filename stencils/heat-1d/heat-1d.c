@@ -18,7 +18,7 @@
 #include "heat-1d.h"
 
 /* Array initialization. */
-static void init_array(int n, int m, DATA_TYPE POLYBENCH_2D(A, M, N, m, n))
+static void init_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_2D(A, M, N, m, n))
 {
     int i;
     const int BASE = 1024;
@@ -33,7 +33,7 @@ static void init_array(int n, int m, DATA_TYPE POLYBENCH_2D(A, M, N, m, n))
 
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
-static void print_array(int n, int m, DATA_TYPE POLYBENCH_2D(A, M, N, m, n))
+static void print_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_2D(A, M, N, m, n))
 {
     int i;
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, M, N, m, n);
 
     /* Initialize array(s). */
-    init_array(n, m, POLYBENCH_ARRAY(A));
+    init_array(tsteps, n, m, POLYBENCH_ARRAY(A));
 
     /* Start timer. */
     polybench_start_instruments;
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
     /* Prevent dead-code elimination. All live-out data must be printed
      by the function call in argument. */
-    polybench_prevent_dce(print_array(n, m, POLYBENCH_ARRAY(A)));
+    polybench_prevent_dce(print_array(tsteps, n, m, POLYBENCH_ARRAY(A)));
 
     /* Be clean. */
     POLYBENCH_FREE_ARRAY(A);

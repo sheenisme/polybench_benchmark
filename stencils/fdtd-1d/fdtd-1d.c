@@ -12,7 +12,7 @@
 #include "fdtd-1d.h"
 
 /* Array initialization. */
-static void init_array(int n, DATA_TYPE POLYBENCH_1D(H, N, n),
+static void init_array(int tsteps, int n, DATA_TYPE POLYBENCH_1D(H, N, n),
                        DATA_TYPE POLYBENCH_1D(E, N, n))
 {
     int i;
@@ -26,8 +26,7 @@ static void init_array(int n, DATA_TYPE POLYBENCH_1D(H, N, n),
 
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
-static void print_array(int n, DATA_TYPE POLYBENCH_1D(H, N, n))
-
+static void print_array(int tsteps, int n, DATA_TYPE POLYBENCH_1D(H, N, n))
 {
     int i;
 
@@ -77,7 +76,7 @@ int main(int argc, char **argv)
     POLYBENCH_1D_ARRAY_DECL(E, DATA_TYPE, N, n);
 
     /* Initialize array(s). */
-    init_array(n, POLYBENCH_ARRAY(H), POLYBENCH_ARRAY(E));
+    init_array(tsteps, n, POLYBENCH_ARRAY(H), POLYBENCH_ARRAY(E));
 
     /* Start timer. */
     polybench_start_instruments;
@@ -91,7 +90,7 @@ int main(int argc, char **argv)
 
     /* Prevent dead-code elimination. All live-out data must be printed
      by the function call in argument. */
-    polybench_prevent_dce(print_array(n, POLYBENCH_ARRAY(H)));
+    polybench_prevent_dce(print_array(tsteps, n, POLYBENCH_ARRAY(H)));
 
     /* Be clean. */
     POLYBENCH_FREE_ARRAY(H);
