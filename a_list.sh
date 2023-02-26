@@ -7,7 +7,7 @@ cd $workdir
 
 # 先调用lnlamp生成所有需要的代码
 cd utilities;
-perl run-all.pl ../ 4 > ../big_tile-128_lnlamp-run-0225.log 2>&1        
+perl run-all.pl ../ 4 > ../big_split_tile_lnlamp_run.log 2>&1        
 cd ..;
 
 
