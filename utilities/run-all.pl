@@ -57,6 +57,7 @@ foreach $cat (@categories) {
             $command = "cd ../scripts; ./experimental_tests.sh  $targetDir $kernel; ./get_experimental_test_result.sh $kernel";
         }elsif($OPTION == 4) {
             $command = "cd $targetDir; lnlamp $kernel.c";
+            # $command = "cd $targetDir; make amp; ./${kernel}-amp_50.exe 2> /dev/null ;";
         }else {
             # $command = "cd $targetDir; make clean; make; ./$kernel";
             printf("the error option!!!\n");
