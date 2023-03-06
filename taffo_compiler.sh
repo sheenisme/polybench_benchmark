@@ -175,7 +175,7 @@ for bench in $all_benchs; do
     opts=$(read_opts ${bench})
     compile_one "$bench" \
       "-O3 \
-      -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS \
+      -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DPOLYBENCH_USE_C99_PROTO\
       -DNO_PENCIL_KILL -D$D_CONF -D$D_LARGE_DATASET $MIXIMODE \
       -Xdta -totalbits -Xdta $TOT \
       $ERRORPROP $opts"
