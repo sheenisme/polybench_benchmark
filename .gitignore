@@ -3,6 +3,8 @@
 *_lnlamp.c.no-tile.c
 *.ppcg.c
 *.ppcg.no-tile.c
+*-amp_*.c
+*-ppcg.c
 avg_*.out
 ____tempfile_*.data.polybench
 ____tempfile_data*.csv
