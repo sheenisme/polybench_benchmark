@@ -5,17 +5,27 @@ cd $workdir
 
 
 
-# 先调用lnlamp生成所有需要的代码
-cd utilities;
-perl run-all.pl ../ 4 > ../big_split_tile_lnlamp_run.log 2>&1        
-cd ..;
+all_benchs=$(cat ./utilities/benchmark_list)
+for bench in $all_benchs;
+do
+    benchdir=$(dirname $bench)
+    benchname=$(basename $benchdir)
+    # echo $benchdir " " $benchname
+    # 进入测试用例的目录进行测试
+    cd $benchdir
+    lnlamp -t "{[1,4,8,16]}" ${benchname}.c
+    
+    echo "lnlamp -t {[1,4,8,16]} ${benchname}.c over! "
+    # 返回测试脚本目录
+    cd $workdir
+done
 
-
-
-#  schedule + tile + mix
+# 返回测试脚本目录
 cd $workdir
-mkdir schedule_tile_mix
-./taffo_collect-fe-stats.sh schedule_tile_mix       
+#  schedule + tile + mix
+rm -rf build
+rm -rf result-out
+./taffo_collect-fe-stats.sh schedule_tile_mix
 
 
 
@@ -23,9 +33,10 @@ mkdir schedule_tile_mix
 # 准备
 sed -n "s/_lnlamp.c/.c.ppcg.c/p" taffo_compiler.sh
 sed -i "s/_lnlamp.c/.c.ppcg.c/g" taffo_compiler.sh
+rm -rf build
+rm -rf result-out
 
-mkdir schedule_tile
-./taffo_collect-fe-stats.sh schedule_tile       
+./taffo_collect-fe-stats.sh   schedule_tile
 
 # 复原
 sed -n "s/.c.ppcg.c/_lnlamp.c/p" taffo_compiler.sh
@@ -38,15 +49,14 @@ sed -i "s/.c.ppcg.c/_lnlamp.c/g" taffo_compiler.sh
 # 准备
 sed -n "s/_lnlamp.c/_lnlamp.c.no-tile.c/p" taffo_compiler.sh
 sed -i "s/_lnlamp.c/_lnlamp.c.no-tile.c/g" taffo_compiler.sh
+rm -rf build
+rm -rf result-out
 
-mkdir schedule_mix
-./taffo_collect-fe-stats.sh schedule_mix     
+./taffo_collect-fe-stats.sh schedule_mix
 
 # 复原
 sed -n "s/_lnlamp.c.no-tile.c/_lnlamp.c/p" taffo_compiler.sh
 sed -i "s/_lnlamp.c.no-tile.c/_lnlamp.c/g" taffo_compiler.sh
-# git restore taffo_compiler.sh
-
 
 
 
@@ -54,11 +64,17 @@ sed -i "s/_lnlamp.c.no-tile.c/_lnlamp.c/g" taffo_compiler.sh
 # 准备
 sed -n "s/_lnlamp.c/.c.ppcg.no-tile.c/p" taffo_compiler.sh
 sed -i "s/_lnlamp.c/.c.ppcg.no-tile.c/g" taffo_compiler.sh
+rm -rf build
+rm -rf result-out
 
-mkdir schedule
-./taffo_collect-fe-stats.sh schedule  
+./taffo_collect-fe-stats.sh schedule
 
 # 复原
 sed -n "s/.c.ppcg.no-tile.c/_lnlamp.c/p" taffo_compiler.sh
 sed -i "s/.c.ppcg.no-tile.c/_lnlamp.c/g" taffo_compiler.sh
-# git restore taffo_compiler.sh
+
+
+
+echo "lnlamp vs taffo, over!"
+# 返回测试脚本目录
+cd $workdir
