@@ -49,7 +49,7 @@ cd $target_dir;
 # workdir_2=$(cd `dirname $0`; pwd)
 # echo "当前的工作路径是:" $workdir_2
 # cd $workdir_2
-make clean;
+# make clean;
 
 
 
