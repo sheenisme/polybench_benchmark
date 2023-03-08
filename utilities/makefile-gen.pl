@@ -86,8 +86,10 @@ clean:
 	@ rm -f avg_*.out
 	@ rm -f ${kernel}_lnlamp.c
 	@ rm -f ${kernel}_lnlamp.c.no-tile.c
+	@ rm -f ${kernel}_lnlamp.c.only-mix.c
 	@ rm -f ${kernel}.c.ppcg.no-tile.c
 	@ rm -f ${kernel}.c.ppcg.c
+	@ rm -f ${kernel}.ppcg.c
 	@ rm -f lnlamp_predict_result.png
 	@ rm -f lnlamp_temp_result.txt
 	@ rm -f lnlamp_internal_usage.py.log
