@@ -1,6 +1,7 @@
 *.exe
 *_lnlamp.c
 *_lnlamp.c.no-tile.c
+*_lnlamp.c.only-mix.c
 *.ppcg.c
 *.ppcg.no-tile.c
 *-amp_*.c

@@ -13,9 +13,21 @@ do
     # echo $benchdir " " $benchname
     # 进入测试用例的目录进行测试
     cd $benchdir
-    lnlamp -t "{[1,4,8,16]}" ${benchname}.c
-    
-    echo "lnlamp -t {[1,4,8,16]} ${benchname}.c over! "
+
+    # 根据测试用例，选择不同的调度算法
+    case "${benchname}" in
+        seidel-2d|jacobi-2d|jacobi-1d|heat-3d|fdtd-2d|gramschmidt|trmm|gemm|doitgen|2mm|3mm)
+            lnlamp -a feautrier -t '{[1,2,4,8,16]}' ${benchname}.c
+            echo "lnlamp -a feautrier -t {[1,2,4,8,16]} ${benchname}.c over! "
+            ;;
+        *)
+            lnlamp -t '{[1,2,4,8,16]}' ${benchname}.c
+            echo "lnlamp -t {[1,2,4,8,16]} ${benchname}.c over! "
+    esac
+    # # 用同一调度算法
+    # lnlamp -t '{[1,2,4,8,16]}' ${benchname}.c
+    # echo "lnlamp -t {[1,2,4,8,16]} ${benchname}.c over! "
+
     # 返回测试脚本目录
     cd $workdir
 done
@@ -73,6 +85,20 @@ rm -rf result-out
 sed -n "s/.c.ppcg.no-tile.c/_lnlamp.c/p" taffo_compiler.sh
 sed -i "s/.c.ppcg.no-tile.c/_lnlamp.c/g" taffo_compiler.sh
 
+
+
+#  only mix
+# 准备
+sed -n "s/_lnlamp.c/_lnlamp.c.only-mix.c/p" taffo_compiler.sh
+sed -i "s/_lnlamp.c/_lnlamp.c.only-mix.c/g" taffo_compiler.sh
+rm -rf build
+rm -rf result-out
+
+./taffo_collect-fe-stats.sh only-mix
+
+# 复原
+sed -n "s/_lnlamp.c.only-mix.c/_lnlamp.c/p" taffo_compiler.sh
+sed -i "s/_lnlamp.c.only-mix.c/_lnlamp.c/g" taffo_compiler.sh
 
 
 echo "lnlamp vs taffo, over!"
