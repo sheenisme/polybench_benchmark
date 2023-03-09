@@ -19,20 +19,20 @@ do
         # seidel-2d|jacobi-2d|jacobi-1d|heat-3d|fdtd-2d|gramschmidt|trmm|gemm|doitgen|2mm|3mm
         # seidel-2d|                    heat-3d|       |gramschmidt|trmm|    |doitgen|2mm|3mm
         trmm)  # 和jacobi-1d是两层循环
-            lnlamp -a feautrier -t '{[4,16,16,16]}' ${benchname}.c
-            echo "lnlamp -a feautrier -t {[4,16,16,16]} ${benchname}.c over! "
+            lnlamp -a feautrier -t '{[1,8,16,16]}' ${benchname}.c
+            echo "lnlamp -a feautrier -t {[1,8,16,16]} ${benchname}.c over! "
             ;;
         seidel-2d|jacobi-2d|fdtd-2d|gramschmidt|doitgen|gemm|2mm|3mm)
-            lnlamp -a feautrier -t '{[2,8,16,16]}' ${benchname}.c
-            echo "lnlamp -a feautrier -t {[2,8,16,16]} ${benchname}.c over! "
+            lnlamp -a feautrier -t '{[1,8,16,16]}' ${benchname}.c
+            echo "lnlamp -a feautrier -t {[1,8,16,16]} ${benchname}.c over! "
             ;;
         heat-3d)
             lnlamp -a feautrier -t '{[1,4,8,16]}' ${benchname}.c
             echo "lnlamp -a feautrier -t {[1,4,8,16]} ${benchname}.c over! "
             ;;
         *)
-            lnlamp -t '{[1,8,8,16]}' ${benchname}.c
-            echo "lnlamp -t '{[1,8,8,16]}' ${benchname}.c over! "
+            lnlamp -t '{[1,4,8,16]}' ${benchname}.c
+            echo "lnlamp -t '{[1,4,8,16]}' ${benchname}.c over! "
     esac
     # # 用同一调度算法
     # lnlamp -t '{[1,2,4,8,16]}' ${benchname}.c
