@@ -1,4 +1,4 @@
-CC=/media/sheen/文件/ubuntu_code_data/llvm-project/llvm-install/bin/clang
+CC=gcc
 CFLAGS=-O3 
 CC_OPENMP_FLAGS=
 POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DPOLYBENCH_USE_C99_PROTO
