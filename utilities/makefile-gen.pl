@@ -74,10 +74,10 @@ amp: pre-amp $kernel-amp_\${RATE}.c $kernel.h
 	\${VERBOSE} \${CC} -o $kernel-amp_\${RATE}.exe $kernel-amp_\${RATE}.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLY_ARGS} -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
 
 pre-amp: $kernel.c
-	ppcg --target c \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} $kernel.c -o $kernel-amp_\${RATE}.c > /dev/null 2>&1
+	ppcg --target c \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} $kernel.c -o $kernel-amp_\${RATE}.c > /dev/null 2>&1
 
 pre-ppcg:
-	ppcg --target c \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision $kernel.c -o $kernel-ppcg.c > /dev/null 2>&1
+	ppcg --target c \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision $kernel.c -o $kernel-ppcg.c > /dev/null 2>&1
 
 clean:
 	@ rm -f $kernel-*.exe
@@ -115,6 +115,7 @@ CC=/media/sheen/文件/ubuntu_code_data/llvm-project/llvm-install/bin/clang
 CFLAGS=-O3 
 CC_OPENMP_FLAGS=
 POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS
+PPCG_SCHED_FLAGS=--no-reschedule
 PPCG_TILE_FLAGS=
 PPCG_OPENMP_FLAGS=
 EOF
