@@ -7,6 +7,7 @@ cd $workdir
 rm -f scripts/benchmark_result_perf-Reliable.log
 rm -f scripts/lnlamp_correct_part_test.log
 rm -f scripts/4D_Check.exe
+# 要求：config.mk和lnlamp中编译器为gcc，且设置POLYBENCH_C99_PROTO，并且其过程中不设置循环分块，使用默认的isl调度算法，进行多次测试方可。
 
 
 
