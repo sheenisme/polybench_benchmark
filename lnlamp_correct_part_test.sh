@@ -18,7 +18,7 @@ do
     # echo $benchdir " " $benchname
     # 进入脚本所在的目录进行测试
     cd $benchdir
-    # lnlamp ${benchname}.c
+    lnlamp ${benchname}.c
     cd $workdir
     cd scripts
     ./Reliable_perf_test.sh ../$benchdir $benchname  >> lnlamp_correct_part_test.log 2>&1
