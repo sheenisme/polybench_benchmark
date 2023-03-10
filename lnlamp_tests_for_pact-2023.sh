@@ -23,12 +23,12 @@ do
             echo "lnlamp -a feautrier -t {[1,8,16,16]} ${benchname}.c over! "
             ;;
         seidel-2d|jacobi-2d|fdtd-2d|gramschmidt|doitgen|gemm|2mm|3mm)
-            lnlamp -a feautrier -t '{[1,8,16,16]}' ${benchname}.c
-            echo "lnlamp -a feautrier -t {[1,8,16,16]} ${benchname}.c over! "
+            lnlamp -a feautrier -t '{[1,8,8,16]}' ${benchname}.c
+            echo "lnlamp -a feautrier -t {[1,8,8,16]} ${benchname}.c over! "
             ;;
         heat-3d)
-            lnlamp -a feautrier -t '{[1,4,8,16]}' ${benchname}.c
-            echo "lnlamp -a feautrier -t {[1,4,8,16]} ${benchname}.c over! "
+            lnlamp -a feautrier -t '{[1,2,4,8,16]}' ${benchname}.c
+            echo "lnlamp -a feautrier -t {[1,2,4,8,16]} ${benchname}.c over! "
             ;;
         *)
             lnlamp -t '{[1,4,8,16]}' ${benchname}.c
