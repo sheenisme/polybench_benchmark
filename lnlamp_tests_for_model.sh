@@ -6,6 +6,7 @@ cd $workdir
 # 删除历史的测试结果
 rm -f scripts/benchmark_result_perf-Reliable.log
 rm -f scripts/benchmark_test.log
+rm -f scripts/benchmark_mean_result.log
 rm -f scripts/4D_Check.exe
 
 
