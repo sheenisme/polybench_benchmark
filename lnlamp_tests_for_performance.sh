@@ -5,7 +5,7 @@ cd $workdir
 
 
 
-all_benchs=$(cat ./utilities/benchmark_list)
+all_benchs=$(cat ./utilities/benchmark_list_performance)
 for bench in $all_benchs;
 do
     benchdir=$(dirname $bench)
@@ -16,8 +16,6 @@ do
 
     # 根据测试用例，选择不同的调度算法
     case "${benchname}" in
-        # seidel-2d|jacobi-2d|jacobi-1d|heat-3d|fdtd-2d|gramschmidt|trmm|gemm|doitgen|2mm|3mm
-        # seidel-2d|                    heat-3d|       |gramschmidt|trmm|    |doitgen|2mm|3mm
         seidel-2d|jacobi-2d|fdtd-2d|trmm|doitgen|gemm|2mm|3mm)
             lnlamp -a feautrier -t '{[1,4,8,16,32]}' ${benchname}.c
             echo "lnlamp -a feautrier -t {[1,4,8,16,32]} ${benchname}.c over! "
@@ -42,17 +40,22 @@ do
             lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[64,64,64,64]}' ${benchname}.c
             echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[64,64,64,64]}' ${benchname}.c over! "
             ;;
+        cholesky)
+            lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,16,16,16]}' ${benchname}.c
+            echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,16,16,16]}' ${benchname}.c over! "
+            ;;
         symm)
             lnlamp -t '{[256,256,256,256,256]}' ${benchname}.c
             echo "lnlamp -t '{[256,256,256,256,256]}' ${benchname}.c over! "
+            ;;
+        adi)
+            lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c
+            echo "lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c over! "
             ;;
         *)
             lnlamp -t '{[1,4,8,16,32]}' ${benchname}.c
             echo "lnlamp -t '{[1,4,8,16,32]}' ${benchname}.c over! "
     esac
-    # # 用同一调度算法
-    # lnlamp -t '{[1,2,4,8,16]}' ${benchname}.c
-    # echo "lnlamp -t {[1,2,4,8,16]} ${benchname}.c over! "
     echo ""
 
     # 返回测试脚本目录

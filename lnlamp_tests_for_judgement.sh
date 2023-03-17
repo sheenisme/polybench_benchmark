@@ -11,7 +11,7 @@ rm -f scripts/4D_Check.exe
 
 
 
-all_benchs=$(cat ./utilities/benchmark_list)
+all_benchs=$(cat ./utilities/benchmark_list_judgement)
 for bench in $all_benchs;
 do
     benchdir=$(dirname $bench)
