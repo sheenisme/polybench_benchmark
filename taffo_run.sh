@@ -78,7 +78,7 @@ done
 
 mkdir -p results-out
 
-all_benchs=$(cat ./utilities/benchmark_list)
+all_benchs=$(cat ./utilities/benchmark_list_performance)
 skipped_all=1
 for bench in $all_benchs; do
   if [[ "$bench" =~ $ONLY ]]; then

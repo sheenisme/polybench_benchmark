@@ -17,7 +17,7 @@ def PolybenchRootDir() -> Path:
 
 
 def BenchmarkList():
-  blpath = PolybenchRootDir().joinpath(Path('./utilities/benchmark_list'))
+  blpath = PolybenchRootDir().joinpath(Path('./utilities/benchmark_list_performance'))
   listtext = blpath.read_text()
   res = listtext.strip().split('\n')
   return res
