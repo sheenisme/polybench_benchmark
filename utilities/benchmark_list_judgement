@@ -3,7 +3,6 @@
 ./linear-algebra/kernels/mvt/mvt.c
 ./linear-algebra/blas/gemver/gemver.c
 ./linear-algebra/blas/gesummv/gesummv.c
-./linear-algebra/solvers/cholesky/cholesky.c
 ./linear-algebra/solvers/ludcmp/ludcmp.c
 ./linear-algebra/solvers/trisolv/trisolv.c
 ./stencils/jacobi-1d/jacobi-1d.c
