@@ -3,7 +3,7 @@ workdir=$(cd `dirname $0`; pwd)
 # echo "当前的工作路径是:" $workdir
 cd $workdir
 
-err_thr="-e 1"
+err_thr="-e 0.1"
 
 
 all_benchs=$(cat ./utilities/benchmark_list_performance)
@@ -68,6 +68,7 @@ cd $workdir
 rm -rf build
 rm -rf result-out
 
+err_thr=${err_thr// /-}
 ./taffo_collect-fe-stats.sh "temp_test_res_${err_thr}"
 
 echo "lnlamp temp test, over!"
