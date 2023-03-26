@@ -48,6 +48,9 @@ run_one()
   sed -i "/begin dump/d"  $datadir/$benchname.origion.csv 
   sed -i "/end   dump/d"  $datadir/$benchname.origion.csv
 
+  # 设置openmp
+  export OMP_NUM_THREADS=4
+
   $TASKSET $fix_out 2> $datadir/$benchname.lnlamp.csv > $datadir/$benchname.lnlamp.time.txt || return $?
   for ((i=1; i<$times; i++)); do
     $TASKSET $fix_out 2> /dev/null >> $datadir/$benchname.lnlamp.time.txt || return $?
