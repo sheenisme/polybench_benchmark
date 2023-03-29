@@ -12,7 +12,8 @@ sed -i "s/OMPSET=\" \"/OMPSET=\"-fopnemp\"/g" taffo_compiler.sh
 array=( 2 4 8 )
 for element in ${array[@]}
 do
-    omp_set="-o ${element} -r '1 12 25 37 50 62 75 87 99' "
+    omp_set="-o ${element}"
+    rate_set=(1 12 25 37 50 62 75 87 99)
     # 先将run的脚本设置成对应的核数
     sed -n "s/OMP_NUM_THREADS=1/OMP_NUM_THREADS=${element}/p" taffo_run.sh
     sed -i "s/OMP_NUM_THREADS=1/OMP_NUM_THREADS=${element}/g" taffo_run.sh
@@ -30,44 +31,44 @@ do
         # 根据测试用例，选择不同的调度算法
         case "${benchname}" in
             seidel-2d|jacobi-2d|fdtd-2d|trmm|doitgen|gemm|2mm|3mm)
-                lnlamp -a feautrier -t '{[1,4,8,16,32]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -a feautrier -t {[1,4,8,16,32]} ${benchname}.c ${omp_set} over! "
+                lnlamp -a feautrier -t '{[1,4,8,16,32]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -a feautrier -t {[1,4,8,16,32]} ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             heat-3d)
-                lnlamp -a feautrier -t '{[1,1,8,16,16]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -a feautrier -t {[1,1,8,16,16]} ${benchname}.c ${omp_set} over! "
+                lnlamp -a feautrier -t '{[1,1,8,16,16]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -a feautrier -t {[1,1,8,16,16]} ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             correlation)
-                lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set} over! "
+                lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"; 
+                echo "lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             covariance)
-                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,8,8,8]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,8,8,8]}' ${benchname}.c ${omp_set} over! "
+                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,8,8,8]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,8,8,8]}' ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             gramschmidt)
-                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -a feautrier -t '{[16,8,8,8,8]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -a feautrier -t {[16,8,8,8,8]} ${benchname}.c ${omp_set} over! "
+                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -a feautrier -t '{[16,8,8,8,8]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -a feautrier -t {[16,8,8,8,8]} ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             lu)
-                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[64,64,64,64]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[64,64,64,64]}' ${benchname}.c ${omp_set} over! "
+                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[64,64,64,64]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[64,64,64,64]}' ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             cholesky)
-                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,16,16,16]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,16,16,16]}' ${benchname}.c ${omp_set} over! "
+                lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,16,16,16]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -i '--isl-schedule-max-coefficient=1 --isl-schedule-max-constant-term=0 ' -t '{[16,16,16,16,16]}' ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             symm)
-                lnlamp -t '{[256,256,256,256,256]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -t '{[256,256,256,256,256]}' ${benchname}.c ${omp_set} over! "
+                lnlamp -t '{[256,256,256,256,256]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -t '{[256,256,256,256,256]}' ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             adi)
-                lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set} over! "
+                lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -t '{[8,8,8,8,8]}' ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
                 ;;
             *)
-                lnlamp -t '{[1,4,8,16,32]}' ${benchname}.c ${omp_set}
-                echo "lnlamp -t '{[1,4,8,16,32]}' ${benchname}.c ${omp_set} over! "
+                lnlamp -t '{[1,4,8,16,32]}' ${benchname}.c ${omp_set} -r "$(echo ${rate_set[*]})"
+                echo "lnlamp -t '{[1,4,8,16,32]}' ${benchname}.c ${omp_set} -r \"$(echo ${rate_set[*]})\" over! "
         esac
         echo ""
 
