@@ -52,7 +52,7 @@ compile_one()
 
 
 # 设置openmp
-OMPSET="-fopenmp"
+OMPSET=" "
 
 compile_lnlamp()
 {
