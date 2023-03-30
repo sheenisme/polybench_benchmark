@@ -4,8 +4,8 @@ workdir=$(cd `dirname $0`; pwd)
 cd $workdir
 
 # 设置编译脚本
-sed -n "s/OMPSET=\" \"/OMPSET=\"-fopnemp\"/p" taffo_compiler.sh
-sed -i "s/OMPSET=\" \"/OMPSET=\"-fopnemp\"/g" taffo_compiler.sh
+sed -n "s/OMPSET=\" \"/OMPSET=\"-fopenmp\"/p" taffo_compiler.sh
+sed -i "s/OMPSET=\" \"/OMPSET=\"-fopenmp\"/g" taffo_compiler.sh
 
 
 
@@ -109,5 +109,5 @@ done
 
 
 # 复原编译脚本
-sed -n "s/OMPSET=\"-fopnemp\"/OMPSET=\" \"/p" taffo_compiler.sh
-sed -i "s/OMPSET=\"-fopnemp\"/OMPSET=\" \"/g" taffo_compiler.sh
+sed -n "s/OMPSET=\"-fopenmp\"/OMPSET=\" \"/p" taffo_compiler.sh
+sed -i "s/OMPSET=\"-fopenmp\"/OMPSET=\" \"/g" taffo_compiler.sh
