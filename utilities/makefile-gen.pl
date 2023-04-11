@@ -111,7 +111,7 @@ if ($GEN_CONFIG) {
 open FILE, '>'.$TARGET_DIR.'/config.mk';
 
 print FILE << "EOF";
-CC=/media/sheen/文件/ubuntu_code_data/llvm-project/llvm-install/bin/clang
+CC=/home/sheen/llvm-project/llvm-install/bin/clang
 CFLAGS=-O3 
 CC_OPENMP_FLAGS=
 POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS

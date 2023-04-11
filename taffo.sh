@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-LLVM_DIR="/media/sheen/文件/ubuntu_code_data/llvm-project/llvm-install"
+LLVM_DIR="/home/sheen/llvm-project/llvm-install"
 #!/usr/bin/env bash
 
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM
