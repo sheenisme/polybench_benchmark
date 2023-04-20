@@ -1,17 +1,346 @@
-Polybench_benchmark仓库的核心是用Polybench基准测试集(PolyBench/C 4.2.1  beta版本)对循环嵌套级自动混合精度(Loop nesting level automatic mixed precision, LNLAMP)进行指令测试、性能测试和误差测试。
+This repository is a dedicated repository for testing of `PrecTuner`, which is mainly based on the polybench benchmark.
 
-#### 测试步骤
+Replicating data from SC papers:
+===
 
-前提：已安装perl环境
+Part1  Getting Started Guide
+---
 
-1. 设置CPATH=your_location_of_polybench_benchmark/utilities(export 即可)
-2. 进入your_location_of_polybench_benchmark/utilities目录，依次执行：
-   1. 生成头文件：perl header-gen.pl ../
-   2. 生成makefile：perl makefile-gen.pl ../ -cfg
-   3. 运行：perl run-all.pl ../ 4 > ../run.log 2>&1
-   4. 清理文件：perl clean.pl ../
+### step1 install `PrecTuner` 
 
-以下是原作者的描述(The following is the original author's description):
+```shell
+# prepare
+sudo apt update && sudo apt upgrade -y
+sudo apt-get install gcc g++ git vim make bc python python3-pip
+sudo apt install automake autoconf libtool pkg-config libgmp3-dev libyaml-dev libclang-dev llvm clang
+pip install pandas numpy matplotlib
+
+cd /home/sheen/
+mkdir lnlamp-install
+git clone https://github.com/sheenisme/lnlamp.git
+
+cd lnlamp/
+./get_submodules.sh 
+./autogen.sh 
+./configure --prefix=/home/sheen/lnlamp-install
+
+make
+make install
+```
+
+For further installation help please refer to: https://repo.or.cz/ppcg.git.
+
+### step2 install `LLVM`
+
+```shell
+# prepare
+sudo apt install cmake
+
+cd /home/sheen/
+git clone https://github.com/sheenisme/llvm-project.git
+
+cd llvm-project/
+mkdir llvm-install
+git checkout origin/release/12.x
+cmake -S ./llvm -B llvm-build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Debug" -DLLVM_VERSION_MAJOR="12"  -DLLVM_TARGETS_TO_BUILD="X86" -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;openmp;polly" -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/llvm-project/llvm-install
+
+cd llvm-build/
+make -j2
+make install
+```
+
+**Note:** this process requires a lot of hard drive space, so make sure you have plenty of space.
+
+For further installation help please refer to: https://github.com/llvm/llvm-project.
+
+### step3 install `LuIs`
+
+```shell
+cd /home/sheen/
+git clone https://github.com/sheenisme/TAFFO.git
+
+cd TAFFO/
+mkdir taffo-install
+export LLVM_DIR=/home/sheen/llvm-project/llvm-install
+cmake -S . -B build -DTAFFO_BUILD_ORTOOLS=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/TAFFO/taffo-install
+
+cd build/
+make -j2
+sudo make install
+```
+
+**Note:** This process requires downloading a number of dependencies from `github`. If you have a poor internet connection or a timeout error, please run the `cmake -S . -B build -DTAFFO_BUILD_ORTOOLS=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/TAFFO/taffo-install` command several times until it works.
+
+For further installation help please refer to: https://github.com/TAFFO-org/TAFFO.
+
+### step4 install `Pluto`
+
+```shell
+# prepare
+sudo apt-get install flex bison texinfo
+
+cd /home/sheen/
+git clone https://github.com/sheenisme/pluto.git
+
+cd pluto/
+mkdir pluto-install
+git submodule init 
+git submodule update
+./autogen.sh
+./configure --prefix=/home/sheen/pluto/pluto-install
+
+make
+make install
+```
+
+For further installation help please refer to: https://github.com/bondhugula/pluto.
+
+### step5 Configuring environment
+
+```shell
+# setting pluto
+export PATH=/home/sheen/pluto/pluto-install/bin:$PATH
+
+# setting LLVM and TAFFO
+export LLVM_DIR=/home/sheen/llvm-project/llvm-install
+export PATH=/home/sheen/llvm-project/llvm-install/bin:/home/sheen/TAFFO/taffo-install/bin:$PATH
+export LD_LIBRARY_PATH=/home/sheen/TAFFO/taffo-install/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export LD_LIBRARY_PATH=/home/sheen/llvm-project/llvm-install/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+# setting prectuner
+export PATH=/home/sheen/lnlamp-install/bin:$PATH
+export LD_LIBRARY_PATH=/home/sheen/lnlamp-install/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+# setting polybench
+export CPATH=/usr/local/include:/home/sheen/lnlamp/polybench_benchmark/utilities:$CPATH
+```
+
+First add these code to `/home/sheen/.bashrc` , and then executing `source .bashrc`.
+
+**Now all tools are installed.**
+
+### Some of the problems that may be encountered:
+
+- The following error was encountered when installing `PrecTuner` :
+
+```
+config.status: error: in `/home/sheen/ppcg':
+config.status: error: Something went wrong bootstrapping makefile fragments
+    for automatic dependency tracking.  If GNU make was not used, consider
+    re-running the configure script with MAKE="gmake" (or whatever is
+    necessary).  You can also try re-running configure with the
+    '--disable-dependency-tracking' option to at least be able to build
+    the package (albeit without support for automatic dependency tracking).
+See `config.log' for more details
+```
+
+ Perhaps this can be solved by executing the `sudo apt install make` command.
+
+- The following error was encountered when installing `PrecTuner` :
+
+```
+configure: error: in `/home/sheen/ppcg/isl/interface':
+configure: error: C++ compiler cannot create executables
+See `config.log' for more details
+configure: error: ./configure failed for interface
+configure: error: ./configure failed for isl
+```
+
+Perhaps this can be solved by executing the `sudo apt-get install gcc g++` command.
+
+- The following error was encountered when installing `PrecTuner` :
+
+
+```
+checking whether /usr/lib/llvm-11/bin/clang can find standard include files... no
+checking for xcode-select... no
+configure: error: Cannot find xcode-select
+configure: error: ./configure failed for interface
+configure: error: ./configure failed for isl
+```
+
+Perhaps this can be solved by executing the `sudo apt install clang` command.
+
+- The following error was encountered when installing `pluto` :
+
+```
+checking flex version... configure: error: flex not found. Version 2.5.35 or greater is required.
+checking for clan/Makefile... no
+configure: error: configure in clan/ failed
+```
+
+Perhaps this can be solved by executing the `sudo apt-get install flex` command.
+
+- The following error was encountered when installing `pluto` :
+
+```
+checking bison version... configure: error: bison not found. Version 2.4 or greater is required.
+checking for clan/Makefile... no
+configure: error: configure in clan/ failed
+```
+
+Perhaps this can be solved by executing the  `sudo apt-get install bison` command. 
+
+- The following error was encountered when installing `pluto` :
+
+```
+  MAKEINFO candl.info
+/home/sheen/pluto/candl/autoconf/missing: line 81: makeinfo: command not found
+WARNING: 'makeinfo' is missing on your system.
+         You should only need it if you modified a '.texi' file, or
+         any other file indirectly affecting the aspect of the manual.
+         You might want to install the Texinfo package:
+         <https://www.gnu.org/software/texinfo/>
+         The spurious makeinfo call might also be the consequence of
+         using a buggy 'make' (AIX, DU, IRIX), in which case you might
+         want to install GNU make:
+         <https://www.gnu.org/software/make/>
+make[4]: *** [Makefile:487: candl.info] Error 127
+```
+
+Perhaps this can be solved by executing the `sudo apt-get install texinfo` command. 
+
+Part2  Reproduced Results
+---
+
+### 1. Reproduced the Effects of Performance Prediction
+
+The prediction results can be reproduced by executing the following command:
+
+```shell
+cd /home/sheen/lnlamp/polybench_benchmark/
+nohup ./lnlamp_tests_for_judgement.sh &
+```
+
+These commands will generate files: `nohup.out, scripts/benchmark_result_perf-Reliable.log, scripts/benchmark_test.log, and scripts/benchmark_mean_result.log`. The `nohup.out` contains the execution log of the `PrecTuner` and its prediction results; `scripts/benchmark_mean_result.log` and `scripts/benchmark_test.log` is the log of the empirically executed; `scripts/benchmark_result_perf-Reliable.log` is the empirically executed results automatically collated by the script.
+
+**Figure 10** is drawn using the data from the  `nohup.out`  and `scripts/benchmark_result_perf-Reliable.log` files.
+
+### 2. Reproduced the Ablation Study of the Optimizations
+
+The results can be reproduced by executing the following command:
+
+```shell
+cd /home/sheen/lnlamp/polybench_benchmark/
+nohup ./lnlamp_tests_for_performance.sh &
+```
+
+These commands will generate folders: `only-mix`, `schedule`, `schedule_mix`, `schedule_tile`, `schedule_tile_mix`. The results of the respective executions are recorded in `vra.txt` for each of these folders. It should be noted that the last column in  `vra.txt` is the performance speedup, and that all the relevant data from the execution is stored in the `vra` folder. However, as the execution results are stored, these `vra` folders may take up a large amount of hard disk storage space(A folder of that requires 10G), so please delete these runtime data in time to ensure that your machine has sufficient storage space.
+
+**Figure 11** is drawn using the data from the `vra.txt` of `only-mix`, `schedule`, `schedule_mix`, `schedule_tile`, `schedule_tile_mix` folders.
+
+### 3. Reproduced the Compatibility with Error Budgets
+
+The result for an error threshold of `0.1` can be obtained with the following command:
+
+```shell
+cd /home/sheen/lnlamp/polybench_benchmark/
+nohup ./lnlamp_tests_for_performance_err-thr.sh &
+```
+
+These commands will generate file folders-`temp_test_res_-e-0.1` in order to obtain runtime result data(error and performance acceleration),and generate file -`nohup.out` ,which contains the execution log and results of runs at an error threshold of `0.1`. 
+
+The sixth line of the `lnlamp_tests_for_performance_err-thr.sh` script is `err_thr="-e 0.1",` modify `0.1` to `1`, `0.01`,  `0.001`, `0.0001`, `0.00001`, `0.000001`, `0.0000001`, `0.000001` in turn to obtain the results shown in **Figure 13**.
+
+### 4. Reproduced the Comparison with the State of the Art
+
+#### (1) Reproduced the `PrecTuner` performance
+
+The test in this section is the same as **Reproduced the Ablation Study of the Optimizations**, so the corresponding data can be obtained directly from the latter.
+
+#### (2) Reproduced the `LuIs` performance
+
+The results can be reproduced by executing the following command:
+
+```shell
+cd /home/sheen/TAFFO/test/polybench-c-4.2.1-beta/
+export LLVM_DIR=/home/sheen/llvm-project/llvm-install
+nohup ./collect-fe-stats.sh luis_test_res &
+```
+
+These commands will generate folder-`luis_test_res` in order to obtain runtime result data(error and performance acceleration),and generate file -`nohup.out` ,which contains the execution log.
+
+The  `LuIs` performance speedup in the last column in  `luis_test_res/vra.txt`. It should be noted that the Relative error and Absolute error data of  `LuIs` is in  the file - `luis_test_res/vra.txt`.
+
+#### (3) Reproduced the `Pluto` performance
+
+The results can be reproduced by executing the following command:
+
+```shell
+cd /home/sheen/pluto/polybench_benchmark
+nohup ./pluto_part_test.sh &
+```
+
+These commands will generate folder-`pluto_test_result` in order to obtain runtime result data(error and performance acceleration), and generate file -`nohup.out` ,which contains the execution log.
+
+The `Pluto` performance speedup in the last column in  `pluto_test_result/vra.txt`. 
+
+**So, Figure 12 can be drawn using these data. Meanwhile the error data in table2 are also available by these data. **
+
+### 5. Reproduced the Scalability to Parallel Execution
+
+#### (1) Reproduced the `PrecTuner` parallel execution
+
+The results can be reproduced by executing the following command:
+
+```shell
+cd /home/sheen/lnlamp/polybench_benchmark/
+nohup ./lnlamp_tests_for_performance_omp.sh &
+```
+
+These commands will generate folders: `omp_test_res_-o_2`, `omp_test_res_-o_4`, `omp_test_res_-o_8`. The results of the respective executions are recorded in `vra.txt` for each of these folders. 
+
+#### (2) Reproduced the `Pluto` parallel execution
+
+The results can be reproduced by executing the following command:
+
+```shell
+cd /home/sheen/pluto/polybench_benchmark
+nohup ./pluto_part_test_omp.sh &
+```
+
+These commands will generate folders: `pluto_test_result_2`, `pluto_test_result_4`, `pluto_test_result_8`. The results of the respective executions are recorded in `vra.txt` for each of these folders. 
+
+**So, Figure 14 can be drawn using these data. **
+
+### 6. Automatic generation and cleaning of configuration information
+
+In addition, there are a number of `perl` scripts for automated testing in the `/home/sheen/lnlamp/polybench_benchmark/utilities` ,which can be executed to achieve the appropriate functionality with the following commands:
+
+```shell
+perl header-gen.pl ../         # generates header in each directory.
+perl makefile-gen.pl ../ -cfg  # generates make files in each directory.
+perl clean.pl ../              # runs make clean in each directory and then removes Makefile.
+```
+
+### 7. Some of the problems that may be encountered
+
+- If `prectuner` does not output any results or hints, then please use the `cd` command to go to the root directory where the source code is located and re-execute the command. If the same problem still occurs, then please follow the error hints in the log file generated in the source code directory (for example: `lnlamp_internal_usage.py.log`) to solve the corresponding errors. And, in general, you only need to install the corresponding package or tool according to the prompt.
+- If you encountered `lnlamp: error: PPCG Codegen meets errors` errors, Then please execute the `PPCG CMD` command immediately after it and solve the corresponding problem according to the error or prompt message of the command.  Generally, the command takes the form of `ppcg --target c --no-automatic-mixed-precision  <input>.c` or `ppcg --target c -R 50 <input>.c` 
+- If you encountered `fatal error: 'polybench.h' file not found` errors, then execute the  `export CPATH=/home/sheen/lnlamp/polybench_benchmark/utilities:$CPATH` command can solve this error.
+
+
+- If  some error(such as 124 or 127) were encountered when executing `heat-3d` by  `pluto` , perhaps you can resolve any problems you may encounter by executing the following command:
+
+```shell
+# compiler again
+/home/sheen/llvm-project/llvm-install/bin/clang -I./stencils/heat-3d -I./utilities -I./ -DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS -DCONF_GOOD -DLARGE_DATASET -lm -O3 build/heat-3d.out.1.taffotmp.ll -o build/heat-3d.pluto.out
+
+# run and get result
+./taffo_run.sh --times=20
+./taffo_validate.py > result.txt
+```
+
+Part3 Other Notes
+---
+
+In addition, we provide a `Dockerfile`([https://github.com/sheenisme/lnlamp/blob/master/Dockerfile](https://github.com/sheenisme/lnlamp/blob/master/Dockerfile)) file for quick installation, but this installation is not recommended given the instability of performance testing in virtual machines.
+
+
+Part4 Polybench description
+---
+
+The following is the original author's description in polybench:
 
       * * * * * * * * * * * * * * *
       * PolyBench/C 4.2.1 (beta)  *
