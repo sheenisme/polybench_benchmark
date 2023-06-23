@@ -66,7 +66,7 @@ do
     done
 
 
-    make double;
+
     ppcg ${kernel}.c;
     cuda_timing_add ${kernel}_host.cu;
     nvcc ${kernel}_host.cu ${kernel}_kernel.cu /home/sheen/lnlamp/polybench_benchmark/utilities/polybench.cu -DPOLYBENCH_TIME -DPOLYBENCH_STACK_ARRAYS -O3 -o cuda_ppcg.out 2> /dev/null;
