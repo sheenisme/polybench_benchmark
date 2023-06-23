@@ -97,6 +97,10 @@ clean:
 	@ rm -f ____tempfile_time*.txt
 	@ rm -f ____tempfile_*
 	@ rm -f ____lnlamp_*
+	@ rm -f ${kernel}*_host.cu
+	@ rm -f ${kernel}*_kernel.cu
+	@ rm -f ${kernel}*_kernel.hu
+	@ rm -f cuda_*.out
 
 EOF
 
