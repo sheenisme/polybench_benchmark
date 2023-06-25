@@ -1,0 +1,34 @@
+diff --git a/config.mk b/config.mk
+index 83fcdb3..00662c0 100644
+--- a/config.mk
++++ b/config.mk
+@@ -1,7 +1,7 @@
+-CC=/home/sheen/llvm-project/llvm-install/bin/clang
++CC=clang
+ CFLAGS=-O3 
+ CC_OPENMP_FLAGS=
+-POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS
+-PPCG_SCHED_FLAGS=--no-reschedule
++POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_STACK_ARRAYS
++PPCG_SCHED_FLAGS=
+ PPCG_TILE_FLAGS=
+ PPCG_OPENMP_FLAGS=
+diff --git a/utilities/makefile-gen.pl b/utilities/makefile-gen.pl
+index 444d9d9..b4dab30 100755
+--- a/utilities/makefile-gen.pl
++++ b/utilities/makefile-gen.pl
+@@ -115,11 +115,11 @@ if ($GEN_CONFIG) {
+ open FILE, '>'.$TARGET_DIR.'/config.mk';
+ 
+ print FILE << "EOF";
+-CC=/home/sheen/llvm-project/llvm-install/bin/clang
++CC=clang
+ CFLAGS=-O3 
+ CC_OPENMP_FLAGS=
+-POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS
+-PPCG_SCHED_FLAGS=--no-reschedule
++POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_STACK_ARRAYS
++PPCG_SCHED_FLAGS=
+ PPCG_TILE_FLAGS=
+ PPCG_OPENMP_FLAGS=
+ EOF
