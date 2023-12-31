@@ -1,6 +1,6 @@
 This repository is a dedicated repository for testing of `PrecTuner`, which is mainly based on the polybench benchmark.
 
-Replicating data from SC papers:
+Replicating data from our paper:
 ===
 
 Part1  Getting Started Guide
