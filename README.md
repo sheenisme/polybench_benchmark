@@ -66,7 +66,7 @@ cmake -S . -B build -DTAFFO_BUILD_ORTOOLS=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/
 
 cd build/
 make -j$(nproc)
-sudo make install
+make install
 ```
 
 **Note:** This process requires downloading a number of dependencies from `github`. If you have a poor internet connection or a timeout error, please run the `cmake -S . -B build -DTAFFO_BUILD_ORTOOLS=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/TAFFO/taffo-install` command several times until it works.
