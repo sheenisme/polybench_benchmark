@@ -42,10 +42,10 @@ git clone https://github.com/sheenisme/llvm-project.git
 cd llvm-project/
 mkdir llvm-install
 git checkout origin/release/12.x
-cmake -S ./llvm -B llvm-build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Debug" -DLLVM_VERSION_MAJOR="12"  -DLLVM_TARGETS_TO_BUILD="X86" -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;openmp;polly" -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/llvm-project/llvm-install
+cmake -S ./llvm -B llvm-build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_VERSION_MAJOR="12"  -DLLVM_TARGETS_TO_BUILD="X86" -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;openmp;polly" -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_LINK_LLVM_DYLIB=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/llvm-project/llvm-install
 
 cd llvm-build/
-make -j2
+make -j$(nproc)
 make install
 ```
 
@@ -65,7 +65,7 @@ export LLVM_DIR=/home/sheen/llvm-project/llvm-install
 cmake -S . -B build -DTAFFO_BUILD_ORTOOLS=ON -DCMAKE_INSTALL_PREFIX=/home/sheen/TAFFO/taffo-install
 
 cd build/
-make -j2
+make -j$(nproc)
 sudo make install
 ```
 
