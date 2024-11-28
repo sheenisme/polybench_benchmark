@@ -64,44 +64,117 @@ EXTRA_FLAGS=$extra_flags{$kernel}
 
 RATE ?= 50
 
-double: pre-ppcg $kernel-ppcg.c $kernel.h
-	\${VERBOSE} \${CC} -o $kernel-ppcg-double.exe $kernel-ppcg.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLY_ARGS} -DDATA_TYPE_IS_DOUBLE=1 -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+get-amp: ${kernel}.c
+	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}-amp-\${RATE}.c > /dev/null 2>&1
 
-float: pre-ppcg $kernel-ppcg.c $kernel.h
-	\${VERBOSE} \${CC} -o $kernel-ppcg-float.exe  $kernel-ppcg.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLY_ARGS} -DDATA_TYPE_IS_FLOAT=1  -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+get-ppcg:
+	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o ${kernel}-ppcg.c > /dev/null 2>&1
 
-amp: pre-amp $kernel-amp_\${RATE}.c $kernel.h
-	\${VERBOSE} \${CC} -o $kernel-amp_\${RATE}.exe $kernel-amp_\${RATE}.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLY_ARGS} -I. -I$utilityDir $utilityDir/polybench.c \${EXTRA_FLAGS}
+clang2mlir: get-ppcg get-amp
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-amp-\${RATE}.c > ${kernel}-amp-\${RATE}.mlir
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-ppcg.c > ${kernel}-ppcg.mlir
 
-pre-amp: $kernel.c
-	ppcg --target c \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} $kernel.c -o $kernel-amp_\${RATE}.c > /dev/null 2>&1
+extract-kernel: clang2mlir
+	\@awk '\\
+		BEGIN { inside_block = 0; keep_header = 1; } \\
+		/^[ \\t]*module/ { \\
+			keep_header = 0; \\
+		} \\
+		keep_header { \\
+			print; \\
+			next; \\
+		} \\
+		/func.*\@kernel_/ { \\
+			inside_block = 1; \\
+			print; \\
+			next; \\
+		} \\
+		inside_block { \\
+			print; \\
+			if (/return/ && \$\$0 ~ /\\}\\\$\$\/) { \\
+				inside_block = 0; \\
+				next; \\
+			} \\
+			if (/return/) { \\
+				inside_block = 2; \\
+			} \\
+			if (inside_block == 2 && /\\}/) { \\
+				inside_block = 0; \\
+			} \\
+		} \\
+	' ${kernel}-amp-\${RATE}.mlir > kernel_${kernel}-amp-\${RATE}.tmp.mlir
+	\@awk '\\
+		BEGIN { inside_block = 0; keep_header = 1; } \\
+		/^[ \\t]*module/ { \\
+			keep_header = 0; \\
+		} \\
+		keep_header { \\
+			print; \\
+			next; \\
+		} \\
+		/func.*\@kernel_/ { \\
+			inside_block = 1; \\
+			print; \\
+			next; \\
+		} \\
+		inside_block { \\
+			print; \\
+			if (/return/ && \$\$0 ~ /\\}\\\$\$\/) { \\
+				inside_block = 0; \\
+				next; \\
+			} \\
+			if (/return/) { \\
+				inside_block = 2; \\
+			} \\
+			if (inside_block == 2 && /\\}/) { \\
+				inside_block = 0; \\
+			} \\
+		} \\
+	' ${kernel}-ppcg.mlir > kernel_${kernel}-ppcg.tmp.mlir
 
-pre-ppcg:
-	ppcg --target c \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision $kernel.c -o $kernel-ppcg.c > /dev/null 2>&1
+optimization: extract-kernel
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-amp-\${RATE}.tmp.mlir > kernel_${kernel}-amp-\${RATE}.mlir
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-ppcg.tmp.mlir > kernel_${kernel}-ppcg.mlir
+
+translate: optimization
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-amp-\${RATE}.mlir > kernel_${kernel}-amp-\${RATE}.c
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir > kernel_${kernel}-ppcg.c
+
+testfix: translate
+	@ sed -i '1i#include "${kernel}.h"' kernel_${kernel}-amp-\${RATE}.c
+	@ sed -i '1i#include "${kernel}.h"' kernel_${kernel}-ppcg.c
+	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}-amp-\${RATE}.c
+	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}-ppcg.c
+
+all: testfix
+	@ rm -f ${kernel}-amp-\${RATE}.c
+	@ rm -f ${kernel}-ppcg.c
+	@ rm -f ${kernel}-amp-\${RATE}.mlir
+	@ rm -f ${kernel}-ppcg.mlir
+	@ rm -f kernel_${kernel}-amp-\${RATE}.tmp.mlir
+	@ rm -f kernel_${kernel}-ppcg.tmp.mlir
+	@ rm -f kernel_${kernel}-amp-\${RATE}.mlir
+	@ rm -f kernel_${kernel}-ppcg.mlir
+	@ echo 
 
 clean:
-	@ rm -f $kernel-*.exe
-	@ rm -f $kernel-*.c
-	@ rm -f ____tempfile_*.data.polybench
+	@ rm -f ${kernel}-amp-\${RATE}.c
+	@ rm -f ${kernel}-ppcg.c
+	@ rm -f ${kernel}-amp-\${RATE}.mlir
+	@ rm -f ${kernel}-ppcg.mlir
+	@ rm -f kernel_${kernel}-amp-\${RATE}.tmp.mlir
+	@ rm -f kernel_${kernel}-ppcg.tmp.mlir
+	@ rm -f kernel_${kernel}-amp-\${RATE}.mlir
+	@ rm -f kernel_${kernel}-ppcg.mlir
+	@ rm -f kernel_${kernel}-amp-\${RATE}.c
+	@ rm -f kernel_${kernel}-ppcg.c
+	@ rm -f *.exe
+	@ rm -f *.out
+	@ rm -f __tmp_*
 	@ rm -f avg_*.out
-	@ rm -f ${kernel}_lnlamp.c
-	@ rm -f ${kernel}_lnlamp.c.no-tile.c
-	@ rm -f ${kernel}_lnlamp.c.only-mix.c
-	@ rm -f ${kernel}.c.ppcg.no-tile.c
-	@ rm -f ${kernel}.c.ppcg.c
-	@ rm -f ${kernel}.ppcg.c
-	@ rm -f lnlamp_predict_result.png
-	@ rm -f lnlamp_temp_result.txt
-	@ rm -f lnlamp_internal_usage.py.log
-	@ rm -f ____tempfile_data*.csv
 	@ rm -f ____tempfile_time*.txt
 	@ rm -f ____tempfile_*
-	@ rm -f ____lnlamp_*
-	@ rm -f ${kernel}*_host.cu
-	@ rm -f ${kernel}*_kernel.cu
-	@ rm -f ${kernel}*_kernel.hu
-	@ rm -f cuda_*.out
-
+	@ rm -f *.mlir
 EOF
 
         close FILE;
@@ -118,10 +191,26 @@ print FILE << "EOF";
 CC=/home/sheen/llvm-project/llvm-install/bin/clang
 CFLAGS=-O3 
 CC_OPENMP_FLAGS=
-POLY_ARGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS
-PPCG_SCHED_FLAGS=--no-reschedule
+POLYBENCH_FLAGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS
+
+PPCG=/data/dagongcheng/sheensong-test/lnlamp/lnlamp-install/bin/ppcg
+PPCG_TARGET=--target c 
 PPCG_TILE_FLAGS=
 PPCG_OPENMP_FLAGS=
+
+CGEIST=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/polygeist/build/bin/cgeist
+CGEIST_FLAGS=-O0 -g -S -memref-fullrank -raise-scf-to-affine
+CGEIST_LIB=
+CGEIST_INC=-I /usr/lib/gcc/x86_64-linux-gnu/12/include/
+
+OPTIMIZER=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-opt
+OPTIMIZER_COMMON_FLAGS=
+OPTIMIZER_DATAFLOW_FLAGS=
+OPTIMIZER_PIPELINE_FLAGS=
+OPTIMIZER_OTHER_FLAGS=
+
+TRANSLATE=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-translate
+TRANSLATE_FLAGS=-scalehls-emit-hlscpp
 EOF
 
 close FILE;
