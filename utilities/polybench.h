@@ -84,9 +84,9 @@
 #ifndef POLYBENCH_STACK_ARRAYS
 #define POLYBENCH_ARRAY(x) *x
 #ifdef POLYBENCH_ENABLE_INTARRAY_PAD
-#define POLYBENCH_FREE_ARRAY(x) polybench_free_data((void *)x);
+#define POLYBENCH_FREE_ARRAY(x) polybench_free_data((void *) x);
 #else
-#define POLYBENCH_FREE_ARRAY(x) free((void *)x);
+#define POLYBENCH_FREE_ARRAY(x) free((void *) x);
 #endif
 #define POLYBENCH_DECL_VAR(x) (*x)
 #else
@@ -95,156 +95,156 @@
 #define POLYBENCH_DECL_VAR(x) x
 #endif
 /* Macros for using arrays in the function prototypes. */
-#define POLYBENCH_1D(var, dim1, ddim1)                         \
-    var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1) + \
-        POLYBENCH_PADDING_FACTOR]
-#define POLYBENCH_2D(var, dim1, dim2, ddim1, ddim2)            \
-    var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1) + \
-        POLYBENCH_PADDING_FACTOR]                              \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]
-#define POLYBENCH_3D(var, dim1, dim2, dim3, ddim1, ddim2, ddim3)      \
-    var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1) +        \
-        POLYBENCH_PADDING_FACTOR]                                     \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR] \
-       [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]
-#define POLYBENCH_4D(var, dim1, dim2, dim3, dim4, ddim1, ddim2, ddim3, ddim4) \
-    var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1) +                \
-        POLYBENCH_PADDING_FACTOR]                                             \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]         \
-       [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]         \
-       [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]
-#define POLYBENCH_5D(var, dim1, dim2, dim3, dim4, dim5, ddim1, ddim2, ddim3, \
-                     ddim4, ddim5)                                           \
-    var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1) +               \
-        POLYBENCH_PADDING_FACTOR]                                            \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]        \
-       [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]        \
-       [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]        \
-       [POLYBENCH_C99_SELECT(dim5, ddim5) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_1D(var, dim1, ddim1)                                         \
+  var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1)                     \
+      + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_2D(var, dim1, dim2, ddim1, ddim2)                            \
+  var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1)                     \
+      + POLYBENCH_PADDING_FACTOR]                                              \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_3D(var, dim1, dim2, dim3, ddim1, ddim2, ddim3)               \
+  var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1)                     \
+      + POLYBENCH_PADDING_FACTOR]                                              \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_4D(var, dim1, dim2, dim3, dim4, ddim1, ddim2, ddim3, ddim4)  \
+  var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1)                     \
+      + POLYBENCH_PADDING_FACTOR]                                              \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_5D(var, dim1, dim2, dim3, dim4, dim5, ddim1, ddim2, ddim3,   \
+                     ddim4, ddim5)                                             \
+  var[POLYBENCH_RESTRICT POLYBENCH_C99_SELECT(dim1, ddim1)                     \
+      + POLYBENCH_PADDING_FACTOR]                                              \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim5, ddim5) + POLYBENCH_PADDING_FACTOR]
 /* Macros for using arrays within the functions. */
-#define POLYBENCH_1D_F(var, dim1, ddim1) \
-    var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]
-#define POLYBENCH_2D_F(var, dim1, dim2, ddim1, ddim2)                 \
-    var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR] \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]
-#define POLYBENCH_3D_F(var, dim1, dim2, dim3, ddim1, ddim2, ddim3)    \
-    var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR] \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR] \
-       [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]
-#define POLYBENCH_4D_F(var, dim1, dim2, dim3, dim4, ddim1, ddim2, ddim3, \
-                       ddim4)                                            \
-    var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]    \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]    \
-       [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]    \
-       [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_1D_F(var, dim1, ddim1)                                       \
+  var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_2D_F(var, dim1, dim2, ddim1, ddim2)                          \
+  var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_3D_F(var, dim1, dim2, dim3, ddim1, ddim2, ddim3)             \
+  var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]
+#define POLYBENCH_4D_F(var, dim1, dim2, dim3, dim4, ddim1, ddim2, ddim3,       \
+                       ddim4)                                                  \
+  var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]
 #define POLYBENCH_5D_F(var, dim1, dim2, dim3, dim4, dim5, ddim1, ddim2, ddim3, \
                        ddim4, ddim5)                                           \
-    var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]          \
-       [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]          \
-       [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]          \
-       [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]          \
-       [POLYBENCH_C99_SELECT(dim5, ddim5) + POLYBENCH_PADDING_FACTOR]
+  var[POLYBENCH_C99_SELECT(dim1, ddim1) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim2, ddim2) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim3, ddim3) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim4, ddim4) + POLYBENCH_PADDING_FACTOR]            \
+     [POLYBENCH_C99_SELECT(dim5, ddim5) + POLYBENCH_PADDING_FACTOR]
 
 /* Macros to allocate heap arrays.
    Example:
    polybench_alloc_2d_array(N, M, double) => allocates N x M x sizeof(double)
                                           and returns a pointer to the 2d array
  */
-#define POLYBENCH_ALLOC_1D_ARRAY(n1, type)                             \
-    (type(*)[(unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR]) \
-        polybench_alloc_data((unsigned long long int)(n1) +            \
-                                 POLYBENCH_PADDING_FACTOR,             \
-                             sizeof(type))
-#define POLYBENCH_ALLOC_2D_ARRAY(n1, n2, type)                             \
-    (type(*)[(unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR]      \
-            [(unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR])     \
-        polybench_alloc_data(                                              \
-            ((unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR) *    \
-                ((unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR), \
-            sizeof(type))
-#define POLYBENCH_ALLOC_3D_ARRAY(n1, n2, n3, type)                          \
-    (type(*)[(unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n3) + POLYBENCH_PADDING_FACTOR])      \
-        polybench_alloc_data(                                               \
-            ((unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR) *     \
-                ((unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR) * \
-                ((unsigned long long int)(n3) + POLYBENCH_PADDING_FACTOR),  \
-            sizeof(type))
-#define POLYBENCH_ALLOC_4D_ARRAY(n1, n2, n3, n4, type)                      \
-    (type(*)[(unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n3) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n4) + POLYBENCH_PADDING_FACTOR])      \
-        polybench_alloc_data(                                               \
-            ((unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR) *     \
-                ((unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR) * \
-                ((unsigned long long int)(n3) + POLYBENCH_PADDING_FACTOR) * \
-                ((unsigned long long int)(n4) + POLYBENCH_PADDING_FACTOR),  \
-            sizeof(type))
-#define POLYBENCH_ALLOC_5D_ARRAY(n1, n2, n3, n4, n5, type)                  \
-    (type(*)[(unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n3) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n4) + POLYBENCH_PADDING_FACTOR]       \
-            [(unsigned long long int)(n5) + POLYBENCH_PADDING_FACTOR])      \
-        polybench_alloc_data(                                               \
-            ((unsigned long long int)(n1) + POLYBENCH_PADDING_FACTOR) *     \
-                ((unsigned long long int)(n2) + POLYBENCH_PADDING_FACTOR) * \
-                ((unsigned long long int)(n3) + POLYBENCH_PADDING_FACTOR) * \
-                ((unsigned long long int)(n4) + POLYBENCH_PADDING_FACTOR) * \
-                ((unsigned long long int)(n5) + POLYBENCH_PADDING_FACTOR),  \
-            sizeof(type))
+#define POLYBENCH_ALLOC_1D_ARRAY(n1, type)                                     \
+  (type(*)[(unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR])          \
+      polybench_alloc_data((unsigned long long int) (n1)                       \
+                               + POLYBENCH_PADDING_FACTOR,                     \
+                           sizeof(type))
+#define POLYBENCH_ALLOC_2D_ARRAY(n1, n2, type)                                 \
+  (type(*)[(unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR])          \
+      polybench_alloc_data(                                                    \
+          ((unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR)           \
+              * ((unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR),    \
+          sizeof(type))
+#define POLYBENCH_ALLOC_3D_ARRAY(n1, n2, n3, type)                             \
+  (type(*)[(unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n3) + POLYBENCH_PADDING_FACTOR])          \
+      polybench_alloc_data(                                                    \
+          ((unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR)           \
+              * ((unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR)     \
+              * ((unsigned long long int) (n3) + POLYBENCH_PADDING_FACTOR),    \
+          sizeof(type))
+#define POLYBENCH_ALLOC_4D_ARRAY(n1, n2, n3, n4, type)                         \
+  (type(*)[(unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n3) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n4) + POLYBENCH_PADDING_FACTOR])          \
+      polybench_alloc_data(                                                    \
+          ((unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR)           \
+              * ((unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR)     \
+              * ((unsigned long long int) (n3) + POLYBENCH_PADDING_FACTOR)     \
+              * ((unsigned long long int) (n4) + POLYBENCH_PADDING_FACTOR),    \
+          sizeof(type))
+#define POLYBENCH_ALLOC_5D_ARRAY(n1, n2, n3, n4, n5, type)                     \
+  (type(*)[(unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n3) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n4) + POLYBENCH_PADDING_FACTOR]           \
+          [(unsigned long long int) (n5) + POLYBENCH_PADDING_FACTOR])          \
+      polybench_alloc_data(                                                    \
+          ((unsigned long long int) (n1) + POLYBENCH_PADDING_FACTOR)           \
+              * ((unsigned long long int) (n2) + POLYBENCH_PADDING_FACTOR)     \
+              * ((unsigned long long int) (n3) + POLYBENCH_PADDING_FACTOR)     \
+              * ((unsigned long long int) (n4) + POLYBENCH_PADDING_FACTOR)     \
+              * ((unsigned long long int) (n5) + POLYBENCH_PADDING_FACTOR),    \
+          sizeof(type))
 
 /* Macros for array declaration. */
 #ifndef POLYBENCH_STACK_ARRAYS
-#define POLYBENCH_1D_ARRAY_DECL(var, type, dim1, ddim1)        \
-    type POLYBENCH_1D_F(POLYBENCH_DECL_VAR(var), dim1, ddim1); \
-    var = POLYBENCH_ALLOC_1D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1), type);
-#define POLYBENCH_2D_ARRAY_DECL(var, type, dim1, dim2, ddim1, ddim2)        \
-    type POLYBENCH_2D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, ddim1, ddim2); \
-    var = POLYBENCH_ALLOC_2D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1),       \
-                                   POLYBENCH_C99_SELECT(dim2, ddim2), type);
-#define POLYBENCH_3D_ARRAY_DECL(var, type, dim1, dim2, dim3, ddim1, ddim2,       \
-                                ddim3)                                           \
-    type POLYBENCH_3D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, ddim1, ddim2, \
-                        ddim3);                                                  \
-    var = POLYBENCH_ALLOC_3D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1),            \
-                                   POLYBENCH_C99_SELECT(dim2, ddim2),            \
-                                   POLYBENCH_C99_SELECT(dim3, ddim3), type);
-#define POLYBENCH_4D_ARRAY_DECL(var, type, dim1, dim2, dim3, dim4, ddim1,       \
-                                ddim2, ddim3, ddim4)                            \
-    type POLYBENCH_4D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, ddim1, \
-                        ddim2, ddim3, ddim4);                                   \
-    var = POLYBENCH_ALLOC_4D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1),           \
-                                   POLYBENCH_C99_SELECT(dim2, ddim2),           \
-                                   POLYBENCH_C99_SELECT(dim3, ddim3),           \
-                                   POLYBENCH_C99_SELECT(dim4, ddim4), type);
+#define POLYBENCH_1D_ARRAY_DECL(var, type, dim1, ddim1)                        \
+  type POLYBENCH_1D_F(POLYBENCH_DECL_VAR(var), dim1, ddim1);                   \
+  var = POLYBENCH_ALLOC_1D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1), type);
+#define POLYBENCH_2D_ARRAY_DECL(var, type, dim1, dim2, ddim1, ddim2)           \
+  type POLYBENCH_2D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, ddim1, ddim2);      \
+  var = POLYBENCH_ALLOC_2D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1),            \
+                                 POLYBENCH_C99_SELECT(dim2, ddim2), type);
+#define POLYBENCH_3D_ARRAY_DECL(var, type, dim1, dim2, dim3, ddim1, ddim2,     \
+                                ddim3)                                         \
+  type POLYBENCH_3D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, ddim1, ddim2, \
+                      ddim3);                                                  \
+  var = POLYBENCH_ALLOC_3D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1),            \
+                                 POLYBENCH_C99_SELECT(dim2, ddim2),            \
+                                 POLYBENCH_C99_SELECT(dim3, ddim3), type);
+#define POLYBENCH_4D_ARRAY_DECL(var, type, dim1, dim2, dim3, dim4, ddim1,      \
+                                ddim2, ddim3, ddim4)                           \
+  type POLYBENCH_4D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, ddim1,  \
+                      ddim2, ddim3, ddim4);                                    \
+  var = POLYBENCH_ALLOC_4D_ARRAY(POLYBENCH_C99_SELECT(dim1, ddim1),            \
+                                 POLYBENCH_C99_SELECT(dim2, ddim2),            \
+                                 POLYBENCH_C99_SELECT(dim3, ddim3),            \
+                                 POLYBENCH_C99_SELECT(dim4, ddim4), type);
 #define POLYBENCH_5D_ARRAY_DECL(var, type, dim1, dim2, dim3, dim4, dim5,       \
                                 ddim1, ddim2, ddim3, ddim4, ddim5)             \
-    type POLYBENCH_5D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, dim5, \
-                        ddim1, ddim2, ddim3, ddim4, ddim5);                    \
-    var = POLYBENCH_ALLOC_5D_ARRAY(                                            \
-        POLYBENCH_C99_SELECT(dim1, ddim1), POLYBENCH_C99_SELECT(dim2, ddim2),  \
-        POLYBENCH_C99_SELECT(dim3, ddim3), POLYBENCH_C99_SELECT(dim4, ddim4),  \
-        POLYBENCH_C99_SELECT(dim5, ddim5), type);
+  type POLYBENCH_5D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, dim5,   \
+                      ddim1, ddim2, ddim3, ddim4, ddim5);                      \
+  var = POLYBENCH_ALLOC_5D_ARRAY(                                              \
+      POLYBENCH_C99_SELECT(dim1, ddim1), POLYBENCH_C99_SELECT(dim2, ddim2),    \
+      POLYBENCH_C99_SELECT(dim3, ddim3), POLYBENCH_C99_SELECT(dim4, ddim4),    \
+      POLYBENCH_C99_SELECT(dim5, ddim5), type);
 #else
-#define POLYBENCH_1D_ARRAY_DECL(var, type, dim1, ddim1) \
-    type POLYBENCH_1D_F(POLYBENCH_DECL_VAR(var), dim1, ddim1);
-#define POLYBENCH_2D_ARRAY_DECL(var, type, dim1, dim2, ddim1, ddim2) \
-    type POLYBENCH_2D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, ddim1, ddim2);
-#define POLYBENCH_3D_ARRAY_DECL(var, type, dim1, dim2, dim3, ddim1, ddim2,       \
-                                ddim3)                                           \
-    type POLYBENCH_3D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, ddim1, ddim2, \
-                        ddim3);
-#define POLYBENCH_4D_ARRAY_DECL(var, type, dim1, dim2, dim3, dim4, ddim1,       \
-                                ddim2, ddim3, ddim4)                            \
-    type POLYBENCH_4D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, ddim1, \
-                        ddim2, ddim3, ddim4);
+#define POLYBENCH_1D_ARRAY_DECL(var, type, dim1, ddim1)                        \
+  type POLYBENCH_1D_F(POLYBENCH_DECL_VAR(var), dim1, ddim1);
+#define POLYBENCH_2D_ARRAY_DECL(var, type, dim1, dim2, ddim1, ddim2)           \
+  type POLYBENCH_2D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, ddim1, ddim2);
+#define POLYBENCH_3D_ARRAY_DECL(var, type, dim1, dim2, dim3, ddim1, ddim2,     \
+                                ddim3)                                         \
+  type POLYBENCH_3D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, ddim1, ddim2, \
+                      ddim3);
+#define POLYBENCH_4D_ARRAY_DECL(var, type, dim1, dim2, dim3, dim4, ddim1,      \
+                                ddim2, ddim3, ddim4)                           \
+  type POLYBENCH_4D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, ddim1,  \
+                      ddim2, ddim3, ddim4);
 #define POLYBENCH_5D_ARRAY_DECL(var, type, dim1, dim2, dim3, dim4, dim5,       \
                                 ddim1, ddim2, ddim3, ddim4, ddim5)             \
-    type POLYBENCH_5D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, dim5, \
-                        ddim1, ddim2, ddim3, ddim4, ddim5);
+  type POLYBENCH_5D_F(POLYBENCH_DECL_VAR(var), dim1, dim2, dim3, dim4, dim5,   \
+                      ddim1, ddim2, ddim3, ddim4, ddim5);
 #endif
 
 /* Dead-code elimination macros. Use argc/argv for the run-time check. */
@@ -255,18 +255,18 @@
 #endif
 
 #define POLYBENCH_DUMP_TARGET stderr
-#define POLYBENCH_DUMP_START \
-    fprintf(POLYBENCH_DUMP_TARGET, "==BEGIN DUMP_ARRAYS==\n")
-#define POLYBENCH_DUMP_FINISH \
-    fprintf(POLYBENCH_DUMP_TARGET, "==END   DUMP_ARRAYS==\n")
-#define POLYBENCH_DUMP_BEGIN(s) \
-    fprintf(POLYBENCH_DUMP_TARGET, "begin dump: %s", s)
-#define POLYBENCH_DUMP_END(s) \
-    fprintf(POLYBENCH_DUMP_TARGET, "\nend   dump: %s\n", s)
+#define POLYBENCH_DUMP_START                                                   \
+  fprintf(POLYBENCH_DUMP_TARGET, "==BEGIN DUMP_ARRAYS==\n")
+#define POLYBENCH_DUMP_FINISH                                                  \
+  fprintf(POLYBENCH_DUMP_TARGET, "==END   DUMP_ARRAYS==\n")
+#define POLYBENCH_DUMP_BEGIN(s)                                                \
+  fprintf(POLYBENCH_DUMP_TARGET, "begin dump: %s", s)
+#define POLYBENCH_DUMP_END(s)                                                  \
+  fprintf(POLYBENCH_DUMP_TARGET, "\nend   dump: %s\n", s)
 
-#define polybench_prevent_dce(func) \
-    POLYBENCH_DCE_ONLY_CODE         \
-    func
+#define polybench_prevent_dce(func)                                            \
+  POLYBENCH_DCE_ONLY_CODE                                                      \
+  func
 
 /* Performance-related instrumentation. See polybench.c */
 #define polybench_start_instruments
@@ -279,20 +279,20 @@ extern const unsigned int polybench_papi_eventlist[];
 #undef polybench_start_instruments
 #undef polybench_stop_instruments
 #undef polybench_print_instruments
-#define polybench_set_papi_thread_report(x) \
-    polybench_papi_counters_threadid = x;
-#define polybench_start_instruments                               \
-    polybench_prepare_instruments();                              \
-    polybench_papi_init();                                        \
-    int evid;                                                     \
-    for (evid = 0; polybench_papi_eventlist[evid] != 0; evid++) { \
-        if (polybench_papi_start_counter(evid))                   \
-            continue;
+#define polybench_set_papi_thread_report(x)                                    \
+  polybench_papi_counters_threadid = x;
+#define polybench_start_instruments                                            \
+  polybench_prepare_instruments();                                             \
+  polybench_papi_init();                                                       \
+  int evid;                                                                    \
+  for (evid = 0; polybench_papi_eventlist[evid] != 0; evid++) {                \
+    if (polybench_papi_start_counter(evid))                                    \
+      continue;
 
-#define polybench_stop_instruments     \
-    polybench_papi_stop_counter(evid); \
-    }                                  \
-    polybench_papi_close();
+#define polybench_stop_instruments                                             \
+  polybench_papi_stop_counter(evid);                                           \
+  }                                                                            \
+  polybench_papi_close();
 
 #define polybench_print_instruments polybench_papi_print();
 #endif

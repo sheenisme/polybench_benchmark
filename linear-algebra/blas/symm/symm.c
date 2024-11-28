@@ -76,8 +76,8 @@ static void kernel_symm(int m, int n,
                         DATA_TYPE POLYBENCH_2D(A, M, M, m, m),
                         DATA_TYPE POLYBENCH_2D(B, M, N, m, n))
 {
-  int i, j, k;
-  DATA_TYPE temp2;
+  int i = 0, j = 0, k = 0;
+  DATA_TYPE temp2 = SCALAR_VAL(0.0);
   DATA_TYPE zero = SCALAR_VAL(0.0);
 
 // BLAS PARAMS
