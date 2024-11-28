@@ -10,7 +10,7 @@ my $TARGET_DIR = ".";
 
 if ($#ARGV != 0 && $#ARGV != 1) {
    printf("usage perl run-all.pl target-dir [option] [output-file]\n");
-   printf("the option: 1.Reliable performance test(default);2.Performance distribution test;3.Performance and Error test;4.LNLAMP test.\n");
+   printf("the option: 1.run all cases; 2.clean.\n");
    exit(1);
 }
 
@@ -50,20 +50,11 @@ foreach $cat (@categories) {
         my $targetDir = $target.'/'.$dir;  
         my $command = "";
         if ($OPTION == 1) {
-            $command = "cd ../scripts; ./Reliable_perf_test.sh $targetDir $kernel;";
-        }elsif($OPTION == 2) {
-            $command = "cd ../scripts; ./performance_testing.sh $targetDir $kernel; ./get_performance_test_results.sh $kernel";
-        }elsif($OPTION == 3) {
-            $command = "cd ../scripts; ./experimental_tests.sh  $targetDir $kernel; ./get_experimental_test_result.sh $kernel";
-        }elsif($OPTION == 4) {
-            $command = "cd $targetDir; make clean; lnlamp $kernel.c";
-            # $command = "cd $targetDir; make amp; ./${kernel}-amp_50.exe 2> /dev/null ;";
-        }else {
-            # $command = "cd $targetDir; make clean; make; ./$kernel";
-            printf("the error option!!!\n");
-            exit(1);
-        }              
-           $command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
+            $command = "cd $targetDir; make clean; make all;";
+        }else{
+            $command = "cd $targetDir; make clean;";
+        }
+        $command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
         print($command."\n");
         system($command);
    }
