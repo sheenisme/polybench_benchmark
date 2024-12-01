@@ -204,7 +204,7 @@ CGEIST_LIB=
 CGEIST_INC=-I /usr/lib/gcc/x86_64-linux-gnu/12/include/
 
 OPTIMIZER=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-opt
-OPTIMIZER_COMMON_FLAGS=
+OPTIMIZER_COMMON_FLAGS=--canonicalize --cse
 OPTIMIZER_DATAFLOW_FLAGS=
 OPTIMIZER_PIPELINE_FLAGS=
 OPTIMIZER_OTHER_FLAGS=
