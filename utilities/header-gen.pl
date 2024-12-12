@@ -76,7 +76,7 @@ sub generateHeader() {
       for (my $i = 0; $i <= $#params; $i++) {
          $paramDefs .= '#   define '.$params[$i].' '.$sizes[$i]."\n";
       }
-      $paramDefs .= '#  endif '."\n\n";
+      $paramDefs .= '#  endif'."\n\n";
    }
 
    my $paramCheck = '# if';
@@ -103,9 +103,9 @@ print HFILE << "EOF";
 
 $integerSupport
 
-/* Default to LARGE_DATASET. */
+/* Default to SMALL_DATASET. */
 # if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(MEDIUM_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
-#  define LARGE_DATASET
+#  define SMALL_DATASET
 # endif
 
 $paramCheck
