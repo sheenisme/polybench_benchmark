@@ -1,0 +1,24 @@
+{
+    "frequency": "100MHz",
+    "dsp": 2200,
+    "bram": 2800,
+    "dsp_usage": {
+        "fadd": 100,
+        "fmul": 300,
+        "fdiv": 500,
+        "fcmp": 200,
+        "fexp": 70
+    },
+    "100MHz": {
+        "fadd": 4,
+        "fmul": 3,
+        "fdiv": 15,
+        "fcmp": 1,
+        "fexp": 8,
+        "fadd_delay": 7.25,
+        "fmul_delay": 5.7,
+        "fdiv_delay": 6.07,
+        "fcmp_delay": 6.4,
+        "fexp_delay": 7.68
+    }
+}

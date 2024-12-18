@@ -53,11 +53,14 @@ foreach $key (keys %categories) {
         my $file = $target.'/'.$dir.'/Makefile';
         my $polybenchRoot = '../'x$categories{$key};
         my $configFile = $polybenchRoot.'config.mk';
+		my $jsonConfigFile = $polybenchRoot.'config.json';
         my $utilityDir = $polybenchRoot.'utilities';
 
         open FILE, ">$file" or die "failed to open $file.";
 
 print FILE << "EOF";
+KERNEL=$kernel
+
 include $configFile
 
 EXTRA_FLAGS=$extra_flags{$kernel}
@@ -204,10 +207,10 @@ CGEIST_LIB=
 CGEIST_INC=-I /usr/lib/gcc/x86_64-linux-gnu/12/include/
 
 OPTIMIZER=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-opt
-OPTIMIZER_COMMON_FLAGS=--canonicalize --cse
+OPTIMIZER_COMMON_FLAGS=--scalehls-func-preprocess="top-func=kernel_\${KERNEL}"
 OPTIMIZER_DATAFLOW_FLAGS=
-OPTIMIZER_PIPELINE_FLAGS=
-OPTIMIZER_OTHER_FLAGS=
+OPTIMIZER_PIPELINE_FLAGS=--scalehls-func-pipelining="target-func=kernel_\${KERNEL}"
+OPTIMIZER_OTHER_FLAGS=--canonicalize --cse
 
 TRANSLATE=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-translate
 TRANSLATE_FLAGS=-scalehls-emit-hlscpp
