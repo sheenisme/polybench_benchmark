@@ -20,7 +20,7 @@
 
 #ifdef SMALL_DATASET
 #define TSTEPS 40
-#define M 1
+#define M 2
 #define N 20
 #endif
 

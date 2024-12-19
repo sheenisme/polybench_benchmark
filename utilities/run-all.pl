@@ -10,12 +10,12 @@ my $TARGET_DIR = ".";
 
 if ($#ARGV != 0 && $#ARGV != 1) {
    printf("usage perl run-all.pl target-dir [option] [output-file]\n");
-   printf("the option: 1.run all cases; 2.clean.\n");
+   printf("the option: 1.run all cases; 2.run origin and clean.\n");
    exit(1);
 }
 
 
-
+# parse arguments
 if ($#ARGV >= 0) {
    $TARGET_DIR = $ARGV[0];
 }
@@ -38,6 +38,20 @@ my @categories = ('linear-algebra/blas',
                   'stencils',
                   'medley');
 
+# set CPATH
+use Cwd 'abs_path';
+my $script_path = abs_path($0);
+$script_path =~ s/\/[^\/]+$//;
+if (defined $ENV{CPATH}) {
+    $ENV{CPATH} .= ":$script_path";
+} else {
+    $ENV{CPATH} = $script_path;
+}
+
+# set stack size
+my $runSets = "ulimit -s unlimited";
+print($runSets."\n");
+system($runSets);
 
 foreach $cat (@categories) {
    my $target = $TARGET_DIR.'/'.$cat;
@@ -52,7 +66,7 @@ foreach $cat (@categories) {
         if ($OPTION == 1) {
             $command = "cd $targetDir; make clean; make all;";
         }else{
-            $command = "cd $targetDir; make clean;";
+            $command = "cd $targetDir; make run_origin; make clean;";
         }
         $command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
         print($command."\n");

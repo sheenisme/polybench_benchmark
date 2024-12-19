@@ -74,8 +74,8 @@ get-ppcg:
 	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o ${kernel}-ppcg.c > /dev/null 2>&1
 
 clang2mlir: get-ppcg get-amp
-	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-amp-\${RATE}.c > ${kernel}-amp-\${RATE}.mlir
-	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-ppcg.c > ${kernel}-ppcg.mlir
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-amp-\${RATE}.c -o ${kernel}-amp-\${RATE}.mlir
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-ppcg.c -o ${kernel}-ppcg.mlir
 
 extract-kernel: clang2mlir
 	\@awk '\\
@@ -136,12 +136,12 @@ extract-kernel: clang2mlir
 	' ${kernel}-ppcg.mlir > kernel_${kernel}-ppcg.tmp.mlir
 
 optimization: extract-kernel
-	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-amp-\${RATE}.tmp.mlir > kernel_${kernel}-amp-\${RATE}.mlir
-	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-ppcg.tmp.mlir > kernel_${kernel}-ppcg.mlir
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-amp-\${RATE}.tmp.mlir -o kernel_${kernel}-amp-\${RATE}.mlir
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-ppcg.tmp.mlir -o kernel_${kernel}-ppcg.mlir
 
 translate: optimization
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-amp-\${RATE}.mlir > kernel_${kernel}-amp-\${RATE}.c
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir > kernel_${kernel}-ppcg.c
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-amp-\${RATE}.mlir -o kernel_${kernel}-amp-\${RATE}.c
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir         -o kernel_${kernel}-ppcg.c
 
 testfix: translate
 	@ sed -i '1i#include "${kernel}.h"' kernel_${kernel}-amp-\${RATE}.c
@@ -149,7 +149,12 @@ testfix: translate
 	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}-amp-\${RATE}.c
 	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}-ppcg.c
 
-all: testfix
+run_origin:
+	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
+	./$kernel-origon.exe
+
+all: testfix run_origin
+	@ rm -f ${kernel}-origon.exe
 	@ rm -f ${kernel}-amp-\${RATE}.c
 	@ rm -f ${kernel}-ppcg.c
 	@ rm -f ${kernel}-amp-\${RATE}.mlir
@@ -158,9 +163,10 @@ all: testfix
 	@ rm -f kernel_${kernel}-ppcg.tmp.mlir
 	@ rm -f kernel_${kernel}-amp-\${RATE}.mlir
 	@ rm -f kernel_${kernel}-ppcg.mlir
-	@ echo 
+	@ echo "Done"
 
 clean:
+	@ rm -f ${kernel}-origon.exe
 	@ rm -f ${kernel}-amp-\${RATE}.c
 	@ rm -f ${kernel}-ppcg.c
 	@ rm -f ${kernel}-amp-\${RATE}.mlir
@@ -191,10 +197,10 @@ if ($GEN_CONFIG) {
 open FILE, '>'.$TARGET_DIR.'/config.mk';
 
 print FILE << "EOF";
-CC=/home/sheen/llvm-project/llvm-install/bin/clang
+CC=gcc
 CFLAGS=-O3 
 CC_OPENMP_FLAGS=
-POLYBENCH_FLAGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS
+POLYBENCH_FLAGS=-DPOLYBENCH_TIME -DPOLYBENCH_STACK_ARRAYS
 
 PPCG=/data/dagongcheng/sheensong-test/lnlamp/lnlamp-install/bin/ppcg
 PPCG_TARGET=--target c 
@@ -202,7 +208,7 @@ PPCG_TILE_FLAGS=
 PPCG_OPENMP_FLAGS=
 
 CGEIST=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/polygeist/build/bin/cgeist
-CGEIST_FLAGS=-O0 -g -S -memref-fullrank -raise-scf-to-affine
+CGEIST_FLAGS=-O0 -g -S -memref-fullrank
 CGEIST_LIB=
 CGEIST_INC=-I /usr/lib/gcc/x86_64-linux-gnu/12/include/
 
