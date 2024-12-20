@@ -24,9 +24,9 @@
 static void init_array(int m, int n,
                        DATA_TYPE *alpha,
                        DATA_TYPE *beta,
-                       DATA_TYPE POLYBENCH_2D(C, M, N, m, n),
-                       DATA_TYPE POLYBENCH_2D(A, M, M, m, m),
-                       DATA_TYPE POLYBENCH_2D(B, M, N, m, n))
+                       DATA_TYPE POLYBENCH_2D(C, SIZE_M, SIZE_N, m, n),
+                       DATA_TYPE POLYBENCH_2D(A, SIZE_M, SIZE_M, m, m),
+                       DATA_TYPE POLYBENCH_2D(B, SIZE_M, SIZE_N, m, n))
 {
   int i, j;
 
@@ -50,7 +50,7 @@ static void init_array(int m, int n,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int m, int n,
-                        DATA_TYPE POLYBENCH_2D(C, M, N, m, n))
+                        DATA_TYPE POLYBENCH_2D(C, SIZE_M, SIZE_N, m, n))
 {
   int i, j;
 
@@ -72,9 +72,9 @@ static void print_array(int m, int n,
 static void kernel_symm(int m, int n,
                         DATA_TYPE alpha,
                         DATA_TYPE beta,
-                        DATA_TYPE POLYBENCH_2D(C, M, N, m, n),
-                        DATA_TYPE POLYBENCH_2D(A, M, M, m, m),
-                        DATA_TYPE POLYBENCH_2D(B, M, N, m, n))
+                        DATA_TYPE POLYBENCH_2D(C, SIZE_M, SIZE_N, m, n),
+                        DATA_TYPE POLYBENCH_2D(A, SIZE_M, SIZE_M, m, m),
+                        DATA_TYPE POLYBENCH_2D(B, SIZE_M, SIZE_N, m, n))
 {
   int i = 0, j = 0, k = 0;
   DATA_TYPE temp2 = SCALAR_VAL(0.0);
@@ -89,8 +89,8 @@ static void kernel_symm(int m, int n,
 //  C is MxN
 // note that due to Fortran array layout, the code below more closely resembles upper triangular case in BLAS
 #pragma scop
-  for (i = 0; i < _PB_M; i++)
-    for (j = 0; j < _PB_N; j++)
+  for (i = 0; i < _PB_SIZE_M; i++)
+    for (j = 0; j < _PB_SIZE_N; j++)
     {
       temp2 = zero;
       for (k = 0; k < i; k++)
@@ -109,15 +109,15 @@ static void kernel_symm(int m, int n,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int m = M;
-  int n = N;
+  int m = SIZE_M;
+  int n = SIZE_N;
 
   /* Variable declaration/allocation. */
   DATA_TYPE alpha;
   DATA_TYPE beta;
-  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, M, N, m, n);
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, M, M, m, m);
-  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, M, N, m, n);
+  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, SIZE_M, SIZE_N, m, n);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_M, SIZE_M, m, m);
+  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, SIZE_M, SIZE_N, m, n);
 
   /* Initialize array(s). */
   init_array(m, n, &alpha, &beta,

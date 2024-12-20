@@ -23,21 +23,21 @@
 /* Array initialization. */
 static void init_array(int m, int n,
                        DATA_TYPE *float_n,
-                       DATA_TYPE POLYBENCH_2D(data, N, M, n, m))
+                       DATA_TYPE POLYBENCH_2D(data, SIZE_N, SIZE_M, n, m))
 {
   int i, j;
 
   *float_n = (DATA_TYPE)n;
 
-  for (i = 0; i < N; i++)
-    for (j = 0; j < M; j++)
-      data[i][j] = ((DATA_TYPE)i * j) / M;
+  for (i = 0; i < n; i++)
+    for (j = 0; j < m; j++)
+      data[i][j] = ((DATA_TYPE)i * j) / m;
 }
 
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int m,
-                        DATA_TYPE POLYBENCH_2D(cov, M, M, m, m))
+                        DATA_TYPE POLYBENCH_2D(cov, SIZE_M, SIZE_M, m, m))
 
 {
   int i, j;
@@ -59,34 +59,34 @@ static void print_array(int m,
    including the call and return. */
 static void kernel_covariance(int m, int n,
                               DATA_TYPE float_n,
-                              DATA_TYPE POLYBENCH_2D(data, N, M, n, m),
-                              DATA_TYPE POLYBENCH_2D(cov, M, M, m, m),
-                              DATA_TYPE POLYBENCH_1D(mean, M, m))
+                              DATA_TYPE POLYBENCH_2D(data, SIZE_N, SIZE_M, n, m),
+                              DATA_TYPE POLYBENCH_2D(cov, SIZE_M, SIZE_M, m, m),
+                              DATA_TYPE POLYBENCH_1D(mean, SIZE_M, m))
 {
   int i, j, k;
   DATA_TYPE one = SCALAR_VAL(1.0);
   DATA_TYPE zero = SCALAR_VAL(0.0);
 
 #pragma scop
-  for (j = 0; j < _PB_M; j++)
+  for (j = 0; j < _PB_SIZE_M; j++)
   {
     mean[j] = zero;
-    for (i = 0; i < _PB_N; i++)
+    for (i = 0; i < _PB_SIZE_N; i++)
       mean[j] += data[i][j];
     mean[j] /= float_n;
   }
 
-  for (i = 0; i < _PB_N; i++)
-    for (j = 0; j < _PB_M; j++)
+  for (i = 0; i < _PB_SIZE_N; i++)
+    for (j = 0; j < _PB_SIZE_M; j++)
       data[i][j] -= mean[j];
 #ifndef NO_PENCIL_KILL
   __pencil_kill(mean);
 #endif
-  for (i = 0; i < _PB_M; i++)
-    for (j = i; j < _PB_M; j++)
+  for (i = 0; i < _PB_SIZE_M; i++)
+    for (j = i; j < _PB_SIZE_M; j++)
     {
       cov[i][j] = zero;
-      for (k = 0; k < _PB_N; k++)
+      for (k = 0; k < _PB_SIZE_N; k++)
         cov[i][j] += data[k][i] * data[k][j];
       cov[i][j] /= (float_n - one);
       cov[j][i] = cov[i][j];
@@ -100,14 +100,14 @@ static void kernel_covariance(int m, int n,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int n = N;
-  int m = M;
+  int n = SIZE_N;
+  int m = SIZE_M;
 
   /* Variable declaration/allocation. */
   DATA_TYPE float_n;
-  POLYBENCH_2D_ARRAY_DECL(data, DATA_TYPE, N, M, n, m);
-  POLYBENCH_2D_ARRAY_DECL(cov, DATA_TYPE, M, M, m, m);
-  POLYBENCH_1D_ARRAY_DECL(mean, DATA_TYPE, M, m);
+  POLYBENCH_2D_ARRAY_DECL(data, DATA_TYPE, SIZE_N, SIZE_M, n, m);
+  POLYBENCH_2D_ARRAY_DECL(cov, DATA_TYPE, SIZE_M, SIZE_M, m, m);
+  POLYBENCH_1D_ARRAY_DECL(mean, DATA_TYPE, SIZE_M, m);
 
   /* Initialize array(s). */
   init_array(m, n, &float_n, POLYBENCH_ARRAY(data));

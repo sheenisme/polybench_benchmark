@@ -24,9 +24,9 @@
 static void init_array(int n,
                        DATA_TYPE *alpha,
                        DATA_TYPE *beta,
-                       DATA_TYPE POLYBENCH_2D(A, N, N, n, n),
-                       DATA_TYPE POLYBENCH_2D(B, N, N, n, n),
-                       DATA_TYPE POLYBENCH_1D(x, N, n))
+                       DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_N, n, n),
+                       DATA_TYPE POLYBENCH_2D(B, SIZE_N, SIZE_N, n, n),
+                       DATA_TYPE POLYBENCH_1D(x, SIZE_N, n))
 {
   int i, j;
 
@@ -46,7 +46,7 @@ static void init_array(int n,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int n,
-                        DATA_TYPE POLYBENCH_1D(y, N, n))
+                        DATA_TYPE POLYBENCH_1D(y, SIZE_N, n))
 
 {
   int i;
@@ -68,21 +68,21 @@ static void print_array(int n,
 static void kernel_gesummv(int n,
                            DATA_TYPE alpha,
                            DATA_TYPE beta,
-                           DATA_TYPE POLYBENCH_2D(A, N, N, n, n),
-                           DATA_TYPE POLYBENCH_2D(B, N, N, n, n),
-                           DATA_TYPE POLYBENCH_1D(tmp, N, n),
-                           DATA_TYPE POLYBENCH_1D(x, N, n),
-                           DATA_TYPE POLYBENCH_1D(y, N, n))
+                           DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_N, n, n),
+                           DATA_TYPE POLYBENCH_2D(B, SIZE_N, SIZE_N, n, n),
+                           DATA_TYPE POLYBENCH_1D(tmp, SIZE_N, n),
+                           DATA_TYPE POLYBENCH_1D(x, SIZE_N, n),
+                           DATA_TYPE POLYBENCH_1D(y, SIZE_N, n))
 {
   int i, j;
   DATA_TYPE zero = SCALAR_VAL(0.0);
 
 #pragma scop
-  for (i = 0; i < _PB_N; i++)
+  for (i = 0; i < _PB_SIZE_N; i++)
   {
     tmp[i] = zero;
     y[i] = zero;
-    for (j = 0; j < _PB_N; j++)
+    for (j = 0; j < _PB_SIZE_N; j++)
     {
       tmp[i] = A[i][j] * x[j] + tmp[i];
       y[i] = B[i][j] * x[j] + y[i];
@@ -98,16 +98,16 @@ static void kernel_gesummv(int n,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int n = N;
+  int n = SIZE_N;
 
   /* Variable declaration/allocation. */
   DATA_TYPE alpha;
   DATA_TYPE beta;
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, N, N, n, n);
-  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, N, N, n, n);
-  POLYBENCH_1D_ARRAY_DECL(tmp, DATA_TYPE, N, n);
-  POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, N, n);
-  POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, N, n);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_N, SIZE_N, n, n);
+  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, SIZE_N, SIZE_N, n, n);
+  POLYBENCH_1D_ARRAY_DECL(tmp, DATA_TYPE, SIZE_N, n);
+  POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, SIZE_N, n);
+  POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, SIZE_N, n);
 
   /* Initialize array(s). */
   init_array(n, &alpha, &beta,

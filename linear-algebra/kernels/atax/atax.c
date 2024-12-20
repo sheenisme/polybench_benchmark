@@ -22,8 +22,8 @@
 
 /* Array initialization. */
 static void init_array(int m, int n,
-                       DATA_TYPE POLYBENCH_2D(A, M, N, m, n),
-                       DATA_TYPE POLYBENCH_1D(x, N, n))
+                       DATA_TYPE POLYBENCH_2D(A, SIZE_M, SIZE_N, m, n),
+                       DATA_TYPE POLYBENCH_1D(x, SIZE_N, n))
 {
   int i, j;
   DATA_TYPE fn;
@@ -39,7 +39,7 @@ static void init_array(int m, int n,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int n,
-                        DATA_TYPE POLYBENCH_1D(y, N, n))
+                        DATA_TYPE POLYBENCH_1D(y, SIZE_N, n))
 
 {
   int i;
@@ -59,23 +59,23 @@ static void print_array(int n,
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
 static void kernel_atax(int m, int n,
-                        DATA_TYPE POLYBENCH_2D(A, M, N, m, n),
-                        DATA_TYPE POLYBENCH_1D(x, N, n),
-                        DATA_TYPE POLYBENCH_1D(y, N, n),
-                        DATA_TYPE POLYBENCH_1D(tmp, M, m))
+                        DATA_TYPE POLYBENCH_2D(A, SIZE_M, SIZE_N, m, n),
+                        DATA_TYPE POLYBENCH_1D(x, SIZE_N, n),
+                        DATA_TYPE POLYBENCH_1D(y, SIZE_N, n),
+                        DATA_TYPE POLYBENCH_1D(tmp, SIZE_M, m))
 {
   int i, j;
   DATA_TYPE zero = SCALAR_VAL(0.0);
 
 #pragma scop
-  for (i = 0; i < _PB_N; i++)
+  for (i = 0; i < _PB_SIZE_N; i++)
     y[i] = zero;
-  for (i = 0; i < _PB_M; i++)
+  for (i = 0; i < _PB_SIZE_M; i++)
   {
     tmp[i] = zero;
-    for (j = 0; j < _PB_N; j++)
+    for (j = 0; j < _PB_SIZE_N; j++)
       tmp[i] = tmp[i] + A[i][j] * x[j];
-    for (j = 0; j < _PB_N; j++)
+    for (j = 0; j < _PB_SIZE_N; j++)
       y[j] = y[j] + A[i][j] * tmp[i];
 #ifndef NO_PENCIL_KILL
     __pencil_kill(tmp[i]);
@@ -87,14 +87,14 @@ static void kernel_atax(int m, int n,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int m = M;
-  int n = N;
+  int m = SIZE_M;
+  int n = SIZE_N;
 
   /* Variable declaration/allocation. */
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, M, N, m, n);
-  POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, N, n);
-  POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, N, n);
-  POLYBENCH_1D_ARRAY_DECL(tmp, DATA_TYPE, M, m);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_M, SIZE_N, m, n);
+  POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, SIZE_N, n);
+  POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, SIZE_N, n);
+  POLYBENCH_1D_ARRAY_DECL(tmp, DATA_TYPE, SIZE_M, m);
 
   /* Initialize array(s). */
   init_array(m, n, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x));

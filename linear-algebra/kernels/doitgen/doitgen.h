@@ -10,44 +10,44 @@
 #define SMALL_DATASET
 #endif
 
-#if !defined(NQ) && !defined(NR) && !defined(NP)
+#if !defined(SIZE_NQ) && !defined(SIZE_NR) && !defined(SIZE_NP)
 /* Define sample dataset sizes. */
 #ifdef MINI_DATASET
-#define NQ 8
-#define NR 10
-#define NP 12
+#define SIZE_NQ 8
+#define SIZE_NR 10
+#define SIZE_NP 12
 #endif
 
 #ifdef SMALL_DATASET
-#define NQ 20
-#define NR 25
-#define NP 30
+#define SIZE_NQ 20
+#define SIZE_NR 25
+#define SIZE_NP 30
 #endif
 
 #ifdef MEDIUM_DATASET
-#define NQ 40
-#define NR 50
-#define NP 60
+#define SIZE_NQ 40
+#define SIZE_NR 50
+#define SIZE_NP 60
 #endif
 
 #ifdef LARGE_DATASET
-#define NQ 140
-#define NR 150
-#define NP 160
+#define SIZE_NQ 140
+#define SIZE_NR 150
+#define SIZE_NP 160
 #endif
 
 #ifdef EXTRALARGE_DATASET
-#define NQ 220
-#define NR 250
-#define NP 270
+#define SIZE_NQ 220
+#define SIZE_NR 250
+#define SIZE_NP 270
 #endif
 
 
-#endif /* !(NQ NR NP) */
+#endif /* !(SIZE_NQ SIZE_NR SIZE_NP) */
 
-#define _PB_NQ POLYBENCH_LOOP_BOUND(NQ, nq)
-#define _PB_NR POLYBENCH_LOOP_BOUND(NR, nr)
-#define _PB_NP POLYBENCH_LOOP_BOUND(NP, np)
+#define _PB_SIZE_NQ POLYBENCH_LOOP_BOUND(SIZE_NQ, size_nq)
+#define _PB_SIZE_NR POLYBENCH_LOOP_BOUND(SIZE_NR, size_nr)
+#define _PB_SIZE_NP POLYBENCH_LOOP_BOUND(SIZE_NP, size_np)
 
 
 /* Default data type */

@@ -22,9 +22,9 @@
 
 /* Array initialization. */
 static void init_array(int m, int n,
-                       DATA_TYPE POLYBENCH_2D(A, N, M, n, m),
-                       DATA_TYPE POLYBENCH_1D(r, N, n),
-                       DATA_TYPE POLYBENCH_1D(p, M, m))
+                       DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_M, n, m),
+                       DATA_TYPE POLYBENCH_1D(r, SIZE_N, n),
+                       DATA_TYPE POLYBENCH_1D(p, SIZE_M, m))
 {
   int i, j;
 
@@ -41,8 +41,8 @@ static void init_array(int m, int n,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int m, int n,
-                        DATA_TYPE POLYBENCH_1D(s, M, m),
-                        DATA_TYPE POLYBENCH_1D(q, N, n))
+                        DATA_TYPE POLYBENCH_1D(s, SIZE_M, m),
+                        DATA_TYPE POLYBENCH_1D(q, SIZE_N, n))
 
 {
   int i;
@@ -70,22 +70,22 @@ static void print_array(int m, int n,
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
 static void kernel_bicg(int m, int n,
-                        DATA_TYPE POLYBENCH_2D(A, N, M, n, m),
-                        DATA_TYPE POLYBENCH_1D(s, M, m),
-                        DATA_TYPE POLYBENCH_1D(q, N, n),
-                        DATA_TYPE POLYBENCH_1D(p, M, m),
-                        DATA_TYPE POLYBENCH_1D(r, N, n))
+                        DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_M, n, m),
+                        DATA_TYPE POLYBENCH_1D(s, SIZE_M, m),
+                        DATA_TYPE POLYBENCH_1D(q, SIZE_N, n),
+                        DATA_TYPE POLYBENCH_1D(p, SIZE_M, m),
+                        DATA_TYPE POLYBENCH_1D(r, SIZE_N, n))
 {
   int i, j;
   DATA_TYPE zero = SCALAR_VAL(0.0);
 
 #pragma scop
-  for (i = 0; i < _PB_M; i++)
+  for (i = 0; i < _PB_SIZE_M; i++)
     s[i] = 0;
-  for (i = 0; i < _PB_N; i++)
+  for (i = 0; i < _PB_SIZE_N; i++)
   {
     q[i] = zero;
-    for (j = 0; j < _PB_M; j++)
+    for (j = 0; j < _PB_SIZE_M; j++)
     {
       s[j] = s[j] + r[i] * A[i][j];
       q[i] = q[i] + A[i][j] * p[j];
@@ -97,15 +97,15 @@ static void kernel_bicg(int m, int n,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int n = N;
-  int m = M;
+  int n = SIZE_N;
+  int m = SIZE_M;
 
   /* Variable declaration/allocation. */
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, N, M, n, m);
-  POLYBENCH_1D_ARRAY_DECL(s, DATA_TYPE, M, m);
-  POLYBENCH_1D_ARRAY_DECL(q, DATA_TYPE, N, n);
-  POLYBENCH_1D_ARRAY_DECL(p, DATA_TYPE, M, m);
-  POLYBENCH_1D_ARRAY_DECL(r, DATA_TYPE, N, n);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_N, SIZE_M, n, m);
+  POLYBENCH_1D_ARRAY_DECL(s, DATA_TYPE, SIZE_M, m);
+  POLYBENCH_1D_ARRAY_DECL(q, DATA_TYPE, SIZE_N, n);
+  POLYBENCH_1D_ARRAY_DECL(p, DATA_TYPE, SIZE_M, m);
+  POLYBENCH_1D_ARRAY_DECL(r, DATA_TYPE, SIZE_N, n);
 
   /* Initialize array(s). */
   init_array(m, n,

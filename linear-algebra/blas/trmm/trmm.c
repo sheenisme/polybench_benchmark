@@ -23,8 +23,8 @@
 /* Array initialization. */
 static void init_array(int m, int n,
                        DATA_TYPE *alpha,
-                       DATA_TYPE POLYBENCH_2D(A, M, M, m, m),
-                       DATA_TYPE POLYBENCH_2D(B, M, N, m, n))
+                       DATA_TYPE POLYBENCH_2D(A, SIZE_M, SIZE_M, m, m),
+                       DATA_TYPE POLYBENCH_2D(B, SIZE_M, SIZE_N, m, n))
 {
   int i, j;
 
@@ -46,7 +46,7 @@ static void init_array(int m, int n,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int m, int n,
-                        DATA_TYPE POLYBENCH_2D(B, M, N, m, n))
+                        DATA_TYPE POLYBENCH_2D(B, SIZE_M, SIZE_N, m, n))
 {
   int i, j;
 
@@ -67,8 +67,8 @@ static void print_array(int m, int n,
    including the call and return. */
 static void kernel_trmm(int m, int n,
                         DATA_TYPE alpha,
-                        DATA_TYPE POLYBENCH_2D(A, M, M, m, m),
-                        DATA_TYPE POLYBENCH_2D(B, M, N, m, n))
+                        DATA_TYPE POLYBENCH_2D(A, SIZE_M, SIZE_M, m, m),
+                        DATA_TYPE POLYBENCH_2D(B, SIZE_M, SIZE_N, m, n))
 {
   int i, j, k;
 
@@ -81,10 +81,10 @@ static void kernel_trmm(int m, int n,
 //  A is MxM
 //  B is MxN
 #pragma scop
-  for (i = 0; i < _PB_M; i++)
-    for (j = 0; j < _PB_N; j++)
+  for (i = 0; i < _PB_SIZE_M; i++)
+    for (j = 0; j < _PB_SIZE_N; j++)
     {
-      for (k = i + 1; k < _PB_M; k++)
+      for (k = i + 1; k < _PB_SIZE_M; k++)
         B[i][j] += A[k][i] * B[k][j];
       B[i][j] = alpha * B[i][j];
     }
@@ -94,13 +94,13 @@ static void kernel_trmm(int m, int n,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int m = M;
-  int n = N;
+  int m = SIZE_M;
+  int n = SIZE_N;
 
   /* Variable declaration/allocation. */
   DATA_TYPE alpha;
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, M, M, m, m);
-  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, M, N, m, n);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_M, SIZE_M, m, m);
+  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, SIZE_M, SIZE_N, m, n);
 
   /* Initialize array(s). */
   init_array(m, n, &alpha, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B));

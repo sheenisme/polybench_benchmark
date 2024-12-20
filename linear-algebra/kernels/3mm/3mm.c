@@ -22,10 +22,10 @@
 
 /* Array initialization. */
 static void init_array(int ni, int nj, int nk, int nl, int nm,
-                       DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk),
-                       DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj),
-                       DATA_TYPE POLYBENCH_2D(C, NJ, NM, nj, nm),
-                       DATA_TYPE POLYBENCH_2D(D, NM, NL, nm, nl))
+                       DATA_TYPE POLYBENCH_2D(A, SIZE_NI, SIZE_NK, ni, nk),
+                       DATA_TYPE POLYBENCH_2D(B, SIZE_NK, SIZE_NJ, nk, nj),
+                       DATA_TYPE POLYBENCH_2D(C, SIZE_NJ, SIZE_NM, nj, nm),
+                       DATA_TYPE POLYBENCH_2D(D, SIZE_NM, SIZE_NL, nm, nl))
 {
   int i, j;
 
@@ -46,7 +46,7 @@ static void init_array(int ni, int nj, int nk, int nl, int nm,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int ni, int nl,
-                        DATA_TYPE POLYBENCH_2D(G, NI, NL, ni, nl))
+                        DATA_TYPE POLYBENCH_2D(G, SIZE_NI, SIZE_NL, ni, nl))
 {
   int i, j;
 
@@ -66,41 +66,41 @@ static void print_array(int ni, int nl,
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
 static void kernel_3mm(int ni, int nj, int nk, int nl, int nm,
-                       DATA_TYPE POLYBENCH_2D(E, NI, NJ, ni, nj),
-                       DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk),
-                       DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj),
-                       DATA_TYPE POLYBENCH_2D(F, NJ, NL, nj, nl),
-                       DATA_TYPE POLYBENCH_2D(C, NJ, NM, nj, nm),
-                       DATA_TYPE POLYBENCH_2D(D, NM, NL, nm, nl),
-                       DATA_TYPE POLYBENCH_2D(G, NI, NL, ni, nl))
+                       DATA_TYPE POLYBENCH_2D(E, SIZE_NI, SIZE_NJ, ni, nj),
+                       DATA_TYPE POLYBENCH_2D(A, SIZE_NI, SIZE_NK, ni, nk),
+                       DATA_TYPE POLYBENCH_2D(B, SIZE_NK, SIZE_NJ, nk, nj),
+                       DATA_TYPE POLYBENCH_2D(F, SIZE_NJ, SIZE_NL, nj, nl),
+                       DATA_TYPE POLYBENCH_2D(C, SIZE_NJ, SIZE_NM, nj, nm),
+                       DATA_TYPE POLYBENCH_2D(D, SIZE_NM, SIZE_NL, nm, nl),
+                       DATA_TYPE POLYBENCH_2D(G, SIZE_NI, SIZE_NL, ni, nl))
 {
   int i, j, k;
   DATA_TYPE zero = SCALAR_VAL(0.0);
 
 #pragma scop
   /* E := A*B */
-  for (i = 0; i < _PB_NI; i++)
-    for (j = 0; j < _PB_NJ; j++)
+  for (i = 0; i < _PB_SIZE_NI; i++)
+    for (j = 0; j < _PB_SIZE_NJ; j++)
     {
       E[i][j] = zero;
-      for (k = 0; k < _PB_NK; ++k)
+      for (k = 0; k < _PB_SIZE_NK; ++k)
         E[i][j] += A[i][k] * B[k][j];
     }
   /* F := C*D */
-  for (i = 0; i < _PB_NJ; i++)
-    for (j = 0; j < _PB_NL; j++)
+  for (i = 0; i < _PB_SIZE_NJ; i++)
+    for (j = 0; j < _PB_SIZE_NL; j++)
     {
       F[i][j] = zero;
-      for (k = 0; k < _PB_NM; ++k)
+      for (k = 0; k < _PB_SIZE_NM; ++k)
         F[i][j] += C[i][k] * D[k][j];
     }
   /* G := E*F */
-  for (i = 0; i < _PB_NI; i++)
+  for (i = 0; i < _PB_SIZE_NI; i++)
   {
-    for (j = 0; j < _PB_NL; j++)
+    for (j = 0; j < _PB_SIZE_NL; j++)
     {
       G[i][j] = zero;
-      for (k = 0; k < _PB_NJ; ++k)
+      for (k = 0; k < _PB_SIZE_NJ; ++k)
         G[i][j] += E[i][k] * F[k][j];
     }
 #ifndef NO_PENCIL_KILL
@@ -116,20 +116,20 @@ static void kernel_3mm(int ni, int nj, int nk, int nl, int nm,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int ni = NI;
-  int nj = NJ;
-  int nk = NK;
-  int nl = NL;
-  int nm = NM;
+  int ni = SIZE_NI;
+  int nj = SIZE_NJ;
+  int nk = SIZE_NK;
+  int nl = SIZE_NL;
+  int nm = SIZE_NM;
 
   /* Variable declaration/allocation. */
-  POLYBENCH_2D_ARRAY_DECL(E, DATA_TYPE, NI, NJ, ni, nj);
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NI, NK, ni, nk);
-  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, NK, NJ, nk, nj);
-  POLYBENCH_2D_ARRAY_DECL(F, DATA_TYPE, NJ, NL, nj, nl);
-  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, NJ, NM, nj, nm);
-  POLYBENCH_2D_ARRAY_DECL(D, DATA_TYPE, NM, NL, nm, nl);
-  POLYBENCH_2D_ARRAY_DECL(G, DATA_TYPE, NI, NL, ni, nl);
+  POLYBENCH_2D_ARRAY_DECL(E, DATA_TYPE, SIZE_NI, SIZE_NJ, ni, nj);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_NI, SIZE_NK, ni, nk);
+  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, SIZE_NK, SIZE_NJ, nk, nj);
+  POLYBENCH_2D_ARRAY_DECL(F, DATA_TYPE, SIZE_NJ, SIZE_NL, nj, nl);
+  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, SIZE_NJ, SIZE_NM, nj, nm);
+  POLYBENCH_2D_ARRAY_DECL(D, DATA_TYPE, SIZE_NM, SIZE_NL, nm, nl);
+  POLYBENCH_2D_ARRAY_DECL(G, DATA_TYPE, SIZE_NI, SIZE_NL, ni, nl);
 
   /* Initialize array(s). */
   init_array(ni, nj, nk, nl, nm,

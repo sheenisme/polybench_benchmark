@@ -10,56 +10,57 @@
 #define SMALL_DATASET
 #endif
 
-#if !defined(NI) && !defined(NJ) && !defined(NK) && !defined(NL) && !defined(NM)
+#if !defined(SIZE_NI) && !defined(SIZE_NJ) && !defined(SIZE_NK)                \
+    && !defined(SIZE_NL) && !defined(SIZE_NM)
 /* Define sample dataset sizes. */
 #ifdef MINI_DATASET
-#define NI 16
-#define NJ 18
-#define NK 20
-#define NL 22
-#define NM 24
+#define SIZE_NI 16
+#define SIZE_NJ 18
+#define SIZE_NK 20
+#define SIZE_NL 22
+#define SIZE_NM 24
 #endif
 
 #ifdef SMALL_DATASET
-#define NI 40
-#define NJ 50
-#define NK 60
-#define NL 70
-#define NM 80
+#define SIZE_NI 40
+#define SIZE_NJ 50
+#define SIZE_NK 60
+#define SIZE_NL 70
+#define SIZE_NM 80
 #endif
 
 #ifdef MEDIUM_DATASET
-#define NI 180
-#define NJ 190
-#define NK 200
-#define NL 210
-#define NM 220
+#define SIZE_NI 180
+#define SIZE_NJ 190
+#define SIZE_NK 200
+#define SIZE_NL 210
+#define SIZE_NM 220
 #endif
 
 #ifdef LARGE_DATASET
-#define NI 800
-#define NJ 900
-#define NK 1000
-#define NL 1100
-#define NM 1200
+#define SIZE_NI 800
+#define SIZE_NJ 900
+#define SIZE_NK 1000
+#define SIZE_NL 1100
+#define SIZE_NM 1200
 #endif
 
 #ifdef EXTRALARGE_DATASET
-#define NI 1600
-#define NJ 1800
-#define NK 2000
-#define NL 2200
-#define NM 2400
+#define SIZE_NI 1600
+#define SIZE_NJ 1800
+#define SIZE_NK 2000
+#define SIZE_NL 2200
+#define SIZE_NM 2400
 #endif
 
 
-#endif /* !(NI NJ NK NL NM) */
+#endif /* !(SIZE_NI SIZE_NJ SIZE_NK SIZE_NL SIZE_NM) */
 
-#define _PB_NI POLYBENCH_LOOP_BOUND(NI, ni)
-#define _PB_NJ POLYBENCH_LOOP_BOUND(NJ, nj)
-#define _PB_NK POLYBENCH_LOOP_BOUND(NK, nk)
-#define _PB_NL POLYBENCH_LOOP_BOUND(NL, nl)
-#define _PB_NM POLYBENCH_LOOP_BOUND(NM, nm)
+#define _PB_SIZE_NI POLYBENCH_LOOP_BOUND(SIZE_NI, size_ni)
+#define _PB_SIZE_NJ POLYBENCH_LOOP_BOUND(SIZE_NJ, size_nj)
+#define _PB_SIZE_NK POLYBENCH_LOOP_BOUND(SIZE_NK, size_nk)
+#define _PB_SIZE_NL POLYBENCH_LOOP_BOUND(SIZE_NL, size_nl)
+#define _PB_SIZE_NM POLYBENCH_LOOP_BOUND(SIZE_NM, size_nm)
 
 
 /* Default data type */
