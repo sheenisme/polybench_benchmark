@@ -42,6 +42,11 @@ my %extra_flags = (
    'deriche' => '-lm'
 );
 
+# get abs_path of the script
+use Cwd 'abs_path';
+my $script_path = abs_path($0);
+$script_path =~ s/\/[^\/]+$//;
+
 foreach $key (keys %categories) {
    my $target = $TARGET_DIR.'/'.$key;
    opendir DIR, $target or die "directory $target not found.\n";
@@ -66,6 +71,12 @@ include $configFile
 EXTRA_FLAGS=$extra_flags{$kernel}
 
 RATE ?= 50
+
+# please set $utilityDir or $script_path in CPATH.
+ifeq (\$(findstring $utilityDir,\$(CPATH)),)
+CPATH := \$(CPATH):$utilityDir
+export CPATH
+endif
 
 get-amp: ${kernel}.c
 	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}-amp-\${RATE}.c > /dev/null 2>&1
@@ -144,8 +155,12 @@ translate: optimization
 	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir         -o kernel_${kernel}-ppcg.c
 
 testfix: translate
-	@ sed -i '1i#include "${kernel}.h"' kernel_${kernel}-amp-\${RATE}.c
-	@ sed -i '1i#include "${kernel}.h"' kernel_${kernel}-ppcg.c
+	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-amp-\${RATE}.c || sed -i '/using namespace std;/i \\
+#include "${kernel}.h"\\
+' kernel_${kernel}-amp-\${RATE}.c
+	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-ppcg.c || sed -i '/using namespace std;/i \\
+#include "${kernel}.h"\\
+' kernel_${kernel}-ppcg.c
 	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}-amp-\${RATE}.c
 	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}-ppcg.c
 
