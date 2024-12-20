@@ -24,9 +24,9 @@
 static void init_array(int ni, int nj, int nk,
                        DATA_TYPE *alpha,
                        DATA_TYPE *beta,
-                       DATA_TYPE POLYBENCH_2D(C, SIZE_NI, SIZE_NJ, ni, nj),
-                       DATA_TYPE POLYBENCH_2D(A, SIZE_NI, SIZE_NK, ni, nk),
-                       DATA_TYPE POLYBENCH_2D(B, SIZE_NK, SIZE_NJ, nk, nj))
+                       DATA_TYPE POLYBENCH_2D(C, NI, NJ, ni, nj),
+                       DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk),
+                       DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj))
 {
   int i, j;
 
@@ -46,7 +46,7 @@ static void init_array(int ni, int nj, int nk,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int ni, int nj,
-                        DATA_TYPE POLYBENCH_2D(C, SIZE_NI, SIZE_NJ, ni, nj))
+                        DATA_TYPE POLYBENCH_2D(C, NI, NJ, ni, nj))
 {
   int i, j;
 
@@ -68,9 +68,9 @@ static void print_array(int ni, int nj,
 static void kernel_gemm(int ni, int nj, int nk,
                         DATA_TYPE alpha,
                         DATA_TYPE beta,
-                        DATA_TYPE POLYBENCH_2D(C, SIZE_NI, SIZE_NJ, ni, nj),
-                        DATA_TYPE POLYBENCH_2D(A, SIZE_NI, SIZE_NK, ni, nk),
-                        DATA_TYPE POLYBENCH_2D(B, SIZE_NK, SIZE_NJ, nk, nj))
+                        DATA_TYPE POLYBENCH_2D(C, NI, NJ, ni, nj),
+                        DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk),
+                        DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj))
 {
   int i, j, k;
 
@@ -82,13 +82,13 @@ static void kernel_gemm(int ni, int nj, int nk,
 // B is NKxNJ
 // C is NIxNJ
 #pragma scop
-  for (i = 0; i < _PB_SIZE_NI; i++)
+  for (i = 0; i < _PB_NI; i++)
   {
-    for (j = 0; j < _PB_SIZE_NJ; j++)
+    for (j = 0; j < _PB_NJ; j++)
       C[i][j] *= beta;
-    for (k = 0; k < _PB_SIZE_NK; k++)
+    for (k = 0; k < _PB_NK; k++)
     {
-      for (j = 0; j < _PB_SIZE_NJ; j++)
+      for (j = 0; j < _PB_NJ; j++)
         C[i][j] += alpha * A[i][k] * B[k][j];
     }
   }
@@ -98,16 +98,16 @@ static void kernel_gemm(int ni, int nj, int nk,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int ni = SIZE_NI;
-  int nj = SIZE_NJ;
-  int nk = SIZE_NK;
+  int ni = NI;
+  int nj = NJ;
+  int nk = NK;
 
   /* Variable declaration/allocation. */
   DATA_TYPE alpha;
   DATA_TYPE beta;
-  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, SIZE_NI, SIZE_NJ, ni, nj);
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_NI, SIZE_NK, ni, nk);
-  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, SIZE_NK, SIZE_NJ, nk, nj);
+  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, NI, NJ, ni, nj);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NI, NK, ni, nk);
+  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, NK, NJ, nk, nj);
 
   /* Initialize array(s). */
   init_array(ni, nj, nk, &alpha, &beta,

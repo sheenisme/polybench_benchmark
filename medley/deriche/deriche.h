@@ -10,38 +10,38 @@
 #define SMALL_DATASET
 #endif
 
-#if !defined(SIZE_W) && !defined(SIZE_H)
+#if !defined(W) && !defined(H)
 /* Define sample dataset sizes. */
 #ifdef MINI_DATASET
-#define SIZE_W 64
-#define SIZE_H 64
+#define W 64
+#define H 64
 #endif
 
 #ifdef SMALL_DATASET
-#define SIZE_W 192
-#define SIZE_H 128
+#define W 192
+#define H 128
 #endif
 
 #ifdef MEDIUM_DATASET
-#define SIZE_W 720
-#define SIZE_H 480
+#define W 720
+#define H 480
 #endif
 
 #ifdef LARGE_DATASET
-#define SIZE_W 4096
-#define SIZE_H 2160
+#define W 4096
+#define H 2160
 #endif
 
 #ifdef EXTRALARGE_DATASET
-#define SIZE_W 7680
-#define SIZE_H 4320
+#define W 7680
+#define H 4320
 #endif
 
 
-#endif /* !(SIZE_W SIZE_H) */
+#endif /* !(W H) */
 
-#define _PB_SIZE_W POLYBENCH_LOOP_BOUND(SIZE_W, size_w)
-#define _PB_SIZE_H POLYBENCH_LOOP_BOUND(SIZE_H, size_h)
+#define _PB_W POLYBENCH_LOOP_BOUND(W, w)
+#define _PB_H POLYBENCH_LOOP_BOUND(H, h)
 
 
 /* Default data type */

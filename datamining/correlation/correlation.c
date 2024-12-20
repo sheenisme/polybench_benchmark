@@ -24,21 +24,21 @@
 static void init_array(int m,
                        int n,
                        DATA_TYPE *float_n,
-                       DATA_TYPE POLYBENCH_2D(data, SIZE_N, SIZE_M, n, m))
+                       DATA_TYPE POLYBENCH_2D(data, N, M, n, m))
 {
   int i, j;
 
-  *float_n = (DATA_TYPE)n;
+  *float_n = (DATA_TYPE)N;
 
-  for (i = 0; i < n; i++)
-    for (j = 0; j < m; j++)
-      data[i][j] = (DATA_TYPE)(i * j) / m + i;
+  for (i = 0; i < N; i++)
+    for (j = 0; j < M; j++)
+      data[i][j] = (DATA_TYPE)(i * j) / M + i;
 }
 
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int m,
-                        DATA_TYPE POLYBENCH_2D(corr, SIZE_M, SIZE_M, m, m))
+                        DATA_TYPE POLYBENCH_2D(corr, M, M, m, m))
 
 {
   int i, j;
@@ -60,10 +60,10 @@ static void print_array(int m,
    including the call and return. */
 static void kernel_correlation(int m, int n,
                                DATA_TYPE float_n,
-                               DATA_TYPE POLYBENCH_2D(data, SIZE_N, SIZE_M, n, m),
-                               DATA_TYPE POLYBENCH_2D(corr, SIZE_M,SIZE_M, m, m),
-                               DATA_TYPE POLYBENCH_1D(mean, SIZE_M, m),
-                               DATA_TYPE POLYBENCH_1D(stddev, SIZE_M, m))
+                               DATA_TYPE POLYBENCH_2D(data, N, M, n, m),
+                               DATA_TYPE POLYBENCH_2D(corr, M, M, m, m),
+                               DATA_TYPE POLYBENCH_1D(mean, M, m),
+                               DATA_TYPE POLYBENCH_1D(stddev, M, m))
 {
   int i, j, k;
 
@@ -72,18 +72,18 @@ static void kernel_correlation(int m, int n,
   DATA_TYPE zero = SCALAR_VAL(0.0);
 
 #pragma scop
-  for (j = 0; j < _PB_SIZE_M; j++)
+  for (j = 0; j < _PB_M; j++)
   {
     mean[j] = zero;
-    for (i = 0; i < _PB_SIZE_N; i++)
+    for (i = 0; i < _PB_N; i++)
       mean[j] += data[i][j];
     mean[j] /= float_n;
   }
 
-  for (j = 0; j < _PB_SIZE_M; j++)
+  for (j = 0; j < _PB_M; j++)
   {
     stddev[j] = zero;
-    for (i = 0; i < _PB_SIZE_N; i++)
+    for (i = 0; i < _PB_N; i++)
       stddev[j] += (data[i][j] - mean[j]) * (data[i][j] - mean[j]);
     stddev[j] /= float_n;
     stddev[j] = SQRT_FUN(stddev[j]);
@@ -94,8 +94,8 @@ static void kernel_correlation(int m, int n,
   }
 
   /* Center and reduce the column vectors. */
-  for (i = 0; i < _PB_SIZE_N; i++)
-    for (j = 0; j < _PB_SIZE_M; j++)
+  for (i = 0; i < _PB_N; i++)
+    for (j = 0; j < _PB_M; j++)
     {
       data[i][j] -= mean[j];
       data[i][j] /= SQRT_FUN(float_n) * stddev[j];
@@ -104,13 +104,13 @@ static void kernel_correlation(int m, int n,
   __pencil_kill(stddev, mean, float_n);
 #endif
   /* Calculate the m * m correlation matrix. */
-  for (i = 0; i < _PB_SIZE_M - 1; i++)
+  for (i = 0; i < _PB_M - 1; i++)
   {
     corr[i][i] = one;
-    for (j = i + 1; j < _PB_SIZE_M; j++)
+    for (j = i + 1; j < _PB_M; j++)
     {
       corr[i][j] = zero;
-      for (k = 0; k < _PB_SIZE_N; k++)
+      for (k = 0; k < _PB_N; k++)
         corr[i][j] += (data[k][i] * data[k][j]);
       corr[j][i] = corr[i][j];
     }
@@ -119,21 +119,21 @@ static void kernel_correlation(int m, int n,
   __pencil_kill(data);
 #endif
 #pragma endscop
-  corr[_PB_SIZE_M - 1][_PB_SIZE_M - 1] = one;
+  corr[_PB_M - 1][_PB_M - 1] = one;
 }
 
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int n = SIZE_N;
-  int m = SIZE_M;
+  int n = N;
+  int m = M;
 
   /* Variable declaration/allocation. */
   DATA_TYPE float_n;
-  POLYBENCH_2D_ARRAY_DECL(data, DATA_TYPE, SIZE_N, SIZE_M, n, m);
-  POLYBENCH_2D_ARRAY_DECL(corr, DATA_TYPE, SIZE_M, SIZE_M, m, m);
-  POLYBENCH_1D_ARRAY_DECL(mean, DATA_TYPE, SIZE_M, m);
-  POLYBENCH_1D_ARRAY_DECL(stddev, DATA_TYPE, SIZE_M, m);
+  POLYBENCH_2D_ARRAY_DECL(data, DATA_TYPE, N, M, n, m);
+  POLYBENCH_2D_ARRAY_DECL(corr, DATA_TYPE, M, M, m, m);
+  POLYBENCH_1D_ARRAY_DECL(mean, DATA_TYPE, M, m);
+  POLYBENCH_1D_ARRAY_DECL(stddev, DATA_TYPE, M, m);
 
   /* Initialize array(s). */
   init_array(m, n, &float_n, POLYBENCH_ARRAY(data));

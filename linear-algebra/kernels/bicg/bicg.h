@@ -10,38 +10,38 @@
 #define SMALL_DATASET
 #endif
 
-#if !defined(SIZE_M) && !defined(SIZE_N)
+#if !defined(M) && !defined(N)
 /* Define sample dataset sizes. */
 #ifdef MINI_DATASET
-#define SIZE_M 38
-#define SIZE_N 42
+#define M 38
+#define N 42
 #endif
 
 #ifdef SMALL_DATASET
-#define SIZE_M 116
-#define SIZE_N 124
+#define M 116
+#define N 124
 #endif
 
 #ifdef MEDIUM_DATASET
-#define SIZE_M 390
-#define SIZE_N 410
+#define M 390
+#define N 410
 #endif
 
 #ifdef LARGE_DATASET
-#define SIZE_M 1900
-#define SIZE_N 2100
+#define M 1900
+#define N 2100
 #endif
 
 #ifdef EXTRALARGE_DATASET
-#define SIZE_M 1800
-#define SIZE_N 2200
+#define M 1800
+#define N 2200
 #endif
 
 
-#endif /* !(SIZE_M SIZE_N) */
+#endif /* !(M N) */
 
-#define _PB_SIZE_M POLYBENCH_LOOP_BOUND(SIZE_M, size_m)
-#define _PB_SIZE_N POLYBENCH_LOOP_BOUND(SIZE_N, size_n)
+#define _PB_M POLYBENCH_LOOP_BOUND(M, m)
+#define _PB_N POLYBENCH_LOOP_BOUND(N, n)
 
 
 /* Default data type */

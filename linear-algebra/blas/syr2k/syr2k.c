@@ -24,9 +24,9 @@
 static void init_array(int n, int m,
                        DATA_TYPE *alpha,
                        DATA_TYPE *beta,
-                       DATA_TYPE POLYBENCH_2D(C, SIZE_N, SIZE_N, n, n),
-                       DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_M, n, m),
-                       DATA_TYPE POLYBENCH_2D(B, SIZE_N, SIZE_M, n, m))
+                       DATA_TYPE POLYBENCH_2D(C, N, N, n, n),
+                       DATA_TYPE POLYBENCH_2D(A, N, M, n, m),
+                       DATA_TYPE POLYBENCH_2D(B, N, M, n, m))
 {
   int i, j;
 
@@ -48,7 +48,7 @@ static void init_array(int n, int m,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int n,
-                        DATA_TYPE POLYBENCH_2D(C, SIZE_N, SIZE_N, n, n))
+                        DATA_TYPE POLYBENCH_2D(C, N, N, n, n))
 {
   int i, j;
 
@@ -70,9 +70,9 @@ static void print_array(int n,
 static void kernel_syr2k(int n, int m,
                          DATA_TYPE alpha,
                          DATA_TYPE beta,
-                         DATA_TYPE POLYBENCH_2D(C, SIZE_N, SIZE_N, n, n),
-                         DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_M, n, m),
-                         DATA_TYPE POLYBENCH_2D(B, SIZE_N, SIZE_M, n, m))
+                         DATA_TYPE POLYBENCH_2D(C, N, N, n, n),
+                         DATA_TYPE POLYBENCH_2D(A, N, M, n, m),
+                         DATA_TYPE POLYBENCH_2D(B, N, M, n, m))
 {
   int i, j, k;
 
@@ -83,11 +83,11 @@ static void kernel_syr2k(int n, int m,
 // B is NxM
 // C is NxN
 #pragma scop
-  for (i = 0; i < _PB_SIZE_N; i++)
+  for (i = 0; i < _PB_N; i++)
   {
     for (j = 0; j <= i; j++)
       C[i][j] *= beta;
-    for (k = 0; k < _PB_SIZE_M; k++)
+    for (k = 0; k < _PB_M; k++)
       for (j = 0; j <= i; j++)
       {
         C[i][j] += A[j][k] * alpha * B[i][k] + B[j][k] * alpha * A[i][k];
@@ -99,15 +99,15 @@ static void kernel_syr2k(int n, int m,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int n = SIZE_N;
-  int m = SIZE_M;
+  int n = N;
+  int m = M;
 
   /* Variable declaration/allocation. */
   DATA_TYPE alpha;
   DATA_TYPE beta;
-  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, SIZE_N, SIZE_N, n, n);
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_N, SIZE_M, n, m);
-  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, SIZE_N, SIZE_M, n, m);
+  POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, N, N, n, n);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, N, M, n, m);
+  POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, N, M, n, m);
 
   /* Initialize array(s). */
   init_array(n, m, &alpha, &beta,

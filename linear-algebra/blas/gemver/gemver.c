@@ -24,15 +24,15 @@
 static void init_array(int n,
                        DATA_TYPE *alpha,
                        DATA_TYPE *beta,
-                       DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_N, n, n),
-                       DATA_TYPE POLYBENCH_1D(u1, SIZE_N, n),
-                       DATA_TYPE POLYBENCH_1D(v1, SIZE_N, n),
-                       DATA_TYPE POLYBENCH_1D(u2, SIZE_N, n),
-                       DATA_TYPE POLYBENCH_1D(v2, SIZE_N, n),
-                       DATA_TYPE POLYBENCH_1D(w, SIZE_N, n),
-                       DATA_TYPE POLYBENCH_1D(x, SIZE_N, n),
-                       DATA_TYPE POLYBENCH_1D(y, SIZE_N, n),
-                       DATA_TYPE POLYBENCH_1D(z, SIZE_N, n))
+                       DATA_TYPE POLYBENCH_2D(A, N, N, n, n),
+                       DATA_TYPE POLYBENCH_1D(u1, N, n),
+                       DATA_TYPE POLYBENCH_1D(v1, N, n),
+                       DATA_TYPE POLYBENCH_1D(u2, N, n),
+                       DATA_TYPE POLYBENCH_1D(v2, N, n),
+                       DATA_TYPE POLYBENCH_1D(w, N, n),
+                       DATA_TYPE POLYBENCH_1D(x, N, n),
+                       DATA_TYPE POLYBENCH_1D(y, N, n),
+                       DATA_TYPE POLYBENCH_1D(z, N, n))
 {
   int i, j;
 
@@ -59,7 +59,7 @@ static void init_array(int n,
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
 static void print_array(int n,
-                        DATA_TYPE POLYBENCH_1D(w, SIZE_N, n))
+                        DATA_TYPE POLYBENCH_1D(w, N, n))
 {
   int i;
 
@@ -80,33 +80,33 @@ static void print_array(int n,
 static void kernel_gemver(int n,
                           DATA_TYPE alpha,
                           DATA_TYPE beta,
-                          DATA_TYPE POLYBENCH_2D(A, SIZE_N, SIZE_N, n, n),
-                          DATA_TYPE POLYBENCH_1D(u1, SIZE_N, n),
-                          DATA_TYPE POLYBENCH_1D(v1, SIZE_N, n),
-                          DATA_TYPE POLYBENCH_1D(u2, SIZE_N, n),
-                          DATA_TYPE POLYBENCH_1D(v2, SIZE_N, n),
-                          DATA_TYPE POLYBENCH_1D(w, SIZE_N, n),
-                          DATA_TYPE POLYBENCH_1D(x, SIZE_N, n),
-                          DATA_TYPE POLYBENCH_1D(y, SIZE_N, n),
-                          DATA_TYPE POLYBENCH_1D(z, SIZE_N, n))
+                          DATA_TYPE POLYBENCH_2D(A, N, N, n, n),
+                          DATA_TYPE POLYBENCH_1D(u1, N, n),
+                          DATA_TYPE POLYBENCH_1D(v1, N, n),
+                          DATA_TYPE POLYBENCH_1D(u2, N, n),
+                          DATA_TYPE POLYBENCH_1D(v2, N, n),
+                          DATA_TYPE POLYBENCH_1D(w, N, n),
+                          DATA_TYPE POLYBENCH_1D(x, N, n),
+                          DATA_TYPE POLYBENCH_1D(y, N, n),
+                          DATA_TYPE POLYBENCH_1D(z, N, n))
 {
   int i, j;
 
 #pragma scop
 
-  for (i = 0; i < _PB_SIZE_N; i++)
-    for (j = 0; j < _PB_SIZE_N; j++)
+  for (i = 0; i < _PB_N; i++)
+    for (j = 0; j < _PB_N; j++)
       A[i][j] = A[i][j] + u1[i] * v1[j] + u2[i] * v2[j];
 
-  for (i = 0; i < _PB_SIZE_N; i++)
-    for (j = 0; j < _PB_SIZE_N; j++)
+  for (i = 0; i < _PB_N; i++)
+    for (j = 0; j < _PB_N; j++)
       x[i] = x[i] + beta * A[j][i] * y[j];
 
-  for (i = 0; i < _PB_SIZE_N; i++)
+  for (i = 0; i < _PB_N; i++)
     x[i] = x[i] + z[i];
 
-  for (i = 0; i < _PB_SIZE_N; i++)
-    for (j = 0; j < _PB_SIZE_N; j++)
+  for (i = 0; i < _PB_N; i++)
+    for (j = 0; j < _PB_N; j++)
       w[i] = w[i] + alpha * A[i][j] * x[j];
 #ifndef NO_PENCIL_KILL
   __pencil_kill(x, A);
@@ -117,20 +117,20 @@ static void kernel_gemver(int n,
 int main(int argc, char **argv)
 {
   /* Retrieve problem size. */
-  int n = SIZE_N;
+  int n = N;
 
   /* Variable declaration/allocation. */
   DATA_TYPE alpha;
   DATA_TYPE beta;
-  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, SIZE_N, SIZE_N, n, n);
-  POLYBENCH_1D_ARRAY_DECL(u1, DATA_TYPE, SIZE_N, n);
-  POLYBENCH_1D_ARRAY_DECL(v1, DATA_TYPE, SIZE_N, n);
-  POLYBENCH_1D_ARRAY_DECL(u2, DATA_TYPE, SIZE_N, n);
-  POLYBENCH_1D_ARRAY_DECL(v2, DATA_TYPE, SIZE_N, n);
-  POLYBENCH_1D_ARRAY_DECL(w, DATA_TYPE, SIZE_N, n);
-  POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, SIZE_N, n);
-  POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, SIZE_N, n);
-  POLYBENCH_1D_ARRAY_DECL(z, DATA_TYPE, SIZE_N, n);
+  POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, N, N, n, n);
+  POLYBENCH_1D_ARRAY_DECL(u1, DATA_TYPE, N, n);
+  POLYBENCH_1D_ARRAY_DECL(v1, DATA_TYPE, N, n);
+  POLYBENCH_1D_ARRAY_DECL(u2, DATA_TYPE, N, n);
+  POLYBENCH_1D_ARRAY_DECL(v2, DATA_TYPE, N, n);
+  POLYBENCH_1D_ARRAY_DECL(w, DATA_TYPE, N, n);
+  POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, N, n);
+  POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, N, n);
+  POLYBENCH_1D_ARRAY_DECL(z, DATA_TYPE, N, n);
 
   /* Initialize array(s). */
   init_array(n, &alpha, &beta,

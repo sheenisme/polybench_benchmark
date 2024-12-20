@@ -1,36 +1,36 @@
 kernel	category	datatype	integer_support	params	MINI	SMALL	MEDIUM	LARGE	EXTRALARGE
-correlation	datamining	double	FALSE	SIZE_M SIZE_N	28 32	80 100	240 260	1200 1400	2600 3000
-covariance	datamining	double	FALSE	SIZE_M SIZE_N	28 32	80 100	240 260	1200 1400	2600 3000
-2mm	linear-algebra/kernels	double	FALSE	SIZE_NI SIZE_NJ SIZE_NK SIZE_NL	16 18 22 24	40 50 70 80	180 190 210 220	800 900 1100 1200	1600 1800 2200 2400
-3mm	linear-algebra/kernels	double	FALSE	SIZE_NI SIZE_NJ SIZE_NK SIZE_NL SIZE_NM	16 18 20 22 24	40 50 60 70 80	180 190 200 210 220	800 900 1000 1100 1200	1600 1800 2000 2200 2400
-atax	linear-algebra/kernels	double	FALSE	SIZE_M SIZE_N	38 42	116 124	390 410	1900 2100	1800 2200
-bicg	linear-algebra/kernels	double	FALSE	SIZE_M SIZE_N	38 42	116 124	390 410	1900 2100	1800 2200
-doitgen	linear-algebra/kernels	double	FALSE	SIZE_NQ SIZE_NR SIZE_NP	8 10 12	20 25 30	40 50 60	140 150 160	220 250 270
-mvt	linear-algebra/kernels	double	FALSE	SIZE_N	40	120	400	2000	4000
-gemm	linear-algebra/blas	double	FALSE	SIZE_NI SIZE_NJ SIZE_NK	20 25 30	60 70 80	200 220 240	1000 1100 1200	2000 2300 2600
-gemver	linear-algebra/blas	double	FALSE	SIZE_N	40	120	400	2000	4000
-gesummv	linear-algebra/blas	double	FALSE	SIZE_N	30	90	250	1300	2800
-symm	linear-algebra/blas	double	FALSE	SIZE_M SIZE_N	20 30	60 80	200 240	1000 1200	2000 2600
-syr2k	linear-algebra/blas	double	FALSE	SIZE_M SIZE_N	20 30	60 80	200 240	1000 1200	2000 2600
-syrk	linear-algebra/blas	double	FALSE	SIZE_M SIZE_N	20 30	60 80	200 240	1000 1200	2000 2600
-trmm	linear-algebra/blas	double	FALSE	SIZE_M SIZE_N	20 30	60 80	200 240	1000 1200	2000 2600
-cholesky	linear-algebra/solvers	double	FALSE	SIZE_N	40	120	400	2000	4000
-durbin	linear-algebra/solvers	double	FALSE	SIZE_N	40	120	400	2000	4000
-gramschmidt	linear-algebra/solvers	double	FALSE	SIZE_M SIZE_N	20 30	60 80	200 240	1000 1200	2000 2600
-lu	linear-algebra/solvers	double	FALSE	SIZE_N	40	120	400	2000	4000
-ludcmp	linear-algebra/solvers	double	FALSE	SIZE_N	40	120	400	1000	4000
-trisolv	linear-algebra/solvers	double	FALSE	SIZE_N	40	120	400	2000	4000
-deriche	medley	double	FALSE	SIZE_W SIZE_H	64 64	192 128	720 480	4096 2160	7680 4320
-floyd-warshall	medley	double	TRUE	SIZE_N	60	180	500	2800	5600
-nussinov	medley	double	TRUE	SIZE_N	60	180	500	2500	5500
-adi	stencils	double	FALSE	TSTEPS SIZE_N	20 20	40 60	100 200	500 1000	1000 2000
-fdtd-1d	stencils	double	FALSE	TSTEPS SIZE_N	20 30	40 80 	100 40	500 2000	800000 50000
-fdtd-2d	stencils	double	FALSE	TMAX SIZE_NX SIZE_NY	20 20 30	40 60 80	100 200 240	500 1000 1200	1000 2000 2600
-heat-1d	stencils	double	FALSE	TSTEPS SIZE_M SIZE_N	20 2 100	40 2 200	100 2 400	500 2 2000	200000 2 50000
-heat-2d	stencils	double	FALSE	TSTEPS SIZE_M SIZE_N	20 2 10	40 2 20	100 2 40	500 2 120	8000 2 3000
-heat-3d	stencils	double	FALSE	TSTEPS SIZE_N	20 10	40 20	100 40	500 120	1000 200
-jacobi-1d	stencils	double	FALSE	TSTEPS SIZE_N	20 30	40 120	100 400	500 2000	1000 4000
-jacobi-2d	stencils	double	FALSE	TSTEPS SIZE_N	20 30	40 90	100 250	500 1300	1000 2800
-seidel-2d	stencils	double	FALSE	TSTEPS SIZE_N	20 40	40 120	100 400	500 2000	1000 4000
-3d7pt	stencils	double	FALSE	TSTEPS SIZE_M SIZE_N	20 2 10	40 2 20	200 2 40	1000 2 120	2000 2 200
-3d27pt	stencils	double	FALSE	TSTEPS SIZE_M SIZE_N	20 2 10	40 2 20	100 2 40	500 2 120	1000 2 200
+correlation	datamining	double	FALSE	M N	28 32	80 100	240 260	1200 1400	2600 3000
+covariance	datamining	double	FALSE	M N	28 32	80 100	240 260	1200 1400	2600 3000
+2mm	linear-algebra/kernels	double	FALSE	NI NJ NK NL	16 18 22 24	40 50 70 80	180 190 210 220	800 900 1100 1200	1600 1800 2200 2400
+3mm	linear-algebra/kernels	double	FALSE	NI NJ NK NL NM	16 18 20 22 24	40 50 60 70 80	180 190 200 210 220	800 900 1000 1100 1200	1600 1800 2000 2200 2400
+atax	linear-algebra/kernels	double	FALSE	M N	38 42	116 124	390 410	1900 2100	1800 2200
+bicg	linear-algebra/kernels	double	FALSE	M N	38 42	116 124	390 410	1900 2100	1800 2200
+doitgen	linear-algebra/kernels	double	FALSE	NQ NR NP	8 10 12	20 25 30	40 50 60	140 150 160	220 250 270
+mvt	linear-algebra/kernels	double	FALSE	N	40	120	400	2000	4000
+gemm	linear-algebra/blas	double	FALSE	NI NJ NK	20 25 30	60 70 80	200 220 240	1000 1100 1200	2000 2300 2600
+gemver	linear-algebra/blas	double	FALSE	N	40	120	400	2000	4000
+gesummv	linear-algebra/blas	double	FALSE	N	30	90	250	1300	2800
+symm	linear-algebra/blas	double	FALSE	M N	20 30	60 80	200 240	1000 1200	2000 2600
+syr2k	linear-algebra/blas	double	FALSE	M N	20 30	60 80	200 240	1000 1200	2000 2600
+syrk	linear-algebra/blas	double	FALSE	M N	20 30	60 80	200 240	1000 1200	2000 2600
+trmm	linear-algebra/blas	double	FALSE	M N	20 30	60 80	200 240	1000 1200	2000 2600
+cholesky	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
+durbin	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
+gramschmidt	linear-algebra/solvers	double	FALSE	M N	20 30	60 80	200 240	1000 1200	2000 2600
+lu	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
+ludcmp	linear-algebra/solvers	double	FALSE	N	40	120	400	1000	4000
+trisolv	linear-algebra/solvers	double	FALSE	N	40	120	400	2000	4000
+deriche	medley	double	FALSE	W H	64 64	192 128	720 480	4096 2160	7680 4320
+floyd-warshall	medley	double	TRUE	N	60	180	500	2800	5600
+nussinov	medley	double	TRUE	N	60	180	500	2500	5500
+adi	stencils	double	FALSE	TSTEPS N	20 20	40 60	100 200	500 1000	1000 2000
+fdtd-1d	stencils	double	FALSE	TSTEPS N	20 30	40 80 	100 40	500 2000	800000 50000
+fdtd-2d	stencils	double	FALSE	TMAX NX NY	20 20 30	40 60 80	100 200 240	500 1000 1200	1000 2000 2600
+heat-1d	stencils	double	FALSE	TSTEPS M N	20 2 100	40 2 200	100 2 400	500 2 2000	200000 2 50000
+heat-2d	stencils	double	FALSE	TSTEPS M N	20 2 10	40 2 20	100 2 40	500 2 120	8000 2 3000
+heat-3d	stencils	double	FALSE	TSTEPS N	20 10	40 20	100 40	500 120	1000 200
+jacobi-1d	stencils	double	FALSE	TSTEPS N	20 30	40 120	100 400	500 2000	1000 4000
+jacobi-2d	stencils	double	FALSE	TSTEPS N	20 30	40 90	100 250	500 1300	1000 2800
+seidel-2d	stencils	double	FALSE	TSTEPS N	20 40	40 120	100 400	500 2000	1000 4000
+3d7pt	stencils	double	FALSE	TSTEPS M N	20 2 10	40 2 20	200 2 40	1000 2 120	2000 2 200
+3d27pt	stencils	double	FALSE	TSTEPS M N	20 2 10	40 2 20	100 2 40	500 2 120	1000 2 200

@@ -10,44 +10,44 @@
 #define SMALL_DATASET
 #endif
 
-#if !defined(TSTEPS) && !defined(SIZE_M) && !defined(SIZE_N)
+#if !defined(TSTEPS) && !defined(M) && !defined(N)
 /* Define sample dataset sizes. */
 #ifdef MINI_DATASET
 #define TSTEPS 20
-#define SIZE_M 2
-#define SIZE_N 100
+#define M 2
+#define N 100
 #endif
 
 #ifdef SMALL_DATASET
 #define TSTEPS 40
-#define SIZE_M 2
-#define SIZE_N 200
+#define M 2
+#define N 200
 #endif
 
 #ifdef MEDIUM_DATASET
 #define TSTEPS 100
-#define SIZE_M 2
-#define SIZE_N 400
+#define M 2
+#define N 400
 #endif
 
 #ifdef LARGE_DATASET
 #define TSTEPS 500
-#define SIZE_M 2
-#define SIZE_N 2000
+#define M 2
+#define N 2000
 #endif
 
 #ifdef EXTRALARGE_DATASET
 #define TSTEPS 200000
-#define SIZE_M 2
-#define SIZE_N 50000
+#define M 2
+#define N 50000
 #endif
 
 
-#endif /* !(TSTEPS SIZE_M SIZE_N) */
+#endif /* !(TSTEPS M N) */
 
 #define _PB_TSTEPS POLYBENCH_LOOP_BOUND(TSTEPS, tsteps)
-#define _PB_SIZE_M POLYBENCH_LOOP_BOUND(SIZE_M, size_m)
-#define _PB_SIZE_N POLYBENCH_LOOP_BOUND(SIZE_N, size_n)
+#define _PB_M POLYBENCH_LOOP_BOUND(M, m)
+#define _PB_N POLYBENCH_LOOP_BOUND(N, n)
 
 
 /* Default data type */

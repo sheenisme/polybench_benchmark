@@ -10,44 +10,44 @@
 #define SMALL_DATASET
 #endif
 
-#if !defined(TMAX) && !defined(SIZE_NX) && !defined(SIZE_NY)
+#if !defined(TMAX) && !defined(NX) && !defined(NY)
 /* Define sample dataset sizes. */
 #ifdef MINI_DATASET
 #define TMAX 20
-#define SIZE_NX 20
-#define SIZE_NY 30
+#define NX 20
+#define NY 30
 #endif
 
 #ifdef SMALL_DATASET
 #define TMAX 40
-#define SIZE_NX 60
-#define SIZE_NY 80
+#define NX 60
+#define NY 80
 #endif
 
 #ifdef MEDIUM_DATASET
 #define TMAX 100
-#define SIZE_NX 200
-#define SIZE_NY 240
+#define NX 200
+#define NY 240
 #endif
 
 #ifdef LARGE_DATASET
 #define TMAX 500
-#define SIZE_NX 1000
-#define SIZE_NY 1200
+#define NX 1000
+#define NY 1200
 #endif
 
 #ifdef EXTRALARGE_DATASET
 #define TMAX 1000
-#define SIZE_NX 2000
-#define SIZE_NY 2600
+#define NX 2000
+#define NY 2600
 #endif
 
 
-#endif /* !(TMAX SIZE_NX SIZE_NY) */
+#endif /* !(TMAX NX NY) */
 
 #define _PB_TMAX POLYBENCH_LOOP_BOUND(TMAX, tmax)
-#define _PB_SIZE_NX POLYBENCH_LOOP_BOUND(SIZE_NX, size_nx)
-#define _PB_SIZE_NY POLYBENCH_LOOP_BOUND(SIZE_NY, size_ny)
+#define _PB_NX POLYBENCH_LOOP_BOUND(NX, nx)
+#define _PB_NY POLYBENCH_LOOP_BOUND(NY, ny)
 
 
 /* Default data type */
