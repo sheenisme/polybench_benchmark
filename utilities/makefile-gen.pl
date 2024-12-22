@@ -190,8 +190,8 @@ clean:
 	@ rm -f kernel_${kernel}-ppcg.tmp.mlir
 	@ rm -f kernel_${kernel}-amp-\${RATE}.mlir
 	@ rm -f kernel_${kernel}-ppcg.mlir
-	@ rm -f kernel_${kernel}-amp-\${RATE}.c
-	@ rm -f kernel_${kernel}-ppcg.c
+	@ rm -f kernel_${kernel}-amp-\${RATE}.cpp
+	@ rm -f kernel_${kernel}-ppcg.cpp
 	@ rm -f *.exe
 	@ rm -f *.out
 	@ rm -f __tmp_*
