@@ -151,18 +151,18 @@ optimization: extract-kernel
 	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-ppcg.tmp.mlir -o kernel_${kernel}-ppcg.mlir
 
 translate: optimization
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-amp-\${RATE}.mlir -o kernel_${kernel}-amp-\${RATE}.c
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir         -o kernel_${kernel}-ppcg.c
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-amp-\${RATE}.mlir -o kernel_${kernel}-amp-\${RATE}.cpp
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir         -o kernel_${kernel}-ppcg.cpp
 
 testfix: translate
-	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-amp-\${RATE}.c || sed -i '/using namespace std;/i \\
+	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-amp-\${RATE}.cpp || sed -i '/using namespace std;/i \\
 #include "${kernel}.h"\\
-' kernel_${kernel}-amp-\${RATE}.c
-	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-ppcg.c || sed -i '/using namespace std;/i \\
+' kernel_${kernel}-amp-\${RATE}.cpp
+	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-ppcg.cpp || sed -i '/using namespace std;/i \\
 #include "${kernel}.h"\\
-' kernel_${kernel}-ppcg.c
-	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}-amp-\${RATE}.c
-	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}-ppcg.c
+' kernel_${kernel}-ppcg.cpp
+	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}-amp-\${RATE}.cpp
+	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}-ppcg.cpp
 
 run_origin:
 	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
