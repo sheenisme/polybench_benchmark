@@ -173,13 +173,7 @@ testfix: translate
 
 cppGen: ${kernel}.c
 	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
-	@ echo "#ifdef __cplusplus"             >  test_${kernel}.cpp
-	@ echo "extern \"C\" {"                   >> test_${kernel}.cpp
-	@ echo "#endif"                         >> test_${kernel}.cpp
-	@ cat \$<                                >> test_${kernel}.cpp
-	@ echo "#ifdef __cplusplus"             >> test_${kernel}.cpp
-	@ echo "}"                              >> test_${kernel}.cpp
-	@ echo "#endif"                         >> test_${kernel}.cpp
+	@ cp ${kernel}.c test_${kernel}.cpp
 	@ sed -i 's/${kernel}.h/test_${kernel}.h/g' test_${kernel}.cpp
 
 hGen:
@@ -187,8 +181,9 @@ hGen:
 	@ cp ${kernel}.h test_${kernel}.h
 	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-ppcg.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > ppcg_kernel_func.tmp
 	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-amp-\${RATE}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > amp-\${RATE}_kernel_func.tmp
-	@ sed -i "3r ppcg_kernel_func.tmp" test_${kernel}.h
-	@ sed -i "3r amp-\${RATE}_kernel_func.tmp" test_${kernel}.h
+	@ sed -i "4i #include <ap_int.h>" test_${kernel}.h
+	@ sed -i "4r amp-\${RATE}_kernel_func.tmp" test_${kernel}.h
+	@ sed -i "4r ppcg_kernel_func.tmp" test_${kernel}.h
 	@ rm -f ppcg_kernel_func.tmp amp-\${RATE}_kernel_func.tmp
 
 run_origin:
