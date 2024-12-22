@@ -79,16 +79,20 @@ export CPATH
 endif
 
 get-amp: ${kernel}.c
+	@ echo "[Step] Generating AMP version: ${kernel}-amp-\${RATE}.c"
 	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}-amp-\${RATE}.c > /dev/null 2>&1
 
 get-ppcg:
+	@ echo "[Step] Generating PPCG version: ${kernel}-ppcg.c"
 	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o ${kernel}-ppcg.c > /dev/null 2>&1
 
 clang2mlir: get-ppcg get-amp
+	@ echo "[Step] Translating C to MLIR with cgeist..."
 	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-amp-\${RATE}.c -o ${kernel}-amp-\${RATE}.mlir
 	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-ppcg.c -o ${kernel}-ppcg.mlir
 
 extract-kernel: clang2mlir
+	@ echo "[Step] Extracting kernel function(s) from MLIR by awk command..."
 	\@awk '\\
 		BEGIN { inside_block = 0; keep_header = 1; } \\
 		/^[ \\t]*module/ { \\
@@ -147,28 +151,52 @@ extract-kernel: clang2mlir
 	' ${kernel}-ppcg.mlir > kernel_${kernel}-ppcg.tmp.mlir
 
 optimization: extract-kernel
+	@ echo "[Step] Optimizing MLIR with scalehls-opt..."
 	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-amp-\${RATE}.tmp.mlir -o kernel_${kernel}-amp-\${RATE}.mlir
 	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-ppcg.tmp.mlir -o kernel_${kernel}-ppcg.mlir
 
 translate: optimization
+	@ echo "[Step] Translating MLIR to C++ with scalehls-translate..."
 	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-amp-\${RATE}.mlir -o kernel_${kernel}-amp-\${RATE}.cpp
 	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir         -o kernel_${kernel}-ppcg.cpp
 
 testfix: translate
-	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-amp-\${RATE}.cpp || sed -i '/using namespace std;/i \\
-#include "${kernel}.h"\\
+	@ echo "[Step] Patching C++ files to include test_${kernel}.h by sed command..."
+	@ sed -i '/using namespace std;/i \\
+#include "test_${kernel}.h"\\
 ' kernel_${kernel}-amp-\${RATE}.cpp
-	@ grep -q '#include "${kernel}.h"' kernel_${kernel}-ppcg.cpp || sed -i '/using namespace std;/i \\
-#include "${kernel}.h"\\
+	@ sed -i '/using namespace std;/i \\
+#include "test_${kernel}.h"\\
 ' kernel_${kernel}-ppcg.cpp
 	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}-amp-\${RATE}.cpp
 	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}-ppcg.cpp
 
+cppGen: ${kernel}.c
+	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
+	@ echo "#ifdef __cplusplus"             >  test_${kernel}.cpp
+	@ echo "extern \"C\" {"                   >> test_${kernel}.cpp
+	@ echo "#endif"                         >> test_${kernel}.cpp
+	@ cat \$<                                >> test_${kernel}.cpp
+	@ echo "#ifdef __cplusplus"             >> test_${kernel}.cpp
+	@ echo "}"                              >> test_${kernel}.cpp
+	@ echo "#endif"                         >> test_${kernel}.cpp
+	@ sed -i 's/${kernel}.h/test_${kernel}.h/g' test_${kernel}.cpp
+
+hGen:
+	@ echo "[Step] Generating test_${kernel}.h from ${kernel}.h & extracting kernel function prototypes..."
+	@ cp ${kernel}.h test_${kernel}.h
+	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-ppcg.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > ppcg_kernel_func.tmp
+	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-amp-\${RATE}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > amp-\${RATE}_kernel_func.tmp
+	@ sed -i "3r ppcg_kernel_func.tmp" test_${kernel}.h
+	@ sed -i "3r amp-\${RATE}_kernel_func.tmp" test_${kernel}.h
+	@ rm -f ppcg_kernel_func.tmp amp-\${RATE}_kernel_func.tmp
+
 run_origin:
+	@ echo "[Step] Compiling and running original version to check baseline..."
 	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
 	./$kernel-origon.exe
 
-all: testfix run_origin
+all: testfix cppGen hGen run_origin
 	@ rm -f ${kernel}-origon.exe
 	@ rm -f ${kernel}-amp-\${RATE}.c
 	@ rm -f ${kernel}-ppcg.c
@@ -178,9 +206,10 @@ all: testfix run_origin
 	@ rm -f kernel_${kernel}-ppcg.tmp.mlir
 	@ rm -f kernel_${kernel}-amp-\${RATE}.mlir
 	@ rm -f kernel_${kernel}-ppcg.mlir
-	@ echo "Done"
+	@ echo ">>> [all] Done."
 
 clean:
+	@ echo "[Step] Cleaning up..."
 	@ rm -f ${kernel}-origon.exe
 	@ rm -f ${kernel}-amp-\${RATE}.c
 	@ rm -f ${kernel}-ppcg.c
@@ -192,6 +221,11 @@ clean:
 	@ rm -f kernel_${kernel}-ppcg.mlir
 	@ rm -f kernel_${kernel}-amp-\${RATE}.cpp
 	@ rm -f kernel_${kernel}-ppcg.cpp
+	@ rm -f test_${kernel}.cpp
+	@ rm -f test_${kernel}.h
+	@ rm -f ppcg_kernel_func.tmp
+	@ rm -f amp-\${RATE}_kernel_func.tmp
+	@ rm -f *.tmp
 	@ rm -f *.exe
 	@ rm -f *.out
 	@ rm -f __tmp_*
