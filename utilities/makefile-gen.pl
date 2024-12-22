@@ -181,7 +181,7 @@ hGen:
 	@ cp ${kernel}.h test_${kernel}.h
 	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-ppcg.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > ppcg_kernel_func.tmp
 	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-amp-\${RATE}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > amp-\${RATE}_kernel_func.tmp
-	@ sed -i "4i #include <ap_int.h>" test_${kernel}.h
+	@ sed -i "3a #include <ap_int.h>" test_${kernel}.h
 	@ sed -i "4r amp-\${RATE}_kernel_func.tmp" test_${kernel}.h
 	@ sed -i "4r ppcg_kernel_func.tmp" test_${kernel}.h
 	@ rm -f ppcg_kernel_func.tmp amp-\${RATE}_kernel_func.tmp
