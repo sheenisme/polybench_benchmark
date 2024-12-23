@@ -56,10 +56,11 @@ foreach $key (keys %categories) {
 
 	my $kernel = $dir;
         my $file = $target.'/'.$dir.'/Makefile';
+		my $csynthFile = $target.'/'.$dir.'/csynth.tcl';
         my $polybenchRoot = '../'x$categories{$key};
         my $configFile = $polybenchRoot.'config.mk';
 		my $jsonConfigFile = $polybenchRoot.'config.json';
-        my $utilityDir = $polybenchRoot.'utilities';
+        my $utilityDir = $polybenchRoot.'utilities'; 
 
         open FILE, ">$file" or die "failed to open $file.";
 
@@ -205,6 +206,7 @@ all: testfix cppGen hGen run_origin
 
 clean:
 	@ echo "[Step] Cleaning up..."
+	@ rm -f csynth.tcl
 	@ rm -f ${kernel}-origon.exe
 	@ rm -f ${kernel}-amp-\${RATE}.c
 	@ rm -f ${kernel}-ppcg.c
@@ -231,6 +233,23 @@ clean:
 EOF
 
         close FILE;
+
+		open SYNFILE, ">$csynthFile" or die "failed to open $csynthFile.";
+print SYNFILE << "EOF";
+open_project hlsTest-1
+set_top kernel_${kernel}_ppcg
+add_files ${script_path}/../${key}/${kernel}/kernel_${kernel}-ppcg.cpp
+add_files -tb ${script_path}/../${key}/${kernel}/test_${kernel}.cpp -cflags "-I${script_path} -DPOLYBENCH_STACK_ARRAYS -DNO_PENCIL_KILL -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+add_files -tb ${script_path}/../${key}/${kernel}/test_${kernel}.h -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+open_solution "solution1" -flow_target vivado
+set_part {xc7a100t-csg324-3}
+create_clock -period 10 -name default
+#source "./hlsTest-1/solution1/directives.tcl"
+csynth_design
+EOF
+
+		close SYNFILE;
+
    }
 
 
