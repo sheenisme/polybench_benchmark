@@ -146,7 +146,6 @@ testfix: translate
 ' kernel_\${KERNEL_NAME}.cpp
 	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_\${KERNEL_NAME}/g' kernel_\${KERNEL_NAME}.cpp
 
-
 cppGen: ${kernel}.c
 	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
 	@ cp ${kernel}.c test_${kernel}.cpp
@@ -165,7 +164,7 @@ run_origin:
 	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
 	./$kernel-origon.exe
 
-all_ppcg: testfix cppGen hGen
+ppcg: testfix cppGen hGen
 	@ rm -f \${KERNEL_NAME}.c
 	@ rm -f \${KERNEL_NAME}.mlir
 	@ rm -f kernel_\${KERNEL_NAME}.tmp.mlir
@@ -173,8 +172,11 @@ all_ppcg: testfix cppGen hGen
 	@ echo "[Step] Running end-to-end for PPCG..."
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
 	@ echo ">>> [all] Done."
+	@ rm -f kernel_\${KERNEL_NAME}.cpp
+	@ rm -f test_${kernel}.cpp
+	@ rm -f test_${kernel}.h
 
-all_amp: rate_check testfix cppGen hGen
+amp: rate_check testfix cppGen hGen
 	@ rm -f \${KERNEL_NAME}.c
 	@ rm -f \${KERNEL_NAME}.mlir
 	@ rm -f kernel_\${KERNEL_NAME}.tmp.mlir
@@ -184,6 +186,9 @@ all_amp: rate_check testfix cppGen hGen
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
 	@ sed -i 's/_amp_\${RATE}/_ppcg/g' csynth.tcl
 	@ echo ">>> [all] Done."
+	@ rm -f kernel_\${KERNEL_NAME}.cpp
+	@ rm -f test_${kernel}.cpp
+	@ rm -f test_${kernel}.h
 
 all: run_origin
 	@ rm -f ${kernel}-origon.exe
@@ -192,6 +197,7 @@ all: run_origin
 clean:
 	@ echo "[Step] Cleaning up..."
 	@ rm -f vitis_hls.log
+	@ rm -rf hlsTest
 	@ rm -rf report_ppcg
 	@ rm -rf report_amp_*
 	@ rm -f ${kernel}-origon.exe
