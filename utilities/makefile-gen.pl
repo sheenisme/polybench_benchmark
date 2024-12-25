@@ -49,50 +49,45 @@ $script_path =~ s/\/[^\/]+$//;
 
 # script to extract performance and resource estimates from HLS report files
 my $tcl_extract_result_script = <<'END_TCL';
-if { [llength $report_file] > 0 } {
-	set file_content ""
-	foreach file $report_file {
-		set content [read [open $file]]
-		append file_content $content
-	}
+# Check if the input file exists
+if {![file exists $report_file]} {
+    puts "Error: Report file $report_file does not exist."
+    exit 1
+}
 
-	set performance_section [list]
-	set resource_section [list]
-	set extract_flag 0
+# Open the report file and read its content
+set file_content [read [open $report_file]]
 
-	# Extract Performance and Resource Estimates sections
-	foreach line [split $file_content "\n"] {
-		if {[regexp {Performance Estimates} $line]} {
-			set extract_flag 1
-		} elseif {[regexp {Resource Estimates} $line]} {
-			set extract_flag 2
-		} elseif {[regexp {^[^\|]} $line]} {
-			set extract_flag 0
-		}
+# Extract the Performance & Resource Estimates section
+set performance_section [list]
+set extract_flag 0
 
-		if {$extract_flag == 1 || $extract_flag == 2} {
-			# Check if the line is a table row (contains '|')
-			if {[regexp {\|} $line]} {
-				if {$extract_flag == 1} {
-					lappend performance_section $line
-				} elseif {$extract_flag == 2} {
-					lappend resource_section $line
-				}
-			}
-		}
-	}
+foreach line [split $file_content "\n"] {
+    # Detect the start of the section
+    if {[regexp {^\\+ Performance & Resource Estimates:} $line]} {
+        set extract_flag 1
+    }
+    
+    # Detect the end of the section
+    if {[regexp {^\\+.*Interfaces} $line]} {
+        set extract_flag 0
+    }
 
-	# Save the extracted content to a text file
-	set output_fp [open $output_file w]
-	puts $output_fp "Performance Estimates:\n"
-	puts $output_fp [join $performance_section "\n"]
-	puts $output_fp "\nResource Estimates:\n"
-	puts $output_fp [join $resource_section "\n"]
-	close $output_fp
+    # Collect lines while in the section
+    if {$extract_flag == 1} {
+        lappend performance_section $line
+    }
+}
 
-	puts "Performance and Resource Estimates saved to $output_file"
+# Save the extracted content to the output file
+if {[llength $performance_section] > 0} {
+    set output_fp [open $output_file w]
+    puts $output_fp "Performance & Resource Estimates:\n"
+    puts $output_fp [join $performance_section "\n"]
+    close $output_fp
+    puts "Performance & Resource Estimates saved to $output_file"
 } else {
-	puts "No report files found in the directory: $report_dir"
+    puts "No Performance & Resource Estimates section found in the report."
 }
 END_TCL
 
