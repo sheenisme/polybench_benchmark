@@ -129,17 +129,17 @@ export CPATH
 endif
 
 get-amp: ${kernel}.c
-	@ echo "[Step] Generating AMP version: ${kernel}-amp-\${RATE}.c"
-	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}-amp-\${RATE}.c > /dev/null 2>&1
+	@ echo "[Step] Generating AMP version: ${kernel}_amp_\${RATE}.c"
+	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}_amp_\${RATE}.c > /dev/null 2>&1
 
-get-ppcg:
-	@ echo "[Step] Generating PPCG version: ${kernel}-ppcg.c"
-	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o ${kernel}-ppcg.c > /dev/null 2>&1
+get_ppcg:
+	@ echo "[Step] Generating PPCG version: ${kernel}_ppcg.c"
+	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o ${kernel}_ppcg.c > /dev/null 2>&1
 
-clang2mlir: get-ppcg get-amp
+clang2mlir: get_ppcg get-amp
 	@ echo "[Step] Translating C to MLIR with cgeist..."
-	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-amp-\${RATE}.c -o ${kernel}-amp-\${RATE}.mlir
-	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}-ppcg.c -o ${kernel}-ppcg.mlir
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}_amp_\${RATE}.c -o ${kernel}_amp_\${RATE}.mlir
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}_ppcg.c -o ${kernel}_ppcg.mlir
 
 extract-kernel: clang2mlir
 	@ echo "[Step] Extracting kernel function(s) from MLIR by awk command..."
@@ -170,7 +170,7 @@ extract-kernel: clang2mlir
 				inside_block = 0; \\
 			} \\
 		} \\
-	' ${kernel}-amp-\${RATE}.mlir > kernel_${kernel}-amp-\${RATE}.tmp.mlir
+	' ${kernel}_amp_\${RATE}.mlir > kernel_${kernel}_amp_\${RATE}.tmp.mlir
 	\@awk '\\
 		BEGIN { inside_block = 0; keep_header = 1; } \\
 		/^[ \\t]*module/ { \\
@@ -198,28 +198,28 @@ extract-kernel: clang2mlir
 				inside_block = 0; \\
 			} \\
 		} \\
-	' ${kernel}-ppcg.mlir > kernel_${kernel}-ppcg.tmp.mlir
+	' ${kernel}_ppcg.mlir > kernel_${kernel}_ppcg.tmp.mlir
 
 optimization: extract-kernel
 	@ echo "[Step] Optimizing MLIR with scalehls-opt..."
-	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-amp-\${RATE}.tmp.mlir -o kernel_${kernel}-amp-\${RATE}.mlir
-	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}-ppcg.tmp.mlir -o kernel_${kernel}-ppcg.mlir
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}_amp_\${RATE}.tmp.mlir -o kernel_${kernel}_amp_\${RATE}.mlir
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}_ppcg.tmp.mlir -o kernel_${kernel}_ppcg.mlir
 
 translate: optimization
 	@ echo "[Step] Translating MLIR to C++ with scalehls-translate..."
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-amp-\${RATE}.mlir -o kernel_${kernel}-amp-\${RATE}.cpp
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}-ppcg.mlir         -o kernel_${kernel}-ppcg.cpp
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}_amp_\${RATE}.mlir -o kernel_${kernel}_amp_\${RATE}.cpp
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}_ppcg.mlir         -o kernel_${kernel}_ppcg.cpp
 
 testfix: translate
 	@ echo "[Step] Patching C++ files to include test_${kernel}.h by sed command..."
 	@ sed -i '/using namespace std;/i \\
 #include "test_${kernel}.h"\\
-' kernel_${kernel}-amp-\${RATE}.cpp
+' kernel_${kernel}_amp_\${RATE}.cpp
 	@ sed -i '/using namespace std;/i \\
 #include "test_${kernel}.h"\\
-' kernel_${kernel}-ppcg.cpp
-	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}-amp-\${RATE}.cpp
-	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}-ppcg.cpp
+' kernel_${kernel}_ppcg.cpp
+	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}_amp_\${RATE}.cpp
+	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}_ppcg.cpp
 
 cppGen: ${kernel}.c
 	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
@@ -229,8 +229,8 @@ cppGen: ${kernel}.c
 hGen:
 	@ echo "[Step] Generating test_${kernel}.h from ${kernel}.h & extracting kernel function prototypes..."
 	@ cp ${kernel}.h test_${kernel}.h
-	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-ppcg.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > ppcg_kernel_func.tmp
-	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}-amp-\${RATE}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > amp-\${RATE}_kernel_func.tmp
+	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}_ppcg.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > ppcg_kernel_func.tmp
+	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}_amp_\${RATE}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > amp-\${RATE}_kernel_func.tmp
 	@ sed -i "3a #include <ap_int.h>" test_${kernel}.h
 	@ sed -i "4r amp-\${RATE}_kernel_func.tmp" test_${kernel}.h
 	@ sed -i "4r ppcg_kernel_func.tmp" test_${kernel}.h
@@ -243,30 +243,30 @@ run_origin:
 
 all: testfix cppGen hGen run_origin
 	@ rm -f ${kernel}-origon.exe
-	@ rm -f ${kernel}-amp-\${RATE}.c
-	@ rm -f ${kernel}-ppcg.c
-	@ rm -f ${kernel}-amp-\${RATE}.mlir
-	@ rm -f ${kernel}-ppcg.mlir
-	@ rm -f kernel_${kernel}-amp-\${RATE}.tmp.mlir
-	@ rm -f kernel_${kernel}-ppcg.tmp.mlir
-	@ rm -f kernel_${kernel}-amp-\${RATE}.mlir
-	@ rm -f kernel_${kernel}-ppcg.mlir
+	@ rm -f ${kernel}_amp_\${RATE}.c
+	@ rm -f ${kernel}_ppcg.c
+	@ rm -f ${kernel}_amp_\${RATE}.mlir
+	@ rm -f ${kernel}_ppcg.mlir
+	@ rm -f kernel_${kernel}_amp_\${RATE}.tmp.mlir
+	@ rm -f kernel_${kernel}_ppcg.tmp.mlir
+	@ rm -f kernel_${kernel}_amp_\${RATE}.mlir
+	@ rm -f kernel_${kernel}_ppcg.mlir
 	@ echo ">>> [all] Done."
 
 clean:
 	@ echo "[Step] Cleaning up..."
 	@ rm -f csynth.tcl
 	@ rm -f ${kernel}-origon.exe
-	@ rm -f ${kernel}-amp-\${RATE}.c
-	@ rm -f ${kernel}-ppcg.c
-	@ rm -f ${kernel}-amp-\${RATE}.mlir
-	@ rm -f ${kernel}-ppcg.mlir
-	@ rm -f kernel_${kernel}-amp-\${RATE}.tmp.mlir
-	@ rm -f kernel_${kernel}-ppcg.tmp.mlir
-	@ rm -f kernel_${kernel}-amp-\${RATE}.mlir
-	@ rm -f kernel_${kernel}-ppcg.mlir
-	@ rm -f kernel_${kernel}-amp-\${RATE}.cpp
-	@ rm -f kernel_${kernel}-ppcg.cpp
+	@ rm -f ${kernel}_amp_\${RATE}.c
+	@ rm -f ${kernel}_ppcg.c
+	@ rm -f ${kernel}_amp_\${RATE}.mlir
+	@ rm -f ${kernel}_ppcg.mlir
+	@ rm -f kernel_${kernel}_amp_\${RATE}.tmp.mlir
+	@ rm -f kernel_${kernel}_ppcg.tmp.mlir
+	@ rm -f kernel_${kernel}_amp_\${RATE}.mlir
+	@ rm -f kernel_${kernel}_ppcg.mlir
+	@ rm -f kernel_${kernel}_amp_\${RATE}.cpp
+	@ rm -f kernel_${kernel}_ppcg.cpp
 	@ rm -f test_${kernel}.cpp
 	@ rm -f test_${kernel}.h
 	@ rm -f ppcg_kernel_func.tmp
@@ -285,23 +285,23 @@ EOF
 
 		open SYNFILE, ">$csynthFile" or die "failed to open $csynthFile.";
 print SYNFILE << "EOF";
-puts "Processing kernel_${kernel}-ppcg.cpp..."
-open_project hlsTest-1
+open_project hlsTest
 
 set_top kernel_${kernel}_ppcg
 # current path is: ${script_path}/../${key}/${kernel}/
-add_files kernel_${kernel}-ppcg.cpp
+add_files kernel_${kernel}_ppcg.cpp
 add_files -tb test_${kernel}.cpp -cflags "-I${script_path} -DPOLYBENCH_STACK_ARRAYS -DNO_PENCIL_KILL -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
 add_files -tb test_${kernel}.h -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
 
 open_solution "solution1" -flow_target vivado
 set_part {xc7a100t-csg324-3}
 create_clock -period 10 -name default
-#source "./hlsTest-1/solution1/directives.tcl"
+#source "./hlsTest/solution1/directives.tcl"
+
 csynth_design
 
-set report_dir "./hlsTest-1/solution1/syn/report"
-set report_file [glob -nocomplain \${report_dir}/*.rpt]
+set report_dir "./hlsTest/solution1/syn/report"
+set report_file [glob -nocomplain \${report_dir}/csynth.rpt]
 set output_file "./performance_resource_summary_ppcg.txt"
 
 # Extract performance and resource estimates
@@ -309,45 +309,11 @@ $tcl_extract_result_script
 
 puts "Cleaning up ..."
 # Remove temporary files and directories
-if {[file exists ./hlsTest-1/solution1/tmp]} {
-	file delete -force ./hlsTest-1/solution1/tmp
+if {[file exists ./hlsTest/solution1/tmp]} {
+	file delete -force ./hlsTest/solution1/tmp
 	puts "Temporary files cleaned."
 }
-remove_files kernel_${kernel}-ppcg.cpp
-clean_solution
 puts "Cleanup completed."
-
-# Set default value for the parameter
-set RATE 50
-
-# Parse command-line arguments
-if {\$argc > 0} {
-    set RATE [lindex \$argv 0]
-}
-
-puts "Processing kernel_${kernel}-amp-\$RATE.cpp..."
-set_top kernel_${kernel}_amp_\$RATE
-add_files  kernel_${kernel}-amp-\$RATE.cpp
-
-# Reuse the same solution
-csynth_design
-
-set report_dir "./hlsTest-1/solution1/syn/report"
-set report_file [glob -nocomplain \${report_dir}/*.rpt]
-set output_file "./performance_resource_summary_amp_\$RATE.txt"
-
-# Extract performance and resource estimates
-$tcl_extract_result_script
-
-puts "Cleaning up ..."
-# Remove temporary files and directories
-if {[file exists ./hlsTest-1/solution1/tmp]} {
-	file delete -force ./hlsTest-1/solution1/tmp
-	puts "Temporary files cleaned."
-}
-clean_solution
-
-puts "Script execution completed."
 exit
 EOF
 
