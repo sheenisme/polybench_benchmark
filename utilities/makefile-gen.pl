@@ -47,6 +47,55 @@ use Cwd 'abs_path';
 my $script_path = abs_path($0);
 $script_path =~ s/\/[^\/]+$//;
 
+# script to extract performance and resource estimates from HLS report files
+my $tcl_extract_result_script = <<'END_TCL';
+if { [llength $report_file] > 0 } {
+	set file_content ""
+	foreach file $report_file {
+		set content [read [open $file]]
+		append file_content $content
+	}
+
+	set performance_section [list]
+	set resource_section [list]
+	set extract_flag 0
+
+	# Extract Performance and Resource Estimates sections
+	foreach line [split $file_content "\n"] {
+		if {[regexp {Performance Estimates} $line]} {
+			set extract_flag 1
+		} elseif {[regexp {Resource Estimates} $line]} {
+			set extract_flag 2
+		} elseif {[regexp {^[^\|]} $line]} {
+			set extract_flag 0
+		}
+
+		if {$extract_flag == 1 || $extract_flag == 2} {
+			# Check if the line is a table row (contains '|')
+			if {[regexp {\|} $line]} {
+				if {$extract_flag == 1} {
+					lappend performance_section $line
+				} elseif {$extract_flag == 2} {
+					lappend resource_section $line
+				}
+			}
+		}
+	}
+
+	# Save the extracted content to a text file
+	set output_fp [open $output_file w]
+	puts $output_fp "Performance Estimates:\n"
+	puts $output_fp [join $performance_section "\n"]
+	puts $output_fp "\nResource Estimates:\n"
+	puts $output_fp [join $resource_section "\n"]
+	close $output_fp
+
+	puts "Performance and Resource Estimates saved to $output_file"
+} else {
+	puts "No report files found in the directory: $report_dir"
+}
+END_TCL
+
 foreach $key (keys %categories) {
    my $target = $TARGET_DIR.'/'.$key;
    opendir DIR, $target or die "directory $target not found.\n";
@@ -236,16 +285,70 @@ EOF
 
 		open SYNFILE, ">$csynthFile" or die "failed to open $csynthFile.";
 print SYNFILE << "EOF";
+puts "Processing kernel_${kernel}-ppcg.cpp..."
 open_project hlsTest-1
+
 set_top kernel_${kernel}_ppcg
-add_files ${script_path}/../${key}/${kernel}/kernel_${kernel}-ppcg.cpp
-add_files -tb ${script_path}/../${key}/${kernel}/test_${kernel}.cpp -cflags "-I${script_path} -DPOLYBENCH_STACK_ARRAYS -DNO_PENCIL_KILL -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
-add_files -tb ${script_path}/../${key}/${kernel}/test_${kernel}.h -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+# current path is: ${script_path}/../${key}/${kernel}/
+add_files kernel_${kernel}-ppcg.cpp
+add_files -tb test_${kernel}.cpp -cflags "-I${script_path} -DPOLYBENCH_STACK_ARRAYS -DNO_PENCIL_KILL -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+add_files -tb test_${kernel}.h -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+
 open_solution "solution1" -flow_target vivado
 set_part {xc7a100t-csg324-3}
 create_clock -period 10 -name default
 #source "./hlsTest-1/solution1/directives.tcl"
 csynth_design
+
+set report_dir "./hlsTest-1/solution1/syn/report"
+set report_file [glob -nocomplain \${report_dir}/*.rpt]
+set output_file "./performance_resource_summary_ppcg.txt"
+
+# Extract performance and resource estimates
+$tcl_extract_result_script
+
+puts "Cleaning up ..."
+# Remove temporary files and directories
+if {[file exists ./hlsTest-1/solution1/tmp]} {
+	file delete -force ./hlsTest-1/solution1/tmp
+	puts "Temporary files cleaned."
+}
+remove_files kernel_${kernel}-ppcg.cpp
+clean_solution
+puts "Cleanup completed."
+
+# Set default value for the parameter
+set RATE 50
+
+# Parse command-line arguments
+if {\$argc > 0} {
+    set RATE [lindex \$argv 0]
+}
+
+puts "Processing kernel_${kernel}-amp-\$RATE.cpp..."
+set_top kernel_${kernel}_amp_\$RATE
+add_files  kernel_${kernel}-amp-\$RATE.cpp
+
+# Reuse the same solution
+csynth_design
+
+set report_dir "./hlsTest-1/solution1/syn/report"
+set report_file [glob -nocomplain \${report_dir}/*.rpt]
+set output_file "./performance_resource_summary_amp_\$RATE.txt"
+
+# Extract performance and resource estimates
+$tcl_extract_result_script
+
+puts "Cleaning up ..."
+# Remove temporary files and directories
+if {[file exists ./hlsTest-1/solution1/tmp]} {
+	file delete -force ./hlsTest-1/solution1/tmp
+	puts "Temporary files cleaned."
+}
+clean_solution
+
+puts "Script execution completed."
+exit
 EOF
 
 		close SYNFILE;
