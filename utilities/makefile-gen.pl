@@ -192,10 +192,9 @@ run_origin:
 	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
 	./$kernel-origon.exe
 
-e2e_ppcg:
+e2e_ppcg: testfix cppGen hGen
 	@ echo "[Step] Running end-to-end for PPCG..."
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
-
 
 e2e_amp: testfix cppGen hGen
 	@ echo "[Step] Running end-to-end for \${RATE}..."
@@ -250,7 +249,6 @@ EOF
 
 		open SYNFILE, ">$csynthFile" or die "failed to open $csynthFile.";
 print SYNFILE << "EOF";
-puts "[Step] Run csynth.tcl >>>"
 open_project hlsTest
 
 set_top kernel_${kernel}_ppcg
@@ -275,7 +273,6 @@ if { [file exists ./hlsTest] } {
     puts "Folder does not exist: ./hlsTest"
 }
 
-puts "[Step] Run csynth.tcl over!<<<"
 exit
 EOF
 
