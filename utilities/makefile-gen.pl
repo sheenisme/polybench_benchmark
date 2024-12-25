@@ -71,7 +71,7 @@ include $configFile
 
 EXTRA_FLAGS=$extra_flags{$kernel}
 
-RATE ?= 50
+RATE ?= 
 
 # please set $utilityDir or $script_path in CPATH.
 ifeq (\$(findstring $utilityDir,\$(CPATH)),)
@@ -79,20 +79,28 @@ CPATH := \$(CPATH):$utilityDir
 export CPATH
 endif
 
-get-amp: ${kernel}.c
-	@ echo "[Step] Generating AMP version: ${kernel}_amp_\${RATE}.c"
-	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}_amp_\${RATE}.c > /dev/null 2>&1
+KERNEL_NAME = \$(if \$(strip \$(RATE)),\$(KERNEL)_amp_\$(RATE),\$(KERNEL)_ppcg)
 
-get_ppcg:
+rate_check:
+ifeq (\$(strip \$(RATE)),)
+	\$(error RATE must be specified for all_amp, e.g. 'make all_amp RATE=50')
+endif
+	@ echo "[Step] all_amp with RATE=\$(RATE)"
+	
+get_cvariant: ${kernel}.c
+ifeq (\$(strip \$(RATE)),)
 	@ echo "[Step] Generating PPCG version: ${kernel}_ppcg.c"
 	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o ${kernel}_ppcg.c > /dev/null 2>&1
-
-clang2mlir: get_ppcg get-amp
+else
+	@ echo "[Step] Generating AMP version: ${kernel}_amp_\${RATE}.c"
+	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}_amp_\${RATE}.c > /dev/null 2>&1
+endif
+	
+clang2mlir: get_cvariant
 	@ echo "[Step] Translating C to MLIR with cgeist..."
-	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}_amp_\${RATE}.c -o ${kernel}_amp_\${RATE}.mlir
-	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir ${kernel}_ppcg.c -o ${kernel}_ppcg.mlir
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir \${KERNEL_NAME}.c -o \${KERNEL_NAME}.mlir
 
-extract-kernel: clang2mlir
+extract_kernel: clang2mlir
 	@ echo "[Step] Extracting kernel function(s) from MLIR by awk command..."
 	\@awk '\\
 		BEGIN { inside_block = 0; keep_header = 1; } \\
@@ -121,56 +129,23 @@ extract-kernel: clang2mlir
 				inside_block = 0; \\
 			} \\
 		} \\
-	' ${kernel}_amp_\${RATE}.mlir > kernel_${kernel}_amp_\${RATE}.tmp.mlir
-	\@awk '\\
-		BEGIN { inside_block = 0; keep_header = 1; } \\
-		/^[ \\t]*module/ { \\
-			keep_header = 0; \\
-		} \\
-		keep_header { \\
-			print; \\
-			next; \\
-		} \\
-		/func.*\@kernel_/ { \\
-			inside_block = 1; \\
-			print; \\
-			next; \\
-		} \\
-		inside_block { \\
-			print; \\
-			if (/return/ && \$\$0 ~ /\\}\\\$\$\/) { \\
-				inside_block = 0; \\
-				next; \\
-			} \\
-			if (/return/) { \\
-				inside_block = 2; \\
-			} \\
-			if (inside_block == 2 && /\\}/) { \\
-				inside_block = 0; \\
-			} \\
-		} \\
-	' ${kernel}_ppcg.mlir > kernel_${kernel}_ppcg.tmp.mlir
+	' \${KERNEL_NAME}.mlir > kernel_\${KERNEL_NAME}.tmp.mlir
 
-optimization: extract-kernel
+optimization: extract_kernel
 	@ echo "[Step] Optimizing MLIR with scalehls-opt..."
-	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}_amp_\${RATE}.tmp.mlir -o kernel_${kernel}_amp_\${RATE}.mlir
-	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_${kernel}_ppcg.tmp.mlir -o kernel_${kernel}_ppcg.mlir
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_\${KERNEL_NAME}.tmp.mlir -o kernel_\${KERNEL_NAME}.mlir
 
 translate: optimization
 	@ echo "[Step] Translating MLIR to C++ with scalehls-translate..."
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}_amp_\${RATE}.mlir -o kernel_${kernel}_amp_\${RATE}.cpp
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_${kernel}_ppcg.mlir         -o kernel_${kernel}_ppcg.cpp
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_\${KERNEL_NAME}.mlir -o kernel_\${KERNEL_NAME}.cpp
 
 testfix: translate
 	@ echo "[Step] Patching C++ files to include test_${kernel}.h by sed command..."
 	@ sed -i '/using namespace std;/i \\
 #include "test_${kernel}.h"\\
-' kernel_${kernel}_amp_\${RATE}.cpp
-	@ sed -i '/using namespace std;/i \\
-#include "test_${kernel}.h"\\
-' kernel_${kernel}_ppcg.cpp
-	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_amp_\${RATE}/g' kernel_${kernel}_amp_\${RATE}.cpp
-	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_${kernel}_ppcg/g' kernel_${kernel}_ppcg.cpp
+' kernel_\${KERNEL_NAME}.cpp
+	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_\${KERNEL_NAME}/g' kernel_\${KERNEL_NAME}.cpp
+
 
 cppGen: ${kernel}.c
 	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
@@ -180,38 +155,32 @@ cppGen: ${kernel}.c
 hGen:
 	@ echo "[Step] Generating test_${kernel}.h from ${kernel}.h & extracting kernel function prototypes..."
 	@ cp ${kernel}.h test_${kernel}.h
-	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}_ppcg.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > ppcg_kernel_func.tmp
-	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_${kernel}_amp_\${RATE}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > amp-\${RATE}_kernel_func.tmp
+	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_\${KERNEL_NAME}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > kernel_func.tmp
 	@ sed -i "3a #include <ap_int.h>" test_${kernel}.h
-	@ sed -i "4r amp-\${RATE}_kernel_func.tmp" test_${kernel}.h
-	@ sed -i "4r ppcg_kernel_func.tmp" test_${kernel}.h
-	@ rm -f ppcg_kernel_func.tmp amp-\${RATE}_kernel_func.tmp
+	@ sed -i "4r kernel_func.tmp" test_${kernel}.h
+	@ rm -f kernel_func.tmp
 
 run_origin:
 	@ echo "[Step] Compiling and running original version to check baseline..."
 	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
 	./$kernel-origon.exe
 
-e2e_ppcg: testfix cppGen hGen
+all_ppcg: testfix cppGen hGen
 	@ echo "[Step] Running end-to-end for PPCG..."
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
 
-e2e_amp: testfix cppGen hGen
+all_amp: rate_check testfix cppGen hGen
 	@ echo "[Step] Running end-to-end for \${RATE}..."
-	sed -i 's/_ppcg/_amp\${RATE}/g' csynth.tcl
+	@ sed -i 's/_ppcg/_amp\${RATE}/g' csynth.tcl
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
-	sed -i 's/_amp\${RATE}/_ppcg/g' csynth.tcl
+	@ sed -i 's/_amp\${RATE}/_ppcg/g' csynth.tcl
 
 all: testfix cppGen hGen run_origin
 	@ rm -f ${kernel}-origon.exe
-	@ rm -f ${kernel}_amp_\${RATE}.c
-	@ rm -f ${kernel}_ppcg.c
-	@ rm -f ${kernel}_amp_\${RATE}.mlir
-	@ rm -f ${kernel}_ppcg.mlir
-	@ rm -f kernel_${kernel}_amp_\${RATE}.tmp.mlir
-	@ rm -f kernel_${kernel}_ppcg.tmp.mlir
-	@ rm -f kernel_${kernel}_amp_\${RATE}.mlir
-	@ rm -f kernel_${kernel}_ppcg.mlir
+	@ rm -f \${KERNEL_NAME}.c
+	@ rm -f \${KERNEL_NAME}.mlir
+	@ rm -f kernel_\${KERNEL_NAME}.tmp.mlir
+	@ rm -f kernel_\${KERNEL_NAME}.mlir
 	@ echo ">>> [all] Done."
 
 clean:
@@ -220,20 +189,19 @@ clean:
 	@ rm -rf report_ppcg
 	@ rm -rf report_amp_*
 	@ rm -f ${kernel}-origon.exe
-	@ rm -f ${kernel}_amp_\${RATE}.c
+	@ rm -f ${kernel}_amp_*.c
 	@ rm -f ${kernel}_ppcg.c
-	@ rm -f ${kernel}_amp_\${RATE}.mlir
+	@ rm -f ${kernel}_amp_*.mlir
 	@ rm -f ${kernel}_ppcg.mlir
-	@ rm -f kernel_${kernel}_amp_\${RATE}.tmp.mlir
+	@ rm -f kernel_${kernel}_amp_*.tmp.mlir
 	@ rm -f kernel_${kernel}_ppcg.tmp.mlir
-	@ rm -f kernel_${kernel}_amp_\${RATE}.mlir
+	@ rm -f kernel_${kernel}_amp_*.mlir
 	@ rm -f kernel_${kernel}_ppcg.mlir
-	@ rm -f kernel_${kernel}_amp_\${RATE}.cpp
+	@ rm -f kernel_${kernel}_amp_*.cpp
 	@ rm -f kernel_${kernel}_ppcg.cpp
 	@ rm -f test_${kernel}.cpp
 	@ rm -f test_${kernel}.h
-	@ rm -f ppcg_kernel_func.tmp
-	@ rm -f amp-\${RATE}_kernel_func.tmp
+	@ rm -f rm -f kernel_func.tmp
 	@ rm -f *.log
 	@ rm -f *.tmp
 	@ rm -f *.exe
@@ -306,7 +274,7 @@ CGEIST_INC=-I /usr/lib/gcc/x86_64-linux-gnu/12/include/
 OPTIMIZER=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-opt
 OPTIMIZER_COMMON_FLAGS=--scalehls-func-preprocess="top-func=kernel_\${KERNEL}"
 OPTIMIZER_DATAFLOW_FLAGS=
-OPTIMIZER_PIPELINE_FLAGS=--scalehls-func-pipelining="target-func=kernel_\${KERNEL}"
+OPTIMIZER_PIPELINE_FLAGS=
 OPTIMIZER_OTHER_FLAGS=--canonicalize --cse
 
 TRANSLATE=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-translate
