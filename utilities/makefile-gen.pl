@@ -61,7 +61,8 @@ foreach $key (keys %categories) {
         my $configFile = $polybenchRoot.'config.mk';
 		my $jsonConfigFile = $polybenchRoot.'config.json';
         my $utilityDir = $polybenchRoot.'utilities'; 
-
+		my $kernel_safe = $kernel;
+		$kernel_safe =~ s/-/_/g;
         open FILE, ">$file" or die "failed to open $file.";
 
 print FILE << "EOF";
@@ -79,7 +80,7 @@ CPATH := \$(CPATH):$utilityDir
 export CPATH
 endif
 
-KERNEL_NAME = \$(if \$(strip \$(RATE)),\$(KERNEL)_amp_\$(RATE),\$(KERNEL)_ppcg)
+KERNEL_TMP_FILE_STR = \$(if \$(strip \$(RATE)),\$(KERNEL)_amp_\$(RATE),\$(KERNEL)_ppcg)
 
 rate_check:
 ifeq (\$(strip \$(RATE)),)
@@ -98,7 +99,7 @@ endif
 	
 clang2mlir: get_cvariant
 	@ echo "[Step] Translating C to MLIR with cgeist..."
-	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir \${KERNEL_NAME}.c -o \${KERNEL_NAME}.mlir
+	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir \${KERNEL_TMP_FILE_STR}.c -o \${KERNEL_TMP_FILE_STR}.mlir
 
 extract_kernel: clang2mlir
 	@ echo "[Step] Extracting kernel function(s) from MLIR by awk command..."
@@ -129,22 +130,22 @@ extract_kernel: clang2mlir
 				inside_block = 0; \\
 			} \\
 		} \\
-	' \${KERNEL_NAME}.mlir > kernel_\${KERNEL_NAME}.tmp.mlir
+	' \${KERNEL_TMP_FILE_STR}.mlir > kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
 
 optimization: extract_kernel
 	@ echo "[Step] Optimizing MLIR with scalehls-opt..."
-	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_\${KERNEL_NAME}.tmp.mlir -o kernel_\${KERNEL_NAME}.mlir
+	\${OPTIMIZER} \${OPTIMIZER_COMMON_FLAGS} \${OPTIMIZER_DATAFLOW_FLAGS} \${OPTIMIZER_PIPELINE_FLAGS} \${OPTIMIZER_OTHER_FLAGS} kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir -o kernel_\${KERNEL_TMP_FILE_STR}.mlir
 
 translate: optimization
 	@ echo "[Step] Translating MLIR to C++ with scalehls-translate..."
-	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_\${KERNEL_NAME}.mlir -o kernel_\${KERNEL_NAME}.cpp
+	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_\${KERNEL_TMP_FILE_STR}.mlir -o kernel_\${KERNEL_TMP_FILE_STR}.cpp
 
 testfix: translate
 	@ echo "[Step] Patching C++ files to include test_${kernel}.h by sed command..."
 	@ sed -i '/using namespace std;/i \\
 #include "test_${kernel}.h"\\
-' kernel_\${KERNEL_NAME}.cpp
-	@ sed -i 's/\\bkernel_${kernel}\\b/kernel_\${KERNEL_NAME}/g' kernel_\${KERNEL_NAME}.cpp
+' kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ sed -i 's/kernel_${kernel_safe}/kernel_\${KERNEL_TMP_FILE_STR}/g' kernel_\${KERNEL_TMP_FILE_STR}.cpp
 
 cppGen: ${kernel}.c
 	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
@@ -154,7 +155,7 @@ cppGen: ${kernel}.c
 hGen:
 	@ echo "[Step] Generating test_${kernel}.h from ${kernel}.h & extracting kernel function prototypes..."
 	@ cp ${kernel}.h test_${kernel}.h
-	@ sed -n '/^.*kernel_[a-zA-Z0-9_]* *(/,/)/p' kernel_\${KERNEL_NAME}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > kernel_func.tmp
+	@ sed -n '/^.*kernel_[a-zA-Z0-9_-]* *(/,/)/p' kernel_\${KERNEL_TMP_FILE_STR}.cpp | sed '/{.*/d' | sed '\$\$s/\$\$/);/' > kernel_func.tmp
 	@ sed -i "3a #include <ap_int.h>" test_${kernel}.h
 	@ sed -i "4r kernel_func.tmp" test_${kernel}.h
 	@ rm -f kernel_func.tmp
@@ -165,28 +166,28 @@ run_origin:
 	./$kernel-origon.exe
 
 ppcg: testfix cppGen hGen
-	@ rm -f \${KERNEL_NAME}.c
-	@ rm -f \${KERNEL_NAME}.mlir
-	@ rm -f kernel_\${KERNEL_NAME}.tmp.mlir
-	@ rm -f kernel_\${KERNEL_NAME}.mlir
+	@ rm -f \${KERNEL_TMP_FILE_STR}.c
+	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.mlir
 	@ echo "[Step] Running end-to-end for PPCG..."
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
 	@ echo ">>> [all] Done."
-	@ rm -f kernel_\${KERNEL_NAME}.cpp
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.cpp
 	@ rm -f test_${kernel}.cpp
 	@ rm -f test_${kernel}.h
 
 amp: rate_check testfix cppGen hGen
-	@ rm -f \${KERNEL_NAME}.c
-	@ rm -f \${KERNEL_NAME}.mlir
-	@ rm -f kernel_\${KERNEL_NAME}.tmp.mlir
-	@ rm -f kernel_\${KERNEL_NAME}.mlir
+	@ rm -f \${KERNEL_TMP_FILE_STR}.c
+	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.mlir
 	@ echo "[Step] Running end-to-end for \${RATE}..."
 	@ sed -i 's/_ppcg/_amp_\${RATE}/g' csynth.tcl
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
 	@ sed -i 's/_amp_\${RATE}/_ppcg/g' csynth.tcl
 	@ echo ">>> [all] Done."
-	@ rm -f kernel_\${KERNEL_NAME}.cpp
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.cpp
 	@ rm -f test_${kernel}.cpp
 	@ rm -f test_${kernel}.h
 
