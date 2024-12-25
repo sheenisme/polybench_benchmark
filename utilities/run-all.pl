@@ -1,78 +1,88 @@
 #!/usr/bin/perl
 
-# Visits every directory, calls make, and then executes the benchmark
-# (Designed for making sure every kernel compiles/runs after modifications)
-#
-# Written by Tomofumi Yuki, 01/15 2015
-#
-
-my $TARGET_DIR = ".";
-
-if ($#ARGV != 0 && $#ARGV != 1) {
-   printf("usage perl run-all.pl target-dir [option] [output-file]\n");
-   printf("the option: 1.run all cases; 2.run origin and clean.\n");
-   exit(1);
-}
-
-
-# parse arguments
-if ($#ARGV >= 0) {
-   $TARGET_DIR = $ARGV[0];
-}
-
-my $OPTION = 1;
-if ($#ARGV >= 1) {
-   $OPTION = $ARGV[1];
-}
-
-my $OUTFILE = "";
-if ($#ARGV == 2) {
-   $OUTFILE = $ARGV[2];
-}
-
-
-my @categories = ('linear-algebra/blas',
-                  'linear-algebra/kernels',
-                  'linear-algebra/solvers',
-                  'datamining',
-                  'stencils',
-                  'medley');
-
-# set CPATH
+use strict;
+use warnings;
 use Cwd 'abs_path';
+
+# ------------------------------------------------------------------------------
+#  1) Two arguments are required:
+#     - <target-dir>: The root directory to traverse
+#     - <option-string>: Must be "ppcg" "all" or "amp RATE=<number>"
+#
+#  2) No third argument is accepted; the output-file option has been removed.
+#
+#  3) This script will traverse the subcategories and subdirectories under
+#     <target-dir> and execute "make clean; make <option-string>" in each of them.
+# ------------------------------------------------------------------------------
+
+# Check the number of arguments
+if (@ARGV < 2) {
+    die "Usage: perl $0 <target-dir> <option-string>\n" .
+        "       where <option-string> is either:\n" .
+        "         'ppcg' or 'amp RATE=<number>'\n";
+}
+
+# Parse arguments
+my $TARGET_DIR = $ARGV[0];
+my $OPTION     = $ARGV[1];
+
+# 1. Verify that <target-dir> exists
+die "Error: '$TARGET_DIR' is not a valid directory.\n" unless (-d $TARGET_DIR);
+
+# 2. Check whether <option-string> matches the pattern "ppcg" or "amp RATE=<number>"
+#    Regex explanation:
+#       ^ppcg$              => matches "ppcg"
+#       ^amp\s+RATE=\d+$    => matches "amp RATE=<number>"
+unless ($OPTION =~ /^(ppcg|all|amp\s+RATE=\d+)$/) {
+    die "Error: <option-string> must be 'ppcg' 'all' or 'amp RATE=<number>'. Given: '$OPTION'\n";
+}
+
+# 3. Define the categories (subdirectories) to traverse
+my @categories = (
+    'linear-algebra/blas',
+    'linear-algebra/kernels',
+    'linear-algebra/solvers',
+    'datamining',
+    'stencils',
+    'medley'
+);
+
+# 4. Set CPATH to include the script's directory
 my $script_path = abs_path($0);
-$script_path =~ s/\/[^\/]+$//;
+$script_path =~ s/\/[^\/]+$//;  # Remove the script name, keep the directory
 if (defined $ENV{CPATH}) {
     $ENV{CPATH} .= ":$script_path";
 } else {
     $ENV{CPATH} = $script_path;
 }
 
-# set stack size
-my $runSets = "ulimit -s unlimited";
-print($runSets."\n");
+# 5. Set the stack size to unlimited
+my $runSets = "ulimit -s unlimited;";
+print "$runSets\n";
 system($runSets);
 
-foreach $cat (@categories) {
-   my $target = $TARGET_DIR.'/'.$cat;
-   opendir DIR, $target or die "directory $target not found.\n";
-   while (my $dir = readdir DIR) {
-        next if ($dir=~'^\..*');
-        next if (!(-d $target.'/'.$dir));
+# 6. Traverse each category's subdirectory and run "make clean; make <option-string>"
+foreach my $cat (@categories) {
+    my $cat_path = "$TARGET_DIR/$cat";
+    opendir(my $dh, $cat_path) or do {
+        warn "Skipping '$cat_path': not found or cannot open.\n";
+        next;
+    };
+    while (my $subdir = readdir($dh)) {
+        # Skip hidden directories (e.g., . and ..)
+        next if ($subdir =~ /^\./);
+        
+        my $full_subdir_path = "$cat_path/$subdir";
+        # Only handle directories
+        next unless (-d $full_subdir_path);
 
-        my $kernel = $dir;
-        my $targetDir = $target.'/'.$dir;  
-        my $command = "";
-        if ($OPTION == 1) {
-            $command = "cd $targetDir; make clean; make all;";
-        }else{
-            $command = "cd $targetDir; make run_origin; make clean;";
-        }
-        $command .= " 2>> $OUTFILE" if ($OUTFILE ne '');
-        print($command."\n");
+        my $command = "cd $full_subdir_path; make clean; make $OPTION";
+
+        print("$command\n");
         system($command);
-   }
-
-   closedir DIR;
+    }
+    closedir $dh;
 }
+
+exit 0;
 
