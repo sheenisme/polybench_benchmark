@@ -166,21 +166,27 @@ run_origin:
 	./$kernel-origon.exe
 
 all_ppcg: testfix cppGen hGen
-	@ echo "[Step] Running end-to-end for PPCG..."
-	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
-
-all_amp: rate_check testfix cppGen hGen
-	@ echo "[Step] Running end-to-end for \${RATE}..."
-	@ sed -i 's/_ppcg/_amp\${RATE}/g' csynth.tcl
-	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
-	@ sed -i 's/_amp\${RATE}/_ppcg/g' csynth.tcl
-
-all: testfix cppGen hGen run_origin
-	@ rm -f ${kernel}-origon.exe
 	@ rm -f \${KERNEL_NAME}.c
 	@ rm -f \${KERNEL_NAME}.mlir
 	@ rm -f kernel_\${KERNEL_NAME}.tmp.mlir
 	@ rm -f kernel_\${KERNEL_NAME}.mlir
+	@ echo "[Step] Running end-to-end for PPCG..."
+	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
+	@ echo ">>> [all] Done."
+
+all_amp: rate_check testfix cppGen hGen
+	@ rm -f \${KERNEL_NAME}.c
+	@ rm -f \${KERNEL_NAME}.mlir
+	@ rm -f kernel_\${KERNEL_NAME}.tmp.mlir
+	@ rm -f kernel_\${KERNEL_NAME}.mlir
+	@ echo "[Step] Running end-to-end for \${RATE}..."
+	@ sed -i 's/_ppcg/_amp_\${RATE}/g' csynth.tcl
+	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
+	@ sed -i 's/_amp_\${RATE}/_ppcg/g' csynth.tcl
+	@ echo ">>> [all] Done."
+
+all: run_origin
+	@ rm -f ${kernel}-origon.exe
 	@ echo ">>> [all] Done."
 
 clean:
@@ -232,7 +238,7 @@ create_clock -period 10 -name default
 
 csynth_design
 
-file copy -force -recurse ./hlsTest/solution1/syn/report ./report_ppcg
+file copy -force ./hlsTest/solution1/syn/report ./report_ppcg
 
 # Remove hlsTest directories
 if { [file exists ./hlsTest] } {
