@@ -47,50 +47,6 @@ use Cwd 'abs_path';
 my $script_path = abs_path($0);
 $script_path =~ s/\/[^\/]+$//;
 
-# script to extract performance and resource estimates from HLS report files
-my $tcl_extract_result_script = <<'END_TCL';
-# Check if the input file exists
-if {![file exists $report_file]} {
-    puts "Error: Report file $report_file does not exist."
-    exit 1
-}
-
-# Open the report file and read its content
-set file_content [read [open $report_file]]
-
-# Extract the Performance & Resource Estimates section
-set performance_section [list]
-set extract_flag 0
-
-foreach line [split $file_content "\n"] {
-    # Detect the start of the section
-    if {[regexp {^\\+ Performance & Resource Estimates:} $line]} {
-        set extract_flag 1
-    }
-    
-    # Detect the end of the section
-    if {[regexp {^\\+.*Interfaces} $line]} {
-        set extract_flag 0
-    }
-
-    # Collect lines while in the section
-    if {$extract_flag == 1} {
-        lappend performance_section $line
-    }
-}
-
-# Save the extracted content to the output file
-if {[llength $performance_section] > 0} {
-    set output_fp [open $output_file w]
-    puts $output_fp "Performance & Resource Estimates:\n"
-    puts $output_fp [join $performance_section "\n"]
-    close $output_fp
-    puts "Performance & Resource Estimates saved to $output_file"
-} else {
-    puts "No Performance & Resource Estimates section found in the report."
-}
-END_TCL
-
 foreach $key (keys %categories) {
    my $target = $TARGET_DIR.'/'.$key;
    opendir DIR, $target or die "directory $target not found.\n";
@@ -280,6 +236,7 @@ EOF
 
 		open SYNFILE, ">$csynthFile" or die "failed to open $csynthFile.";
 print SYNFILE << "EOF";
+puts "[Step] Run csynth.tcl >>>"
 open_project hlsTest
 
 set_top kernel_${kernel}_ppcg
@@ -295,20 +252,16 @@ create_clock -period 10 -name default
 
 csynth_design
 
-set report_dir "./hlsTest/solution1/syn/report"
-set report_file [glob -nocomplain \${report_dir}/csynth.rpt]
-set output_file "./performance_resource_summary_ppcg.txt"
+file copy -force -recurse ./hlsTest/solution1/syn/report ./report_ppcg
 
-# Extract performance and resource estimates
-$tcl_extract_result_script
-
-puts "Cleaning up ..."
-# Remove temporary files and directories
-if {[file exists ./hlsTest/solution1/tmp]} {
-	file delete -force ./hlsTest/solution1/tmp
-	puts "Temporary files cleaned."
+# Remove hlsTest directories
+if { [file exists ./hlsTest] } {
+    file delete -force ./hlsTest
+} else {
+    puts "Folder does not exist: ./hlsTest"
 }
-puts "Cleanup completed."
+
+puts "[Step] Run csynth.tcl over!<<<"
 exit
 EOF
 
