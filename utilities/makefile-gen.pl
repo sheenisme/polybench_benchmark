@@ -192,6 +192,17 @@ run_origin:
 	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
 	./$kernel-origon.exe
 
+e2e_ppcg:
+	@ echo "[Step] Running end-to-end for PPCG..."
+	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
+
+
+e2e_amp: testfix cppGen hGen
+	@ echo "[Step] Running end-to-end for \${RATE}..."
+	sed -i 's/_ppcg/_amp\${RATE}/g' csynth.tcl
+	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
+	sed -i 's/_amp\${RATE}/_ppcg/g' csynth.tcl
+
 all: testfix cppGen hGen run_origin
 	@ rm -f ${kernel}-origon.exe
 	@ rm -f ${kernel}_amp_\${RATE}.c
@@ -206,7 +217,9 @@ all: testfix cppGen hGen run_origin
 
 clean:
 	@ echo "[Step] Cleaning up..."
-	@ rm -f csynth.tcl
+	@ rm -f vitis_hls.log
+	@ rm -rf report_ppcg
+	@ rm -rf report_amp_*
 	@ rm -f ${kernel}-origon.exe
 	@ rm -f ${kernel}_amp_\${RATE}.c
 	@ rm -f ${kernel}_ppcg.c
@@ -222,6 +235,7 @@ clean:
 	@ rm -f test_${kernel}.h
 	@ rm -f ppcg_kernel_func.tmp
 	@ rm -f amp-\${RATE}_kernel_func.tmp
+	@ rm -f *.log
 	@ rm -f *.tmp
 	@ rm -f *.exe
 	@ rm -f *.out
@@ -300,6 +314,8 @@ OPTIMIZER_OTHER_FLAGS=--canonicalize --cse
 
 TRANSLATE=/data/dagongcheng/sheensong-test/hlsProject/mixPrecHLS/build/bin/scalehls-translate
 TRANSLATE_FLAGS=-scalehls-emit-hlscpp
+
+VITIS_HLS=/shared/Xilinx/Vitis_HLS/2022.2/bin/vitis_hls
 EOF
 
 close FILE;
