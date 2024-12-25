@@ -18,3 +18,14 @@ lnlamp_predict_result.png
 lnlamp_temp_result.txt
 lnlamp_internal_usage.py.log
 ____tempfile.data.polybench
+*.tmp
+
+# hls
+csynth.tcl
+vitis_hls.log
+kernel_func.tmp
+*_origon.out
+*_origon.exe
+*.tmp.mlir
+*_amp_*.out
+*_amp_*.exe

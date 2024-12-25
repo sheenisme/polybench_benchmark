@@ -19,6 +19,26 @@ use Cwd 'abs_path';
 #     <target-dir> and execute "make <option-string>" in each of them.
 # ------------------------------------------------------------------------------
 
+# Declare the @child_pids array to store the PIDs of child processes
+my @child_pids;
+
+# Handle SIGINT (Ctrl+C) to terminate all child processes
+$SIG{INT} = sub {
+    print "Caught SIGINT. Terminating child processes...\n";
+    
+    # Kill all child processes (use 'KILL' to ensure immediate termination)
+    foreach my $pid (@child_pids) {
+        kill 'KILL', $pid;  # Send KILL signal to child processes
+    }
+    
+    # Wait for all child processes to terminate
+    foreach my $pid (@child_pids) {
+        waitpid($pid, 0);  # Ensure that all child processes are cleaned up
+    }
+
+    exit 1;  # Exit the script after cleanup
+};
+
 # Check the number of arguments
 if (@ARGV < 2) {
     die "Usage: perl $0 <target-dir> <option-string> [parallel]\n" .
@@ -88,7 +108,7 @@ foreach my $cat (@categories) {
     while (my $subdir = readdir($dh)) {
         # Skip hidden directories (e.g., . and ..)
         next if ($subdir =~ /^\./);
-        
+
         # Skip directories in the skip list
         if (exists $skip_dirs{$subdir}) {
             print "Skipping directory '$subdir' as it's in the skip list.\n";
@@ -102,7 +122,7 @@ foreach my $cat (@categories) {
         # If parallel execution is enabled (using relaxed condition), fork a new process
         if ($PARALLEL =~ /^(p|par|paral|parallel)$/i) {
             my $pid = fork();
-            
+
             if ($pid) {
                 # Parent process: Save the child process PID
                 push @child_pids, $pid;
@@ -128,7 +148,7 @@ foreach my $cat (@categories) {
             }
         }
     }
-    
+
     closedir $dh;
 
     # Parent process waits for all child processes to finish (if parallel execution)
