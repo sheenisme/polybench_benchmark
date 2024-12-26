@@ -140,7 +140,7 @@ translate: optimization
 	@ echo "[Step] Translating MLIR to C++ with scalehls-translate..."
 	\${TRANSLATE} \${TRANSLATE_FLAGS} \${PPCG_SCHED_FLAGS} kernel_\${KERNEL_TMP_FILE_STR}.mlir -o kernel_\${KERNEL_TMP_FILE_STR}.cpp
 
-testfix: translate
+func_patch: translate
 	@ echo "[Step] Patching C++ files to include test_${kernel}.h by sed command..."
 	@ sed -i '/using namespace std;/i \\
 #include "test_${kernel}.h"\\
@@ -165,7 +165,7 @@ run_origin:
 	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
 	./$kernel-origon.exe
 
-ppcg: testfix cppGen hGen
+ppcg: func_patch cppGen hGen
 	@ rm -f \${KERNEL_TMP_FILE_STR}.c
 	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
 	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
@@ -177,7 +177,7 @@ ppcg: testfix cppGen hGen
 	@ rm -f test_${kernel}.cpp
 	@ rm -f test_${kernel}.h
 
-amp: rate_check testfix cppGen hGen
+amp: rate_check func_patch cppGen hGen
 	@ rm -f \${KERNEL_TMP_FILE_STR}.c
 	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
 	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
