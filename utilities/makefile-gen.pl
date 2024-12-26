@@ -80,6 +80,8 @@ CPATH := \$(CPATH):$utilityDir
 export CPATH
 endif
 
+KERNEL_MODIFIED = \$(subst -,_,\$(KERNEL))
+KERNEL_FUNC_SAFE_STR = \$(if \$(strip \$(RATE)),\$(KERNEL_MODIFIED)_amp_\$(RATE),\$(KERNEL_MODIFIED)_ppcg)
 KERNEL_TMP_FILE_STR = \$(if \$(strip \$(RATE)),\$(KERNEL)_amp_\$(RATE),\$(KERNEL)_ppcg)
 
 rate_check:
@@ -145,7 +147,7 @@ func_patch: translate
 	@ sed -i '/using namespace std;/i \\
 #include "test_${kernel}.h"\\
 ' kernel_\${KERNEL_TMP_FILE_STR}.cpp
-	@ sed -i 's/kernel_${kernel_safe}/kernel_\${KERNEL_TMP_FILE_STR}/g' kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ sed -i 's/kernel_${kernel_safe}/kernel_\${KERNEL_FUNC_SAFE_STR}/g' kernel_\${KERNEL_TMP_FILE_STR}.cpp
 
 cppGen: ${kernel}.c
 	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
@@ -232,7 +234,7 @@ EOF
 print SYNFILE << "EOF";
 open_project hlsTest
 
-set_top kernel_${kernel}_ppcg
+set_top kernel_${kernel_safe}_ppcg
 # current path is: ${script_path}/../${key}/${kernel}/
 add_files kernel_${kernel}_ppcg.cpp
 add_files -tb test_${kernel}.cpp -cflags "-I${script_path} -DPOLYBENCH_STACK_ARRAYS -DNO_PENCIL_KILL -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
