@@ -12,7 +12,7 @@ use Cwd 'abs_path';
 #  2) No third argument is accepted; the output-file option has been removed.
 #
 #  3) This script will traverse the subcategories and subdirectories under
-#     <target-dir> and execute "make clean; make <option-string>" in each of them.
+#     <target-dir> and execute "make <option-string>" in each of them.
 # ------------------------------------------------------------------------------
 
 # Check the number of arguments
@@ -61,7 +61,7 @@ my $runSets = "ulimit -s unlimited;";
 print "$runSets\n";
 system($runSets);
 
-# 6. Traverse each category's subdirectory and run "make clean; make <option-string>"
+# 6. Traverse each category's subdirectory and run "make <option-string>"
 foreach my $cat (@categories) {
     my $cat_path = "$TARGET_DIR/$cat";
     opendir(my $dh, $cat_path) or do {
@@ -76,7 +76,7 @@ foreach my $cat (@categories) {
         # Only handle directories
         next unless (-d $full_subdir_path);
 
-        my $command = "cd $full_subdir_path; make clean; make $OPTION";
+        my $command = "cd $full_subdir_path; make $OPTION";
 
         print("$command\n");
         system($command);
