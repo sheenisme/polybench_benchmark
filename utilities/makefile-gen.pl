@@ -84,19 +84,20 @@ KERNEL_MODIFIED = \$(subst -,_,\$(KERNEL))
 KERNEL_FUNC_SAFE_STR = \$(if \$(strip \$(RATE)),\$(KERNEL_MODIFIED)_amp_\$(RATE),\$(KERNEL_MODIFIED)_ppcg)
 KERNEL_TMP_FILE_STR = \$(if \$(strip \$(RATE)),\$(KERNEL)_amp_\$(RATE),\$(KERNEL)_ppcg)
 
-rate_check:
+init:
 ifeq (\$(strip \$(RATE)),)
-	\$(error RATE must be specified for all_amp, e.g. 'make all_amp RATE=50')
-endif
-	@ echo "[Step] all_amp with RATE=\$(RATE)"
-	
-get_cvariant: ${kernel}.c
-ifeq (\$(strip \$(RATE)),)
-	@ echo "[Step] Generating PPCG version: ${kernel}_ppcg.c"
-	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o ${kernel}_ppcg.c > /dev/null 2>&1
+	@ echo "[Step] Starting with ppcg"
 else
-	@ echo "[Step] Generating AMP version: ${kernel}_amp_\${RATE}.c"
-	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o ${kernel}_amp_\${RATE}.c > /dev/null 2>&1
+	@ echo "[Step] Starting with RATE=\$(RATE)"
+endif
+
+get_cvariant: init ${kernel}.c
+ifeq (\$(strip \$(RATE)),)
+	@ echo "[Step] Generating PPCG version: \${KERNEL_TMP_FILE_STR}.c"
+	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} --no-automatic-mixed-precision ${kernel}.c -o \${KERNEL_TMP_FILE_STR}.c > /dev/null 2>&1
+else
+	@ echo "[Step] Generating AMP version: \${KERNEL_TMP_FILE_STR}.c"
+	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o \${KERNEL_TMP_FILE_STR}.c > /dev/null 2>&1
 endif
 	
 clang2mlir: get_cvariant
@@ -151,7 +152,7 @@ func_patch: translate
 
 cppGen: ${kernel}.c
 	@ echo "[Step] Generating test_${kernel}.cpp with extern ${kernel}.c..."
-	@ cp ${kernel}.c test_${kernel}.cpp
+	@ cp \${KERNEL_TMP_FILE_STR}.c test_${kernel}.cpp
 	@ sed -i 's/${kernel}.h/test_${kernel}.h/g' test_${kernel}.cpp
 
 hGen:
@@ -162,39 +163,87 @@ hGen:
 	@ sed -i "4r kernel_func.tmp" test_${kernel}.h
 	@ rm -f kernel_func.tmp
 
-run_origin:
-	@ echo "[Step] Compiling and running original version to check baseline..."
-	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o $kernel-origon.exe     \${EXTRA_FLAGS}
-	./$kernel-origon.exe
-
-ppcg: func_patch cppGen hGen
-	@ rm -f \${KERNEL_TMP_FILE_STR}.c
-	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
-	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
-	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.mlir
+fpga: init func_patch cppGen hGen
+ifeq (\$(strip \$(RATE)),)
 	@ echo "[Step] Running end-to-end for PPCG..."
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
-	@ echo ">>> [all] Done."
-	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.cpp
-	@ rm -f test_${kernel}.cpp
-	@ rm -f test_${kernel}.h
-
-amp: rate_check func_patch cppGen hGen
-	@ rm -f \${KERNEL_TMP_FILE_STR}.c
-	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
-	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
-	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.mlir
+else
 	@ echo "[Step] Running end-to-end for \${RATE}..."
 	@ sed -i 's/_ppcg/_amp_\${RATE}/g' csynth.tcl
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
 	@ sed -i 's/_amp_\${RATE}/_ppcg/g' csynth.tcl
-	@ echo ">>> [all] Done."
+endif
+	@ rm -f \${KERNEL_TMP_FILE_STR}.c
+	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.mlir
 	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.cpp
 	@ rm -f test_${kernel}.cpp
 	@ rm -f test_${kernel}.h
+	@ echo ">>> [all] Done."
 
-all: run_origin
-	@ rm -f ${kernel}-origon.exe
+baseline: func_patch
+	@ echo "[Step] Compiling and running baseline version to check correctness..."
+	\${VERBOSE} \${CC} \${KERNEL_TMP_FILE_STR}.c \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o \${KERNEL_TMP_FILE_STR}.exe     \${EXTRA_FLAGS}
+	./\${KERNEL_TMP_FILE_STR}.exe > \${KERNEL_TMP_FILE_STR}.out 2>&1
+
+replace_kernel_call: func_patch cppGen hGen
+	@ echo "[Step] Replacing Kernel function call by shell command..."
+	@ cp kernel_\${KERNEL_TMP_FILE_STR}.cpp verify_kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ cp test_${kernel}.h verify_test_${kernel}.h
+	@ awk -v new_str="kernel_\${KERNEL_FUNC_SAFE_STR}" '/Run kernel/ {print; getline; gsub(/kernel_${kernel_safe}/, new_str); print; next} {print}' test_${kernel}.cpp > verify_test_${kernel}.cpp
+	@ sed -i '4,4d'  verify_test_${kernel}.h
+	@ sed -i '1,14d' verify_kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ sed -i 's/ap_int<32>/int/g' verify_test_${kernel}.h
+	@ sed -i 's/ap_int<32>/int/g' verify_kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ sed -i 's/ap_int<8>/char/g' verify_test_${kernel}.h
+	@ sed -i 's/ap_int<8>/char/g' verify_kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ sed -i 's/test_${kernel}.h/verify_test_${kernel}.h/g' verify_test_${kernel}.cpp
+	@ sed -i 's/test_${kernel}.h/verify_test_${kernel}.h/g' verify_kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	
+verify: baseline replace_kernel_call
+	@ echo "[Step] Compiling and running generated version to check correctness..."
+	\${VERBOSE} \${CPP} verify_test_${kernel}.cpp verify_kernel_\${KERNEL_TMP_FILE_STR}.cpp \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.cpp -o kernel_\${KERNEL_TMP_FILE_STR}.exe     \${EXTRA_FLAGS}
+	./kernel_\${KERNEL_TMP_FILE_STR}.exe > kernel_\${KERNEL_TMP_FILE_STR}.out 2>&1
+
+show_diff: verify
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ rm -f test_${kernel}.cpp
+	@ rm -f test_${kernel}.h
+	@ rm -f \${KERNEL_TMP_FILE_STR}.c
+	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.mlir
+	@ rm -f verify_test_${kernel}.cpp
+	@ rm -f verify_test_${kernel}.h
+	@ rm -f verify_kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.exe
+	@ rm -f \${KERNEL_TMP_FILE_STR}.exe
+	@ echo "[Step] Showing diff result..."
+	diff kernel_\${KERNEL_TMP_FILE_STR}.out \${KERNEL_TMP_FILE_STR}.out || true
+
+run_origin:
+	@ echo "[Step] Compiling and running original version to check baseline..."
+	\${VERBOSE} \${CC} $kernel.c -DNO_PENCIL_KILL \${CFLAGS} \${CC_OPENMP_FLAGS} \${POLYBENCH_FLAGS} -I. -I$utilityDir $utilityDir/polybench.c -o ${kernel}_origon.exe     \${EXTRA_FLAGS}
+	./${kernel}_origon.exe > ${kernel}_origon.out 2>&1
+
+all: run_origin show_diff
+ifeq (\$(strip \$(RATE)),)
+	diff ${kernel}_origon.out \${KERNEL_TMP_FILE_STR}.out || true
+endif
+	@ rm -f ${kernel}_origon.out
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.out
+	@ rm -f \${KERNEL_TMP_FILE_STR}.out
+	@ rm -f ${kernel}_origon.exe
+	@ rm -f \${KERNEL_TMP_FILE_STR}.exe
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.exe
+	@ rm -f \${KERNEL_TMP_FILE_STR}.c
+	@ rm -f \${KERNEL_TMP_FILE_STR}.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.tmp.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.mlir
+	@ rm -f kernel_\${KERNEL_TMP_FILE_STR}.cpp
+	@ rm -f test_${kernel}.cpp
+	@ rm -f test_${kernel}.h
 	@ echo ">>> [all] Done."
 
 clean:
@@ -203,7 +252,7 @@ clean:
 	@ rm -rf hlsTest
 	@ rm -rf report_ppcg
 	@ rm -rf report_amp_*
-	@ rm -f ${kernel}-origon.exe
+	@ rm -f ${kernel}_origon.exe
 	@ rm -f ${kernel}_amp_*.c
 	@ rm -f ${kernel}_ppcg.c
 	@ rm -f ${kernel}_amp_*.mlir
@@ -216,7 +265,10 @@ clean:
 	@ rm -f kernel_${kernel}_ppcg.cpp
 	@ rm -f test_${kernel}.cpp
 	@ rm -f test_${kernel}.h
-	@ rm -f rm -f kernel_func.tmp
+	@ rm -f kernel_func.tmp
+	@ rm -f verify_test_${kernel}.cpp
+	@ rm -f verify_test_${kernel}.h
+	@ rm -f verify_kernel_*.cpp
 	@ rm -f *.log
 	@ rm -f *.tmp
 	@ rm -f *.exe
@@ -272,9 +324,10 @@ open FILE, '>'.$TARGET_DIR.'/config.mk';
 
 print FILE << "EOF";
 CC=gcc
+CPP=g++
 CFLAGS=-O3 
 CC_OPENMP_FLAGS=
-POLYBENCH_FLAGS=-DPOLYBENCH_TIME -DPOLYBENCH_STACK_ARRAYS
+POLYBENCH_FLAGS=-DPOLYBENCH_TIME -DPOLYBENCH_DUMP_ARRAYS -DPOLYBENCH_STACK_ARRAYS
 
 PPCG=/data/dagongcheng/sheensong-test/lnlamp/lnlamp-install/bin/ppcg
 PPCG_TARGET=--target c 

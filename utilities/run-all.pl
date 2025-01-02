@@ -7,7 +7,11 @@ use Cwd 'abs_path';
 # ------------------------------------------------------------------------------
 #  1) Two arguments are required:
 #     - <target-dir>: The root directory to traverse
-#     - <option-string>: Must be "ppcg" "all" or "amp RATE=<number>"
+#     - <option-string>: Must be one of the following:
+#         'all'
+#         'all RATE=<number>'
+#         'fpga'
+#         'fpga RATE=<number>'
 #
 #  2) No third argument is accepted; the output-file option has been removed.
 #
@@ -18,8 +22,11 @@ use Cwd 'abs_path';
 # Check the number of arguments
 if (@ARGV < 2) {
     die "Usage: perl $0 <target-dir> <option-string>\n" .
-        "       where <option-string> is either:\n" .
-        "         'ppcg' or 'amp RATE=<number>'\n";
+        "       where <option-string> is one of the following:\n" .
+        "         'all'\n" .
+        "         'all RATE=<number>'\n" .
+        "         'fpga'\n" .
+        "         'fpga RATE=<number>'\n";
 }
 
 # Parse arguments
@@ -29,12 +36,15 @@ my $OPTION     = $ARGV[1];
 # 1. Verify that <target-dir> exists
 die "Error: '$TARGET_DIR' is not a valid directory.\n" unless (-d $TARGET_DIR);
 
-# 2. Check whether <option-string> matches the pattern "ppcg" or "amp RATE=<number>"
-#    Regex explanation:
-#       ^ppcg$              => matches "ppcg"
-#       ^amp\s+RATE=\d+$    => matches "amp RATE=<number>"
-unless ($OPTION =~ /^(ppcg|all|amp\s+RATE=\d+)$/) {
-    die "Error: <option-string> must be 'ppcg' 'all' or 'amp RATE=<number>'. Given: '$OPTION'\n";
+# 2. Check whether <option-string> matches the allowed patterns:
+#    'all', 'all RATE=<number>', 'fpga', 'fpga RATE=<number>'
+unless ($OPTION =~ /^(all(?:\s+RATE=\d+)?|fpga(?:\s+RATE=\d+)?)$/) {
+    die "Error: <option-string> must be one of the following:\n" .
+        "       'all'\n" .
+        "       'all RATE=<number>'\n" .
+        "       'fpga'\n" .
+        "       'fpga RATE=<number>'\n" .
+        "       Given: '$OPTION'\n";
 }
 
 # 3. Define the categories (subdirectories) to traverse
@@ -85,4 +95,3 @@ foreach my $cat (@categories) {
 }
 
 exit 0;
-
