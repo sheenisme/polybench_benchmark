@@ -70,6 +70,8 @@ if (defined $ENV{CPATH}) {
 my $runSets = "ulimit -s unlimited;";
 print "$runSets\n";
 system($runSets);
+# Define my own cases to skip
+my %skip_dirs = map { $_ => 1 } qw(3d7pt 3d27pt fdtd-1d heat-1d heat-2d);
 
 # 6. Traverse each category's subdirectory and run "make <option-string>"
 foreach my $cat (@categories) {
@@ -82,6 +84,12 @@ foreach my $cat (@categories) {
         # Skip hidden directories (e.g., . and ..)
         next if ($subdir =~ /^\./);
         
+        # Skip directories in the skip list
+        if (exists $skip_dirs{$subdir}) {
+            print "Skipping directory '$subdir' as it's in the skip list.\n";
+            next;
+        }
+
         my $full_subdir_path = "$cat_path/$subdir";
         # Only handle directories
         next unless (-d $full_subdir_path);
