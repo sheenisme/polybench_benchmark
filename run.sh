@@ -51,15 +51,18 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 # Change to the 'utilities' subdirectory
 cd ${SCRIPT_DIR}/utilities
 echo "Changed to $(pwd)"
+# perl clean.pl ../
+perl makefile-gen.pl ../ -cfg
+mkdir -p ____tempfile_logs
 
 # Define RATE values
-RATE_VALUES=(50 80)
+RATE_VALUES=(5 25 50 75 95)
 
 # Display a neat header for execution info
-echo -e "\nStarting execution with the following options:"
+echo -e "Starting execution with the following options:"
 echo -e "Option: $BASE_OPTION"
 echo -e "Rate values to iterate: ${RATE_VALUES[@]}"
-echo -e "Parallel execution: ${2}"
+echo -e "Parallel execution: ${2} .\n"
 
 # Loop through RATE values and execute commands
 for RATE in "${RATE_VALUES[@]}"; do
