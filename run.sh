@@ -83,7 +83,7 @@ for RATE in "${RATE_VALUES[@]}"; do
     # Dynamic progress: continuously update the same line with the current RATE value
     while kill -0 $PID 2>/dev/null; do
         # Use \r to return to the beginning of the line and overwrite
-        echo -ne "\rExecuting with option: $OPTION... Progress: $RATE"
+        echo -ne "\rExecuting with option: $OPTION in ID $PID ... "
         sleep 0.5  # Update every half second (adjustable)
     done
 
