@@ -13,25 +13,27 @@ use Cwd 'abs_path';
 #         'fpga'
 #         'fpga RATE=<number>'
 #
-#  2) No third argument is accepted; the output-file option has been removed.
-#
+#  2) An optional third argument to enable parallel execution:
+#     - 'p', 'par', 'paral', or 'parallel' will enable parallel execution.
 #  3) This script will traverse the subcategories and subdirectories under
 #     <target-dir> and execute "make <option-string>" in each of them.
 # ------------------------------------------------------------------------------
 
 # Check the number of arguments
 if (@ARGV < 2) {
-    die "Usage: perl $0 <target-dir> <option-string>\n" .
+    die "Usage: perl $0 <target-dir> <option-string> [parallel]\n" .
         "       where <option-string> is one of the following:\n" .
         "         'all'\n" .
         "         'all RATE=<number>'\n" .
         "         'fpga'\n" .
-        "         'fpga RATE=<number>'\n";
+        "         'fpga RATE=<number>'\n" .
+        "       [parallel] is optional: 'p', 'par', 'paral', or 'parallel' to enable parallel execution.\n";
 }
 
 # Parse arguments
 my $TARGET_DIR = $ARGV[0];
 my $OPTION     = $ARGV[1];
+my $PARALLEL   = $ARGV[2] // '';  # Check if 'parallel' argument is passed
 
 # 1. Verify that <target-dir> exists
 die "Error: '$TARGET_DIR' is not a valid directory.\n" unless (-d $TARGET_DIR);
@@ -70,8 +72,9 @@ if (defined $ENV{CPATH}) {
 my $runSets = "ulimit -s unlimited;";
 print "$runSets\n";
 system($runSets);
-# Define my own cases to skip
-my %skip_dirs = map { $_ => 1 } qw(3d7pt 3d27pt fdtd-1d heat-1d heat-2d);
+
+# Define some cases to skip
+my %skip_dirs = map { $_ => 1 } qw(3d7pt 3d27pt heat-2d ludcmp);
 
 # 6. Traverse each category's subdirectory and run "make <option-string>"
 foreach my $cat (@categories) {
@@ -80,6 +83,8 @@ foreach my $cat (@categories) {
         warn "Skipping '$cat_path': not found or cannot open.\n";
         next;
     };
+    my @child_pids;  # Store child process PIDs
+
     while (my $subdir = readdir($dh)) {
         # Skip hidden directories (e.g., . and ..)
         next if ($subdir =~ /^\./);
@@ -94,12 +99,44 @@ foreach my $cat (@categories) {
         # Only handle directories
         next unless (-d $full_subdir_path);
 
-        my $command = "cd $full_subdir_path; make $OPTION";
-
-        print("$command\n");
-        system($command);
+        # If parallel execution is enabled (using relaxed condition), fork a new process
+        if ($PARALLEL =~ /^(p|par|paral|parallel)$/i) {
+            my $pid = fork();
+            
+            if ($pid) {
+                # Parent process: Save the child process PID
+                push @child_pids, $pid;
+            } elsif ($pid == 0) {
+                # Child process: Execute the command
+                my $command = "cd $full_subdir_path && make $OPTION";
+                print "Executing: $command\n";
+                my $exit_status = system($command);
+                if ($exit_status != 0) {
+                    warn "Command failed in '$full_subdir_path' with exit status $exit_status\n";
+                }
+                exit 0;  # Child process exits after completion
+            } else {
+                die "Fork failed: $!\n";  # If fork fails
+            }
+        } else {
+            # Sequential execution: Execute the command directly
+            my $command = "cd $full_subdir_path && make $OPTION";
+            print "Executing: $command\n";
+            my $exit_status = system($command);
+            if ($exit_status != 0) {
+                warn "Command failed in '$full_subdir_path' with exit status $exit_status\n";
+            }
+        }
     }
+    
     closedir $dh;
+
+    # Parent process waits for all child processes to finish (if parallel execution)
+    if ($PARALLEL =~ /^(p|par|paral|parallel)$/i) {
+        foreach my $pid (@child_pids) {
+            waitpid($pid, 0);
+        }
+    }
 }
 
 exit 0;
