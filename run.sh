@@ -49,7 +49,10 @@ cd ${SCRIPT_DIR}/utilities
 echo "Changed to $(pwd)"
 # perl clean.pl ../
 perl makefile-gen.pl ../
-mkdir -p ____tempfile_logs
+
+# create log dir
+BIG_TIMESTAMP=$(date +%Y%m%d%H)
+mkdir -p ____tempfile_logs_$BIG_TIMESTAMP
 
 # Define RATE values
 RATE_VALUES=(0 1 12 25 37 50 62 75 87 99 100)
@@ -65,7 +68,7 @@ for RATE in "${RATE_VALUES[@]}"; do
     
     # Generate a dynamic log file name based on the option and rate
     TIMESTAMP=$(date +%Y%m%d%H%M%S)
-    LOG_FILE="____tempfile_logs/${1}_${2}_rate_${RATE}_${TIMESTAMP}.log"
+    LOG_FILE="____tempfile_logs_${BIG_TIMESTAMP}/${1}_${2}_rate_${RATE}_${TIMESTAMP}.log"
 
     # Start the process and capture the PID
     perl run-all.pl ../ "$OPTION" "$2" > "$LOG_FILE" &  
