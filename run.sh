@@ -48,11 +48,11 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd ${SCRIPT_DIR}/utilities
 echo "Changed to $(pwd)"
 # perl clean.pl ../
-perl makefile-gen.pl ../ -cfg
+perl makefile-gen.pl ../
 mkdir -p ____tempfile_logs
 
 # Define RATE values
-RATE_VALUES=(5 25 50 75 95)
+RATE_VALUES=(0 1 12 25 37 50 62 75 87 99 100)
 
 echo -e "\nStarting execution with the following options:"
 echo -e "Option: $BASE_OPTION"
