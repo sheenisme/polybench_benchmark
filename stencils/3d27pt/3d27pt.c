@@ -31,6 +31,7 @@ static void init_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_4D(A, M, N,
             {
                 A[0][i][j][k] = (DATA_TYPE)(rand() % BASE);
                 // A[0][i][j][k] = (DATA_TYPE)(i + j + (n - k)) * 10 / (n);
+                A[1][i][j][k] = A[0][i][j][k];
             }
 }
 
@@ -48,7 +49,7 @@ static void print_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_4D(A, M, N
             {
                 if ((i * n * n + j * n + k) % 20 == 0)
                     fprintf(POLYBENCH_DUMP_TARGET, "\n");
-                fprintf(POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, A[(_PB_TSTEPS - 1) % 2][i][j][k]);
+                fprintf(POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, A[_PB_TSTEPS % 2][i][j][k]);
             }
     POLYBENCH_DUMP_END("A");
     POLYBENCH_DUMP_FINISH;
@@ -90,7 +91,7 @@ static void kernel_3d27pt(int tsteps, int n, int m, DATA_TYPE POLYBENCH_4D(A, M,
         }
     }
 #ifndef NO_PENCIL_KILL
-    __pencil_kill(A[_PB_TSTEPS % 2]);
+    __pencil_kill(A[(_PB_TSTEPS - 1) % 2]);
 #endif
 #pragma endscop
 }

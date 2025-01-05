@@ -28,6 +28,7 @@ static void init_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_2D(A, M, N,
     for (i = 0; i < n; i++)
     {
         A[0][i] = (DATA_TYPE)(rand() % BASE);
+        A[1][i] = A[0][i];
     }
 }
 
@@ -43,7 +44,7 @@ static void print_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_2D(A, M, N
     {
         if (i % 20 == 0)
             fprintf(POLYBENCH_DUMP_TARGET, "\n");
-        fprintf(POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, A[(_PB_TSTEPS - 1) % 2][i]);
+        fprintf(POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, A[_PB_TSTEPS % 2][i]);
     }
     POLYBENCH_DUMP_END("A");
     POLYBENCH_DUMP_FINISH;
@@ -66,7 +67,7 @@ static void kernel_heat_1d(int tsteps, int n, int m, DATA_TYPE POLYBENCH_2D(A, M
         }
     }
 #ifndef NO_PENCIL_KILL
-    __pencil_kill(A[_PB_TSTEPS % 2]);
+    __pencil_kill(A[(_PB_TSTEPS - 1) % 2]);
 #endif
 #pragma endscop
 }

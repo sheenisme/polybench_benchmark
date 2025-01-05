@@ -30,6 +30,7 @@ static void init_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N,
         for (j = 0; j < n; j++)
         {
             A[0][i][j] = (DATA_TYPE)(rand() % BASE);
+            A[1][i][j] = A[0][i][j];
         }
     }
 }
@@ -47,7 +48,7 @@ static void print_array(int tsteps, int n, int m, DATA_TYPE POLYBENCH_3D(A, M, N
         {
             if ((i * n + j) % 20 == 0)
                 fprintf(POLYBENCH_DUMP_TARGET, "\n");
-            fprintf(POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, A[(_PB_TSTEPS - 1) % 2][i][j]);
+            fprintf(POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, A[_PB_TSTEPS % 2][i][j]);
         }
     POLYBENCH_DUMP_END("A");
     POLYBENCH_DUMP_FINISH;
@@ -75,7 +76,7 @@ static void kernel_heat_2d(int tsteps, int n, int m, DATA_TYPE POLYBENCH_3D(A, M
         }
     }
 #ifndef NO_PENCIL_KILL
-    __pencil_kill(A[_PB_TSTEPS % 2]);
+    __pencil_kill(A[(_PB_TSTEPS - 1) % 2]);
 #endif
 #pragma endscop
 }

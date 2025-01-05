@@ -94,7 +94,7 @@ print "$runSets\n";
 system($runSets);
 
 # Define some cases to skip
-my %skip_dirs = map { $_ => 1 } qw(3d7pt 3d27pt heat-2d ludcmp);
+my %skip_dirs = map { $_ => 1 } qw(ludcmp);
 
 # 6. Traverse each category's subdirectory and run "make <option-string>"
 foreach my $cat (@categories) {
