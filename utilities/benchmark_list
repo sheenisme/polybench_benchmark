@@ -28,3 +28,8 @@
 ./stencils/jacobi-1d/jacobi-1d.c
 ./stencils/jacobi-2d/jacobi-2d.c
 ./stencils/seidel-2d/seidel-2d.c
+./stencils/3d7pt/3d7pt.c
+./stencils/3d27pt/3d27pt.c
+./stencils/fdtd-1d/fdtd-1d.c
+./stencils/heat-1d/heat-1d.c
+./stencils/heat-2d/heat-2d.c

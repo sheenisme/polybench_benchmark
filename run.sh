@@ -19,6 +19,9 @@ function handle_sigint() {
 # Trap Ctrl+C (SIGINT) signal to call handle_sigint function
 trap handle_sigint SIGINT
 
+# Store COMMAND_TYPE (fpga/all) for consistent logging
+COMMAND_TYPE=""
+
 # Check if the first argument is provided
 if [ -z "$1" ]; then
     echo "No option provided. Please enter an option:"
@@ -28,11 +31,14 @@ if [ -z "$1" ]; then
         echo "Invalid input. Exiting."
         exit 1
     fi
+    COMMAND_TYPE="$USER_INPUT"
     BASE_OPTION="${USER_INPUT} RATE="
 else
     if [ "$1" == "fpga" ]; then
+        COMMAND_TYPE="fpga"
         BASE_OPTION="fpga RATE="
     elif [ "$1" == "all" ]; then
+        COMMAND_TYPE="all"
         BASE_OPTION="all RATE="
     else
         echo "Invalid option '$1'. Exiting."
@@ -44,31 +50,43 @@ fi
 # Get the script's directory
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
+# Create timestamp once at the start
+START_TIMESTAMP=$(date +%Y%m%d%H)
+LOG_DIR="____tempfile_logs_$START_TIMESTAMP"
+
 # Change to the 'utilities' subdirectory
 cd ${SCRIPT_DIR}/utilities
 echo "Changed to $(pwd)"
 # perl clean.pl ../
 perl makefile-gen.pl ../
 
-# create log dir
-BIG_TIMESTAMP=$(date +%Y%m%d%H)
-mkdir -p ____tempfile_logs_$BIG_TIMESTAMP
+# Create log dir with absolute path
+LOG_DIR_FULL="${SCRIPT_DIR}/utilities/${LOG_DIR}"
+mkdir -p "$LOG_DIR_FULL"
 
-# Define RATE values
-RATE_VALUES=(0 1 12 25 37 50 62 75 87 99 100)
+# Define RATE values (modified to include base case without RATE)
+RATE_VALUES=(-1 0 1 50 100)
 
 echo -e "\nStarting execution with the following options:"
-echo -e "Option: $BASE_OPTION"
+echo -e "Command type: $COMMAND_TYPE"
+echo -e "Base option: $BASE_OPTION"
 echo -e "Rate values to iterate: ${RATE_VALUES[@]}"
-echo -e "Parallel execution: ${2} .\n"
+echo -e "Parallel execution: ${2}"
+echo -e "Log directory: $LOG_DIR_FULL\n"
 
 # Loop through RATE values and execute commands
 for RATE in "${RATE_VALUES[@]}"; do
-    OPTION="${BASE_OPTION}${RATE}"
+    if [ $RATE -eq -1 ]; then
+        # For -1, use base option without RATE
+        OPTION="${COMMAND_TYPE}"
+    else
+        # For other values, append RATE as usual
+        OPTION="${BASE_OPTION}${RATE}"
+    fi
     
     # Generate a dynamic log file name based on the option and rate
     TIMESTAMP=$(date +%Y%m%d%H%M%S)
-    LOG_FILE="____tempfile_logs_${BIG_TIMESTAMP}/${1}_${2}_rate_${RATE}_${TIMESTAMP}.log"
+    LOG_FILE="${LOG_DIR_FULL}/${COMMAND_TYPE}_${2}_rate_${RATE}_${TIMESTAMP}.log"
 
     # Start the process and capture the PID
     perl run-all.pl ../ "$OPTION" "$2" > "$LOG_FILE" &  
@@ -81,5 +99,5 @@ for RATE in "${RATE_VALUES[@]}"; do
     done
 done
 
-# Final message
-echo -e "\rAll executions completed.                                "
+# Final message with log directory location
+echo -e "\rAll executions completed."
