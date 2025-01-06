@@ -138,18 +138,77 @@ for idx, benchmark in enumerate(benchmarks):
     current_legend_lines = []
     current_legend_labels = []
     
-    # Plot Latency first (left y-axis) with solid line
+    # Plot Latency first (left y-axis) with solid line only
     latency_data = benchmark_data['Latency']
     valid_latency = latency_data.dropna()
     if not valid_latency.empty:
+        # Original Latency line
         latency_line = ax1.plot(benchmark_data['RATE'], latency_data,
                 color=latency_color, label='Latency',
-                linestyle='-', linewidth=1.5,  # Back to normal width
-                marker='o', markersize=4, markerfacecolor='white',
-                zorder=10)
+                linestyle='-', linewidth=1.8,
+                marker=None, zorder=10)
+
         current_legend_lines.extend(latency_line)
         current_legend_labels.append('Latency')
+
+        # Define 10 fixed RATE values for curve fitting
+        target_rates = [0, 5, 15, 31, 36, 42, 57, 68, 84, 94, 100]  # Can be modified as needed
         
+        # Collect available data points
+        fit_rates = []
+        fit_latencies = []
+        missing_rates = []
+        
+        for rate in target_rates:
+            rate_data = benchmark_data[benchmark_data['RATE'] == rate]
+            if not rate_data.empty and not rate_data['Latency'].isna().all():
+                fit_rates.append(rate)
+                fit_latencies.append(rate_data['Latency'].iloc[0])
+            else:
+                missing_rates.append(rate)
+        
+        # # Print warning for missing rates
+        # if missing_rates:
+        #     print(f"Warning: Missing RATE values {missing_rates} for {benchmark}")
+
+        # Fit curve if we have enough points (at least 3)
+        if len(fit_rates) >= 3:
+            # Generate smooth x points for the curve
+            x_smooth = np.linspace(min(fit_rates), max(fit_rates), 100)
+            # Fit a 3rd degree polynomial
+            coeffs = np.polyfit(fit_rates, fit_latencies, 3)
+            y_smooth = np.polyval(coeffs, x_smooth)
+            
+            # Format the polynomial expression
+            expr = f'y = {coeffs[0]:.2e}x³'
+            expr += f' {coeffs[1]:+.2e}x²'
+            expr += f' {coeffs[2]:+.2e}x'
+            expr += f' {coeffs[3]:+.2e}'
+            
+            # Add expression to plot in top left corner
+            ax1.text(0.02, 0.98, expr,
+                    transform=ax1.transAxes,
+                    fontsize=8,
+                    verticalalignment='top',
+                    bbox=dict(facecolor='white', 
+                            alpha=0.8,
+                            edgecolor='none',
+                            pad=1))
+
+            # Plot Latency Curve
+            lc_line = ax1.plot(x_smooth, y_smooth,
+                    color='#D62728',  # Cherry red
+                    label='Latency Curve',
+                    linestyle='--',
+                    linewidth=1.5,
+                    marker=None,
+                    alpha=0.7,
+                    zorder=9)
+            current_legend_lines.extend(lc_line)
+            current_legend_labels.append('Latency Curve')
+        else:
+            print(f"Warning: Not enough points for curve fitting in {benchmark}")
+
         latency_scale = determine_scale(valid_latency)
         ax1.set_yscale(latency_scale)
         
@@ -168,11 +227,16 @@ for idx, benchmark in enumerate(benchmarks):
         resource_scale = determine_scale(resource_data.max())
         ax2.set_yscale(resource_scale)
         
-        for metric, color in zip(primary_metrics, resource_colors):
+        markers = ['s', '^', 'D', 'v', 'o']  # Square, triangle up, diamond, triangle down, circle
+        for metric, color, marker in zip(primary_metrics, resource_colors, markers):
             line = ax2.plot(benchmark_data['RATE'], benchmark_data[metric],
-                    marker='s', color=color, label=metric,
+                    marker=marker, color=color, label=metric,
                     linestyle='--', linewidth=1.2,
-                    markersize=3, markerfacecolor='white',
+                    markersize=4,
+                    markerfacecolor=color,  # Filled markers
+                    markeredgecolor=color,
+                    markeredgewidth=1,
+                    alpha=0.8,  # Slight transparency
                     zorder=5)[0]
             current_legend_lines.append(line)
             current_legend_labels.append(metric)
