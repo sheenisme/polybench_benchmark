@@ -92,9 +92,15 @@ for RATE in "${RATE_VALUES[@]}"; do
     perl run-all.pl ../ "$OPTION" "$2" > "$LOG_FILE" &  
     PID=$!
 
-    # Dynamic progress update
+    # Initialize timer
+    SECONDS=0
+    
+    # Dynamic progress update with timer
     while kill -0 $PID 2>/dev/null; do
-        echo -ne "\rExecuting with option: $OPTION $2 (PID: $PID)... "
+        ELAPSED=$SECONDS
+        MINS=$((ELAPSED / 60))
+        SECS=$((ELAPSED % 60))
+        echo -ne "\rExecuting with option: $OPTION $2 (PID: $PID), Runtime: ${MINS}m ${SECS}s ......"
         sleep 1
     done
 done
