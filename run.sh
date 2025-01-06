@@ -65,7 +65,7 @@ LOG_DIR_FULL="${SCRIPT_DIR}/utilities/${LOG_DIR}"
 mkdir -p "$LOG_DIR_FULL"
 
 # Define RATE values (modified to include base case without RATE)
-RATE_VALUES=(-1 0 1 12 25 37 50 62 75 87 99 100)
+RATE_VALUES=(-1 0 5 10 15 21 26 31 36 42 47 52 57 63 68 73 78 84 89 94 100)
 
 echo -e "\nStarting execution with the following options:"
 echo -e "Command type: $COMMAND_TYPE"
