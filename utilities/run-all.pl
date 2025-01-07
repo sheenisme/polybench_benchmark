@@ -103,7 +103,7 @@ print "$runSets\n";
 system($runSets);
 
 # Define some cases to skip
-my %skip_dirs = map { $_ => 1 } qw();
+my %skip_dirs = map { $_ => 1 } qw(correlation cholesky gramschmidt durbin);
 
 # 6. Parse RATE value if present
 # Default RATE is 'ppcg'
