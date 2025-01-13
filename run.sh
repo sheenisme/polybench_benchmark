@@ -100,7 +100,7 @@ for RATE in "${RATE_VALUES[@]}"; do
         ELAPSED=$SECONDS
         MINS=$((ELAPSED / 60))
         SECS=$((ELAPSED % 60))
-        echo -ne "\rExecuting with option: $OPTION $2 (PID: $PID), Runtime: ${MINS}m ${SECS}s ......"
+        echo -ne "\rExecuting with option: $OPTION $2 (PID: $PID), Runtime: ${MINS}m ${SECS}s..."
         sleep 1
     done
 done
