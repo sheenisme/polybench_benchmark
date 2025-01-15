@@ -186,19 +186,17 @@ foreach my $cat (@categories) {
                             my $dom = XML::LibXML->load_xml(location => $xml_file);
 
                             # Get resource utilization info
-                            my $resources_node = $dom->findnodes('//AreaEstimates/Resources')->[0];
-                            my $avail_resources_node = $dom->findnodes('//AreaEstimates/AvailableResources')->[0];
+                            my $resources_node = $dom->findnodes('//profile/AreaEstimates/Resources')->[0];
+                            my $avail_resources_node = $dom->findnodes('//profile/AreaEstimates/AvailableResources')->[0];
 
                             if (!$resources_node || !$avail_resources_node) {
                                 die "Cannot find resource information in XML file";
                             }
 
                             # Extract metrics and handle special values
-                            my $latency = $dom->findvalue('//SummaryOfOverallLatency/Worst-caseLatency');
+                            my $latency = $dom->findvalue('//profile/PerformanceEstimates/SummaryOfOverallLatency/Worst-caseLatency');
                             if ($latency eq '' || $latency =~ /undef/) {
                                 $latency = -1;
-                            } else {
-                                $latency = substr($latency, 0, 10) if length($latency) > 10;
                             }
 
                             # Get resource utilization and calculate percentage
@@ -230,7 +228,7 @@ foreach my $cat (@categories) {
                             $uram_util = $uram > 0 ? int(($uram / $uram_total) * 100) : 0;
 
                             # Format output with controlled field widths and utilization percentages
-                            my $line = sprintf("%-15s\t%4d\t%10d\t%8d (%2d%%)\t%8d (%2d%%)\t%8d (%2d%%)\t%8d (%2d%%)\t%4d (%2d%%)\n",
+                            my $line = sprintf("%-15s\t%3d\t%15d\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%4d (%3d%%)\n",
                                 $subdir, $rate_value, $latency,
                                 $bram, $bram_util,
                                 $dsp, $dsp_util,
@@ -281,19 +279,17 @@ foreach my $cat (@categories) {
                         my $dom = XML::LibXML->load_xml(location => $xml_file);
 
                         # Get resource utilization info
-                        my $resources_node = $dom->findnodes('//AreaEstimates/Resources')->[0];
-                        my $avail_resources_node = $dom->findnodes('//AreaEstimates/AvailableResources')->[0];
+                        my $resources_node = $dom->findnodes('//profile/AreaEstimates/Resources')->[0];
+                        my $avail_resources_node = $dom->findnodes('//profile/AreaEstimates/AvailableResources')->[0];
 
                         if (!$resources_node || !$avail_resources_node) {
                             die "Cannot find resource information in XML file";
                         }
 
                         # Extract metrics and handle special values
-                        my $latency = $dom->findvalue('//SummaryOfOverallLatency/Worst-caseLatency');
+                        my $latency = $dom->findvalue('//profile/PerformanceEstimates/SummaryOfOverallLatency/Worst-caseLatency');
                         if ($latency eq '' || $latency =~ /undef/) {
                             $latency = -1;
-                        } else {
-                            $latency = substr($latency, 0, 10) if length($latency) > 10;
                         }
 
                         # Get resource utilization and calculate percentage
