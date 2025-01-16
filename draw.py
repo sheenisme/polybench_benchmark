@@ -141,6 +141,10 @@ plt.figure(figsize=(n_cols * 5.5, n_rows * 4 + 2))
 all_legend_lines = []
 all_legend_labels = []
 
+# 在主循环开始前添加一行
+print("\n=== Fitting Equations ===")
+print("Format: benchmark latency_type: ax² + bx + c (axis of symmetry: x = -b/2a)\n")
+
 # Create subplots for each benchmark 
 for idx, benchmark in enumerate(benchmarks):
     benchmark_data = data[data['Benchmark'] == benchmark]
@@ -170,8 +174,20 @@ for idx, benchmark in enumerate(benchmarks):
             current_legend_lines.extend(latency_line)
             current_legend_labels.append(style['label'])
 
-            # Define 10 fixed RATE values for curve fitting
-            target_rates = [0, 5, 15, 31, 36, 42, 57, 68, 84, 94, 100]  # Can be modified as needed
+            # Get available rates between 0 and 100 for this benchmark and latency type
+            available_rates = benchmark_data[
+                (benchmark_data['RATE'] <= 100) &
+                (benchmark_data['RATE'] >= 0) &
+                (~benchmark_data[latency_type].isna())
+            ]['RATE'].sort_values().unique()
+
+            # If we have enough data points, select 10 evenly distributed rates
+            if len(available_rates) >= 10:
+                indices = np.linspace(0, len(available_rates)-1, 10, dtype=int)
+                target_rates = available_rates[indices]
+            else:
+                # If we don't have enough points, use all available rates
+                target_rates = available_rates
 
             # Curve fitting section
             fit_rates = []
@@ -194,11 +210,21 @@ for idx, benchmark in enumerate(benchmarks):
             if len(fit_rates) >= 3:
                 # Generate smooth x points for the curve
                 x_smooth = np.linspace(min(fit_rates), max(fit_rates), 100)
-                # Fit a 3rd degree polynomial
-                coeffs = np.polyfit(fit_rates, fit_latencies, 3)
+                # Fit a 2nd degree polynomial
+                coeffs = np.polyfit(fit_rates, fit_latencies, 2)
                 y_smooth = np.polyval(coeffs, x_smooth)
-                
-                # Use lighter color for fitting curve with transparency
+
+                # Calculate the axis of symmetry
+                a, b, c = coeffs
+                axis_of_symmetry = -b/(2*a) if a != 0 else None
+
+                # Print equation and axis of symmetry in terminal
+                eq = f"{benchmark} {latency_type}: {a:.3e}x² + {b:.3e}x + {c:.3e}"
+                if axis_of_symmetry is not None:
+                    eq += f" (axis: x = {axis_of_symmetry:.2f})"
+                print(eq)
+
+                # Plot the fitting curve with lighter color
                 curve_color = f"{style['color']}88"
                 lc_line = ax1.plot(x_smooth, y_smooth,
                         color=curve_color,
