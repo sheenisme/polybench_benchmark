@@ -128,10 +128,10 @@ open(my $sfh, $write_mode, $summary_file) or die "Cannot open '$summary_file' fo
 
 # Write header only if creating new file
 if (!$file_exists) {
-    my $header = sprintf("%-15s\t%4s\t%10s\t%15s\t%15s\t%15s\t%15s\t%10s\n",
-        "Benchmark", "RATE", "Latency", "BRAM_18K", "DSP", "FF", "LUT", "URAM");
+    my $header = sprintf("%-15s\t%5s\t%15s\t%15s\t%15s\t%15s\t%15s\t%15s\t%10s\n",
+        "Benchmark", "RATE", "Latency(Syn)", "Latency(Sim)", "BRAM_18K", "DSP", "FF", "LUT", "URAM");
     print $sfh $header;
-    my $separator = "-" x 120 . "\n";
+    my $separator = "-" x 131 . "\n";
     print $sfh $separator;
 }
 
@@ -179,10 +179,23 @@ foreach my $cat (@categories) {
 
                 # If XML extraction is needed
                 if ($need_xml) {
-                    my $xml_dir = "report_$RATE";
+                    my $xml_dir = "syn_report_$RATE";
+                    my $sim_dir = "sim_report_$RATE";
                     my $xml_file = "$full_subdir_path/$xml_dir/csynth.xml";
-                    if (-e $xml_file) {
+                    my $sim_file = "$full_subdir_path/$sim_dir/verilog/lat.rpt";
+                    if (-e $xml_file || -e $sim_file) {
                         eval {
+                            # Extract TOTAL_EXECUTE_TIME in sim report
+                            my $sim_total_time = -1;
+                            open(my $fh, '<', $sim_file) or die "Cannot open file '$sim_file': $!";
+                            while (my $line = <$fh>) {
+                                if ($line =~ /\$TOTAL_EXECUTE_TIME\s*=\s*"(\d+)"/) {
+                                    $sim_total_time = $1;
+                                    last;
+                                }
+                            }
+                            close($fh);
+
                             my $dom = XML::LibXML->load_xml(location => $xml_file);
 
                             # Get resource utilization info
@@ -228,8 +241,8 @@ foreach my $cat (@categories) {
                             $uram_util = $uram > 0 ? int(($uram / $uram_total) * 100) : 0;
 
                             # Format output with controlled field widths and utilization percentages
-                            my $line = sprintf("%-15s\t%3d\t%15d\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%4d (%3d%%)\n",
-                                $subdir, $rate_value, $latency,
+                            my $line = sprintf("%-15s\t%5d\t%15d\t%15d\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%4d (%3d%%)\n",
+                                $subdir, $rate_value, $latency, $sim_total_time,
                                 $bram, $bram_util,
                                 $dsp, $dsp_util,
                                 $ff, $ff_util,
@@ -242,12 +255,12 @@ foreach my $cat (@categories) {
                             print $sfh_child $line;
                             close($sfh_child);
 
-                            # Execute make clean after successful XML parsing
-                            my $clean_command = "cd $full_subdir_path && make clean";
-                            system($clean_command);
-                            if ($? != 0) {
-                                warn "Warning: make clean failed in '$full_subdir_path' with status $?\n";
-                            }
+                            # # Execute make clean after successful XML parsing
+                            # my $clean_command = "cd $full_subdir_path && make clean";
+                            # system($clean_command);
+                            # if ($? != 0) {
+                            #     warn "Warning: make clean failed in '$full_subdir_path' with status $?\n";
+                            # }
                         };
                         if ($@) {
                             warn "Failed to parse XML file '$xml_file': $@\n";
@@ -272,10 +285,23 @@ foreach my $cat (@categories) {
 
             # If XML extraction is needed
             if ($need_xml) {
-                my $xml_dir = "report_$RATE";
+                my $xml_dir = "syn_report_$RATE";
+                my $sim_dir = "sim_report_$RATE";
                 my $xml_file = "$full_subdir_path/$xml_dir/csynth.xml";
-                if (-e $xml_file) {
+                my $sim_file = "$full_subdir_path/$sim_dir/verilog/lat.rpt";
+                if (-e $xml_file || -e $sim_file) {
                     eval {
+                        # Extract TOTAL_EXECUTE_TIME in sim report
+                        my $sim_total_time = -1;
+                        open(my $fh, '<', $sim_file) or die "Cannot open file '$sim_file': $!";
+                        while (my $line = <$fh>) {
+                            if ($line =~ /\$TOTAL_EXECUTE_TIME\s*=\s*"(\d+)"/) {
+                                $sim_total_time = $1;
+                                last;
+                            }
+                        }
+                        close($fh);
+
                         my $dom = XML::LibXML->load_xml(location => $xml_file);
 
                         # Get resource utilization info
@@ -321,8 +347,8 @@ foreach my $cat (@categories) {
                         $uram_util = $uram > 0 ? int(($uram / $uram_total) * 100) : 0;
 
                         # Format output with controlled field widths and utilization percentages
-                        my $line = sprintf("%-15s\t%4d\t%10d\t%8d (%2d%%)\t%8d (%2d%%)\t%8d (%2d%%)\t%8d (%2d%%)\t%4d (%2d%%)\n",
-                            $subdir, $rate_value, $latency,
+                        my $line = sprintf("%-15s\t%5d\t%15d\t%15d\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%8d (%3d%%)\t%4d (%3d%%)\n",
+                            $subdir, $rate_value, $latency, $sim_total_time,
                             $bram, $bram_util,
                             $dsp, $dsp_util,
                             $ff, $ff_util,
@@ -335,12 +361,12 @@ foreach my $cat (@categories) {
                         print $sfh_child $line;
                         close($sfh_child);
 
-                        # Execute make clean after successful XML parsing
-                        my $clean_command = "cd $full_subdir_path && make clean";
-                        system($clean_command);
-                        if ($? != 0) {
-                            warn "Warning: make clean failed in '$full_subdir_path' with status $?\n";
-                        }
+                        # # Execute make clean after successful XML parsing
+                        # my $clean_command = "cd $full_subdir_path && make clean";
+                        # system($clean_command);
+                        # if ($? != 0) {
+                        #     warn "Warning: make clean failed in '$full_subdir_path' with status $?\n";
+                        # }
                     };
                     if ($@) {
                         warn "Failed to parse XML file '$xml_file': $@\n";

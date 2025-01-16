@@ -21,11 +21,29 @@ ____tempfile.data.polybench
 *.tmp
 
 # hls
+hlsTest
+syn_report_ppcg
+syn_report_amp_*
+sim_report_ppcg
+sim_report_amp_*
 csynth.tcl
 vitis_hls.log
 kernel_func.tmp
+verify_*.h
+verify_*.cpp
+kernel_*.cpp
 *_origon.out
 *_origon.exe
 *.tmp.mlir
 *_amp_*.out
 *_amp_*.exe
+*_amp_*.cpp
+*_amp_*.c
+*_amp_*.mlir
+*_ppcg.out
+*_ppcg.exe
+*_ppcg.cpp
+*_ppcg.c
+*_ppcg.mlir
+*test_*.h
+*test_*.cpp

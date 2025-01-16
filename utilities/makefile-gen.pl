@@ -164,6 +164,10 @@ hGen:
 	@ rm -f kernel_func.tmp
 
 fpga: init func_patch cppGen hGen
+	@ awk -v new_str="kernel_\${KERNEL_FUNC_SAFE_STR}" '/Run kernel/ {print; getline; gsub(/kernel_${kernel_safe}/, new_str); print; next} {print}' test_${kernel}.cpp > __tmp_test_${kernel}.cpp
+	@ mv -f  __tmp_test_${kernel}.cpp test_${kernel}.cpp
+	@ sed -i 's/ap_int<8>/char/g' test_${kernel}.h
+	@ sed -i 's/ap_int<8>/char/g' kernel_\${KERNEL_TMP_FILE_STR}.cpp
 ifeq (\$(strip \$(RATE)),)
 	@ echo "[Step] Running end-to-end for PPCG..."
 	\${VITIS_HLS} -f csynth.tcl | tee vitis_hls.log
@@ -250,8 +254,10 @@ clean:
 	@ echo "[Step] Cleaning up..."
 	@ rm -f vitis_hls.log
 	@ rm -rf hlsTest
-	@ rm -rf report_ppcg
-	@ rm -rf report_amp_*
+	@ rm -rf syn_report_ppcg
+	@ rm -rf syn_report_amp_*
+	@ rm -rf sim_report_ppcg
+	@ rm -rf sim_report_amp_*
 	@ rm -f ${kernel}_origon.exe
 	@ rm -f ${kernel}_amp_*.c
 	@ rm -f ${kernel}_ppcg.c
@@ -290,16 +296,22 @@ set_top kernel_${kernel_safe}_ppcg
 # current path is: ${script_path}/../${key}/${kernel}/
 add_files kernel_${kernel}_ppcg.cpp
 add_files -tb test_${kernel}.cpp -cflags "-I${script_path} -DPOLYBENCH_STACK_ARRAYS -DNO_PENCIL_KILL -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+add_files -tb ${script_path}/polybench.cpp -cflags "-DPOLYBENCH_STACK_ARRAYS -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
 add_files -tb test_${kernel}.h -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
 
 open_solution "solution1" -flow_target vivado
 set_part {xc7a100t-csg324-3}
 create_clock -period 10 -name default
-#source "./hlsTest/solution1/directives.tcl"
+config_interface -m_axi_latency 0
+set_directive_top -name kernel_${kernel_safe}_ppcg "kernel_${kernel_safe}_ppcg"
 
+csim_design
 csynth_design
+cosim_design -O
+export_design -format ip_catalog
 
-file copy -force ./hlsTest/solution1/syn/report ./report_ppcg
+file copy -force ./hlsTest/solution1/syn/report ./syn_report_ppcg
+file copy -force ./hlsTest/solution1/sim/report ./sim_report_ppcg
 
 # Remove hlsTest directories
 if { [file exists ./hlsTest] } {

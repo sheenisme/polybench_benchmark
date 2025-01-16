@@ -39,7 +39,7 @@ def determine_scale(data):
     
     if range_ratio > 1000:
         return 'log'
-    elif cv > 1.5:  # High variance
+    elif cv > 1.5:
         return 'symlog'
     else:
         return 'linear'
@@ -52,13 +52,14 @@ data = data[~data['Benchmark'].str.contains('---+', regex=True)]
 
 # Handle special values
 data['RATE'] = data['RATE'].replace(-1, 110)
-data['Latency'] = data['Latency'].replace(-1, np.nan)
+data['Latency(Syn)'] = data['Latency(Syn)'].replace(-1, np.nan)
+data['Latency(Sim)'] = data['Latency(Sim)'].replace(-1, np.nan)
 
 # Clean numeric data
 for col in data.columns:
     if col != 'Benchmark':
         data[col] = data[col].map(clean_value)
-        if col != 'Latency' and col != 'RATE':  # Keep percentage values for resource columns
+        if col != 'Latency(Syn)' and col != 'Latency(Sim)' and col != 'RATE':
             data[col] = pd.to_numeric(data[col], errors='coerce')
 
 # Clean data by removing duplicates and sorting
@@ -66,7 +67,7 @@ data = data.drop_duplicates(subset=['Benchmark', 'RATE']).sort_values(['Benchmar
 
 # Get unique benchmarks and resources
 benchmarks = sorted(data['Benchmark'].unique())
-resources = ['Latency', 'BRAM_18K', 'DSP', 'FF', 'LUT', 'URAM']
+resources = ['Latency(Syn)', 'Latency(Sim)', 'BRAM_18K', 'DSP', 'FF', 'LUT', 'URAM']
 
 # Print detailed information
 print("\n=== Analysis Summary ===")
@@ -100,7 +101,7 @@ plt.rcParams.update({
     'xtick.labelsize': 8,
     'ytick.labelsize': 8,
     'lines.linewidth': 1.8,
-    'grid.linestyle': ':',  # Dotted grid lines
+    'grid.linestyle': ':',
     'grid.alpha': 0.3,
     'axes.grid': True,
     'axes.facecolor': 'white',
@@ -110,18 +111,31 @@ plt.rcParams.update({
 
 # Define professional academic color scheme
 resource_colors = [
-    '#2077B4',  # Steel blue
-    '#FF7F0E',  # Orange
-    '#2CA02C',  # Green
-    '#9467BD',  # Purple
-    '#8C564B',  # Brown
+    '#9ECAE1',  # Light Blue (Fresh and Academic)
+    '#B2ABD2',  # Light Purple (Soft and Academic)
+    '#A1D99B',  # Light Green (Subtle and Calm)
+    '#C49C94',  # Light Brown (Neutral and Academic)
+    '#E377C2',  # Light Magenta (Soft and Elegant)
 ]  # Scientific paper style colors
 
-# Deep navy blue for Latency - more academic and professional looking
-latency_color = '#08519C'  # Deep navy blue
+# Define styles for two types of latency
+latency_styles = {
+    'Latency(Syn)': {
+        'color': '#D62728',  # Bright Red (Strong and Distinct)
+        'linestyle': '-',
+        'label': 'Latency (Synthesis)',
+        'zorder': 10
+    },
+    'Latency(Sim)': {
+        'color': '#FF7F0E',  # Bright Orange (Distinct and Visible)
+        'linestyle': '-',
+        'label': 'Latency (Simulation)',
+        'zorder': 9
+    }
+}
 
 # Create figure with larger size
-plt.figure(figsize=(n_cols * 5.5, n_rows * 4 + 2))  # Added extra space for legend
+plt.figure(figsize=(n_cols * 5.5, n_rows * 4 + 2))
 
 # Store all legends from all subplots
 all_legend_lines = []
@@ -138,88 +152,81 @@ for idx, benchmark in enumerate(benchmarks):
     current_legend_lines = []
     current_legend_labels = []
     
-    # Plot Latency first (left y-axis) with solid line only
-    latency_data = benchmark_data['Latency']
-    valid_latency = latency_data.dropna()
-    if not valid_latency.empty:
-        # Original Latency line
-        latency_line = ax1.plot(benchmark_data['RATE'], latency_data,
-                color=latency_color, label='Latency',
-                linestyle='-', linewidth=1.8,
-                marker=None, zorder=10)
-
-        current_legend_lines.extend(latency_line)
-        current_legend_labels.append('Latency')
-
-        # Define 10 fixed RATE values for curve fitting
-        target_rates = [0, 5, 15, 31, 36, 42, 57, 68, 84, 94, 100]  # Can be modified as needed
-        
-        # Collect available data points
-        fit_rates = []
-        fit_latencies = []
-        missing_rates = []
-        
-        for rate in target_rates:
-            rate_data = benchmark_data[benchmark_data['RATE'] == rate]
-            if not rate_data.empty and not rate_data['Latency'].isna().all():
-                fit_rates.append(rate)
-                fit_latencies.append(rate_data['Latency'].iloc[0])
-            else:
-                missing_rates.append(rate)
-        
-        # # Print warning for missing rates
-        # if missing_rates:
-        #     print(f"Warning: Missing RATE values {missing_rates} for {benchmark}")
-
-        # Fit curve if we have enough points (at least 3)
-        if len(fit_rates) >= 3:
-            # Generate smooth x points for the curve
-            x_smooth = np.linspace(min(fit_rates), max(fit_rates), 100)
-            # Fit a 3rd degree polynomial
-            coeffs = np.polyfit(fit_rates, fit_latencies, 3)
-            y_smooth = np.polyval(coeffs, x_smooth)
-            
-            # Format the polynomial expression
-            expr = f'y = {coeffs[0]:.2e}x³'
-            expr += f' {coeffs[1]:+.2e}x²'
-            expr += f' {coeffs[2]:+.2e}x'
-            expr += f' {coeffs[3]:+.2e}'
-            
-            # Add expression to plot in top left corner
-            ax1.text(0.02, 0.98, expr,
-                    transform=ax1.transAxes,
-                    fontsize=8,
-                    verticalalignment='top',
-                    bbox=dict(facecolor='white', 
-                            alpha=0.8,
-                            edgecolor='none',
-                            pad=1))
-
-            # Plot Latency Curve
-            lc_line = ax1.plot(x_smooth, y_smooth,
-                    color='#D62728',  # Cherry red
-                    label='Latency Curve',
-                    linestyle='--',
-                    linewidth=1.5,
+    # Process both types of latency data
+    for latency_type in ['Latency(Syn)', 'Latency(Sim)']:
+        latency_data = benchmark_data[latency_type]
+        valid_latency = latency_data.dropna()
+        if not valid_latency.empty:
+            # Draw latency line
+            style = latency_styles[latency_type]
+            latency_line = ax1.plot(benchmark_data['RATE'], latency_data,
+                    color=style['color'],
+                    label=style['label'],
+                    linestyle=style['linestyle'],
+                    linewidth=1.8,
                     marker=None,
-                    alpha=0.7,
-                    zorder=9)
-            current_legend_lines.extend(lc_line)
-            current_legend_labels.append('Latency Curve')
-        else:
-            print(f"Warning: Not enough points for curve fitting in {benchmark}")
+                    zorder=style['zorder'])
 
-        latency_scale = determine_scale(valid_latency)
+            current_legend_lines.extend(latency_line)
+            current_legend_labels.append(style['label'])
+
+            # Define 10 fixed RATE values for curve fitting
+            target_rates = [0, 5, 15, 31, 36, 42, 57, 68, 84, 94, 100]  # Can be modified as needed
+
+            # Curve fitting section
+            fit_rates = []
+            fit_latencies = []
+            missing_rates = []
+            
+            for rate in target_rates:
+                rate_data = benchmark_data[benchmark_data['RATE'] == rate]
+                if not rate_data.empty and not rate_data[latency_type].isna().all():
+                    fit_rates.append(rate)
+                    fit_latencies.append(rate_data[latency_type].iloc[0])
+                else:
+                    missing_rates.append(rate)
+
+            # # Print warning for missing rates
+            # if missing_rates:
+            #     print(f"Warning: Missing RATE values {missing_rates} for {benchmark}")
+
+            # Fit curve if we have enough points (at least 3)
+            if len(fit_rates) >= 3:
+                # Generate smooth x points for the curve
+                x_smooth = np.linspace(min(fit_rates), max(fit_rates), 100)
+                # Fit a 3rd degree polynomial
+                coeffs = np.polyfit(fit_rates, fit_latencies, 3)
+                y_smooth = np.polyval(coeffs, x_smooth)
+                
+                # Use lighter color for fitting curve with transparency
+                curve_color = f"{style['color']}88"
+                lc_line = ax1.plot(x_smooth, y_smooth,
+                        color=curve_color,
+                        label=f'{style["label"]} Curve',
+                        linestyle=':',
+                        linewidth=1.5,
+                        marker=None,
+                        alpha=0.7,
+                        zorder=style['zorder']-1)
+                current_legend_lines.extend(lc_line)
+                current_legend_labels.append(f'{style["label"]} Curve')
+
+    # Set y-axis range
+    valid_latencies = pd.concat([
+        benchmark_data['Latency(Syn)'].dropna(),
+        benchmark_data['Latency(Sim)'].dropna()
+    ])
+    if not valid_latencies.empty:
+        latency_scale = determine_scale(valid_latencies)
         ax1.set_yscale(latency_scale)
         
-        # Set y-axis limits with safety check
         if latency_scale == 'linear':
-            y_min = valid_latency.min()
-            y_max = valid_latency.max()
+            y_min = valid_latencies.min()
+            y_max = valid_latencies.max()
             if y_min != y_max:
                 margin = (y_max - y_min) * 0.1
                 ax1.set_ylim([y_min - margin, y_max + margin])
-    
+
     # Plot resources utilization (right y-axis)
     primary_metrics = ['BRAM_18K', 'DSP', 'FF', 'LUT', 'URAM']
     resource_data = benchmark_data[primary_metrics].dropna()
@@ -233,10 +240,10 @@ for idx, benchmark in enumerate(benchmarks):
                     marker=marker, color=color, label=metric,
                     linestyle='--', linewidth=1.2,
                     markersize=4,
-                    markerfacecolor=color,  # Filled markers
+                    markerfacecolor=color,
                     markeredgecolor=color,
                     markeredgewidth=1,
-                    alpha=0.8,  # Slight transparency
+                    alpha=0.8,
                     zorder=5)[0]
             current_legend_lines.append(line)
             current_legend_labels.append(metric)
@@ -261,7 +268,7 @@ for idx, benchmark in enumerate(benchmarks):
     # Customize spine visibility
     ax1.spines['top'].set_visible(False)
     ax2.spines['top'].set_visible(False)
-    ax2.spines['right'].set_visible(True)  # Show right spine
+    ax2.spines['right'].set_visible(True)
     
     # Set spine colors
     ax2.spines['right'].set_color('gray')
@@ -278,15 +285,15 @@ for idx, benchmark in enumerate(benchmarks):
 
     # Enhanced tick parameters
     ax1.tick_params(axis='both', which='major', labelsize=8, direction='out')
-    ax2.tick_params(axis='y', which='major', labelsize=8, direction='out', right=True)  # Show right ticks
+    ax2.tick_params(axis='y', which='major', labelsize=8, direction='out', right=True)
 
 # After all subplots are created, add the legend at the bottom
 fig = plt.gcf()
 # Calculate the legend position dynamically
 legend = fig.legend(all_legend_lines, all_legend_labels,
                    loc='center',
-                   bbox_to_anchor=(0.5, -0.02),  # Moved below plots
-                   ncol=6, 
+                   bbox_to_anchor=(0.5, -0.02),
+                   ncol=7,
                    fontsize=9,
                    frameon=True,
                    fancybox=False,
