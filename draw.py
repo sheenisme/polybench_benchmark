@@ -79,8 +79,6 @@ print("3.Benchmarks:", end=' ')
 cleaned_benchmarks = [b.replace(' ', '') for b in benchmarks]
 print(' '.join(cleaned_benchmarks))
 
-print("\nStarting plot generation...")
-
 # Plot configuration
 n_benchmarks = len(benchmarks)
 n_cols = 5  # Keep 5 columns
