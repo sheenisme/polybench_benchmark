@@ -143,7 +143,7 @@ all_legend_labels = []
 
 # 在主循环开始前添加一行
 print("\n=== Fitting Equations ===")
-print("Format: benchmark latency_type: ax² + bx + c (axis of symmetry: x = -b/2a)\n")
+print("Benchmark       Latency_type: ax² + bx + c (axis of symmetry: x = -b/2a)")
 
 # Create subplots for each benchmark 
 for idx, benchmark in enumerate(benchmarks):
@@ -202,9 +202,9 @@ for idx, benchmark in enumerate(benchmarks):
                 else:
                     missing_rates.append(rate)
 
-            # # Print warning for missing rates
-            # if missing_rates:
-            #     print(f"Warning: Missing RATE values {missing_rates} for {benchmark}")
+            # Print warning for missing rates
+            if missing_rates:
+                print(f"{benchmark} Warning: Missing RATE values {missing_rates}")
 
             # Fit curve if we have enough points (at least 3)
             if len(fit_rates) >= 3:
@@ -332,5 +332,5 @@ plt.subplots_adjust(bottom=0.1 + legend_height/fig.get_figheight())
 
 # Save figure with tight layout
 plt.savefig('result.png', dpi=300, bbox_inches='tight', pad_inches=0.2)
-print("Plot saved as result.png")
+print("\nRun Over! Plot saved as result.png.")
 plt.close()
