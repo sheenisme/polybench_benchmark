@@ -170,7 +170,7 @@ foreach my $cat (@categories) {
                 push @child_pids, $pid;
             } elsif ($pid == 0) {
                 # Child process: Execute the command
-                my $command = "cd $full_subdir_path && make $OPTION";
+                my $command = "cd $full_subdir_path && ulimit -s unlimited; make $OPTION";
                 print "Executing: $command\n";
                 my $exit_status = system($command);
                 if ($exit_status != 0) {
@@ -276,7 +276,7 @@ foreach my $cat (@categories) {
             }
         } else {
             # Sequential execution: Execute the command directly
-            my $command = "cd $full_subdir_path && make $OPTION";
+            my $command = "cd $full_subdir_path && ulimit -s unlimited; make $OPTION";
             print "Executing: $command\n";
             my $exit_status = system($command);
             if ($exit_status != 0) {
