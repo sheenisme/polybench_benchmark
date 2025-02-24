@@ -56,16 +56,17 @@ LOG_DIR="____tempfile_logs_$START_TIMESTAMP"
 
 # Change to the 'utilities' subdirectory
 cd ${SCRIPT_DIR}/utilities
-echo "Changed to $(pwd)"
-# perl clean.pl ../
-perl makefile-gen.pl ../
+echo "Changed to $(pwd) and running clean.pl..."
+perl clean.pl ../
+perl makefile-gen.pl ../ -cfg
 
 # Create log dir with absolute path
 LOG_DIR_FULL="${SCRIPT_DIR}/utilities/${LOG_DIR}"
 mkdir -p "$LOG_DIR_FULL"
 
 # Define RATE values (modified to include base case without RATE)
-RATE_VALUES=(-1 0 5 10 15 21 26 31 36 42 47 52 57 63 68 73 78 84 89 94 100)
+# RATE_VALUES=(-1 0 5 10 15 21 26 31 36 42 47 52 57 63 68 73 78 84 89 94 100)
+RATE_VALUES=(-1 0 15 31 52 73 94 100)
 
 echo -e "\nStarting execution with the following options:"
 echo -e "Command type: $COMMAND_TYPE"
@@ -76,6 +77,9 @@ echo -e "Log directory: $LOG_DIR_FULL\n"
 
 # Loop through RATE values and execute commands
 for RATE in "${RATE_VALUES[@]}"; do
+    # Reset the Makefile to default
+    perl makefile-gen.pl ../
+
     if [ $RATE -eq -1 ]; then
         # For -1, use base option without RATE
         OPTION="${COMMAND_TYPE}"

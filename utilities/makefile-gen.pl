@@ -170,11 +170,13 @@ fpga: init func_patch cppGen hGen
 	@ sed -i 's/ap_int<8>/char/g' kernel_\${KERNEL_TMP_FILE_STR}.cpp
 ifeq (\$(strip \$(RATE)),)
 	@ echo "[Step] Running end-to-end for PPCG..."
-	exec \${VITIS_HLS} -f csynth.tcl 2>&1
+	-\${VITIS_HLS} -f csynth.tcl > /dev/null 2>&1 || true
+	@ grep -i "error\\|critical\\|fatal" vitis_hls.log | grep -iv "0 error" | grep -iv "if errors" || true
 else
 	@ echo "[Step] Running end-to-end for \${RATE}..."
 	@ sed -i 's/_ppcg/_amp_\${RATE}/g' csynth.tcl
-	exec \${VITIS_HLS} -f csynth.tcl 2>&1
+	-\${VITIS_HLS} -f csynth.tcl > /dev/null 2>&1 || true
+	@ grep -i "error\\|critical\\|fatal" vitis_hls.log | grep -iv "0 error" | grep -iv "if errors" || true
 	@ sed -i 's/_amp_\${RATE}/_ppcg/g' csynth.tcl
 endif
 	@ rm -f \${KERNEL_TMP_FILE_STR}.c
