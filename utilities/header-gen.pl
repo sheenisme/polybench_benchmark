@@ -103,9 +103,9 @@ print HFILE << "EOF";
 
 $integerSupport
 
-/* Default to MEDIUM_DATASET. */
+/* Default to MINI_DATASET. */
 # if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(MEDIUM_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
-#  define MEDIUM_DATASET
+#  define MINI_DATASET
 # endif
 
 $paramCheck
