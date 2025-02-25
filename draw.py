@@ -24,7 +24,7 @@ AVAILABLE_RESOURCES = {
     'URAM': 0
 }
 
-def clean_resource_values(x, column_name=None):
+def clean_values(x, column_name=None):
     """Clean data by extracting actual resource values or handling special cases"""
     if isinstance(x, str):
         # Extract percentage if exists
@@ -108,24 +108,35 @@ def main():
         print(f"Error reading input file: {e}")
         return
 
+    # 1. First clean column names
     data.columns = data.columns.str.strip()
-    # Filter out rows containing three or more consecutive dashes
+    
+    # 2. Filter out rows containing three or more consecutive dashes
     data = data[~data['Benchmark'].str.contains('---+', regex=True)]
-
-    # Handle special values
-    data['RATE'] = data['RATE'].replace(-1, 110)
-    data['Latency(Syn)'] = data['Latency(Syn)'].replace(-1, np.nan)
-    data['Latency(Sim)'] = data['Latency(Sim)'].replace(-1, np.nan)
-
-    # Clean numeric data
+    
+    # 3. Clean benchmark names by removing trailing/leading spaces
+    data['Benchmark'] = data['Benchmark'].str.strip()
+    
+    # 4. Clean numeric data before handling special values
     for col in data.columns:
         if col != 'Benchmark':
-            data[col] = data[col].map(lambda x: clean_resource_values(x, col))
+            data[col] = data[col].map(lambda x: clean_values(x, col))
             if col != 'Latency(Syn)' and col != 'Latency(Sim)' and col != 'RATE':
                 data[col] = pd.to_numeric(data[col], errors='coerce')
-
-    # Clean data by removing duplicates and sorting
-    data = data.drop_duplicates(subset=['Benchmark', 'RATE']).sort_values(['Benchmark', 'RATE'])
+    
+    # 5. Handle special values AFTER cleaning
+    # Convert -1 to 110 for RATE and handle other special cases
+    data['RATE'] = data['RATE'].replace(-1, 110)
+    # Don't replace Latency values with nan here since they're already handled
+    
+    # 6. Clean data by removing duplicates and sorting
+    data = data.drop_duplicates(subset=['Benchmark', 'RATE'])
+    data = data.sort_values(['Benchmark', 'RATE'])
+    
+    # 7. Save processed data with proper format
+    csv_output_path = output_path.parent / 'xml_clean.csv'
+    data.to_csv(csv_output_path, index=False, float_format='%.1f')
+    print(f"Processed data saved to {csv_output_path}")
 
     # Get unique benchmarks and resources
     benchmarks = sorted(data['Benchmark'].unique())
