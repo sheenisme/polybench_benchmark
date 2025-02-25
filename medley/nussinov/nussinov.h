@@ -4,9 +4,9 @@
 #define INTEGER_SUPPORT
 
 
-/* Default to MINI_DATASET. */
+/* Default to MEDIUM_DATASET. */
 # if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(MEDIUM_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
-#  define MINI_DATASET
+#  define MEDIUM_DATASET
 # endif
 
 # if !defined(N)

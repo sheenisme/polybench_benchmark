@@ -57,6 +57,7 @@ LOG_DIR="____tempfile_logs_$START_TIMESTAMP"
 # Change to the 'utilities' subdirectory
 cd ${SCRIPT_DIR}/utilities
 echo "Changed to $(pwd) and running clean.pl..."
+perl makefile-gen.pl ../ -cfg
 perl clean.pl ../
 perl makefile-gen.pl ../ -cfg
 
