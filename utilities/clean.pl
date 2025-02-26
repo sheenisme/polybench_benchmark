@@ -43,8 +43,8 @@ foreach $cat (@categories) {
    closedir DIR;
 }
 
-my $cfgFile = $TARGET_DIR.'/'.'config.mk';
-if (-e $cfgFile) {
-  unlink $cfgFile;
-}
+# my $cfgFile = $TARGET_DIR.'/'.'config.mk';
+# if (-e $cfgFile) {
+#   unlink $cfgFile;
+# }
 

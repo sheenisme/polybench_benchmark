@@ -58,18 +58,34 @@ LOG_DIR="____tempfile_logs_$START_TIMESTAMP"
 
 # Change to the 'utilities' subdirectory
 cd ${SCRIPT_DIR}/utilities
-echo "Changed to $(pwd) and running clean.pl..."
-perl makefile-gen.pl ../ -cfg
+echo "Changed to $(pwd)"
+
+# Check if config.mk exists
+if [ ! -f "../config.mk" ]; then
+    echo "config.mk not found, generating with -cfg option..."
+    perl makefile-gen.pl ../ -cfg
+else
+    echo "config.mk found, using existing configuration..."
+    perl makefile-gen.pl ../
+fi
+
+echo "Cleaning the project..."
 perl clean.pl ../
-perl makefile-gen.pl ../ -cfg
+
+# Reset Makefile based on config.mk existence
+if [ ! -f "../config.mk" ]; then
+    perl makefile-gen.pl ../ -cfg
+else
+    perl makefile-gen.pl ../
+fi
 
 # Create log dir with absolute path
 LOG_DIR_FULL="${SCRIPT_DIR}/utilities/${LOG_DIR}"
 mkdir -p "$LOG_DIR_FULL"
 
 # Define RATE values (modified to include base case without RATE)
-# RATE_VALUES=(-1 0 5 10 15 21 26 31 36 42 47 52 57 63 68 73 78 84 89 94 100)
-RATE_VALUES=(-1 0 15 31 52 73 94 100)
+RATE_VALUES=(-1 0 5 10 15 21 26 31 36 42 47 52 57 63 68 73 78 84 89 94 100)
+# RATE_VALUES=(-1 0 15 31 52 73 94 100)
 
 echo -e "\nStarting execution with the following options:"
 echo -e "Command type: $COMMAND_TYPE"
@@ -96,21 +112,10 @@ for RATE in "${RATE_VALUES[@]}"; do
     LOG_FILE="${LOG_DIR_FULL}/${COMMAND_TYPE}_${2}_rate_${RATE}_${TIMESTAMP}.log"
 
     # Start the process and capture the PID
-    perl run-all.pl ../ "$OPTION" "$2" > "$LOG_FILE" &  
-    PID=$!
+    perl run-all.pl ../ "$OPTION" "$2" > "$LOG_FILE" 2>&1
 
-    # Initialize timer
-    SECONDS=0
-    
-    # Dynamic progress update with timer
-    while kill -0 $PID 2>/dev/null; do
-        ELAPSED=$SECONDS
-        MINS=$((ELAPSED / 60))
-        SECS=$((ELAPSED % 60))
-        echo -ne "\rExecuting with option: $OPTION $2 (PID: $PID), Runtime: ${MINS}m ${SECS}s..."
-        sleep 1
-    done
+    echo "Run: perl run-all.pl ../ "$OPTION" "$2" > "$LOG_FILE" 2>&1 over!"
 done
 
 # Final message with log directory location
-echo -e "\rAll executions completed."
+echo "All executions completed."

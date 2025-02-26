@@ -68,12 +68,373 @@ def determine_scale(data):
     mean = data.mean()
     cv = std / mean if mean != 0 else 0
     
-    if range_ratio > 1000:
+    if range_ratio > 100:
         return 'log'
     elif cv > 1.5:
         return 'symlog'
     else:
         return 'linear'
+
+def calculate_axis_limits(data_series, padding=0.1):
+    """Calculate appropriate axis limits with padding"""
+    if data_series.empty:
+        return 0, 1
+    
+    min_val = data_series.min()
+    max_val = data_series.max()
+    
+    # Handle case where min and max are equal
+    if min_val == max_val:
+        if min_val == 0:
+            return 0, 0.1
+        else:
+            # Set range to ±10% of the value
+            delta = abs(min_val * 0.1)
+            return max(0, min_val - delta), max_val + delta
+    
+    # Normal case
+    range_val = max_val - min_val
+    padding_val = max(range_val * padding, abs(max_val * 0.01))
+    
+    # Ensure minimum values are not negative for log scale
+    return max(0, min_val - padding_val), max_val + padding_val
+
+def set_axis_scale_and_limits(ax, data_series, is_primary_axis=True):
+    """Set appropriate scale and limits for an axis"""
+    if data_series.empty:
+        return
+    
+    scale = determine_scale(data_series)
+    y_min, y_max = calculate_axis_limits(data_series)
+    
+    if scale == 'log':
+        if is_primary_axis:
+            ax.set_yscale('log')
+        else:
+            ax.set_yscale('log')
+        # Adjust limits for log scale
+        if y_min <= 0:
+            y_min = data_series[data_series > 0].min() * 0.9
+    elif scale == 'symlog':
+        if is_primary_axis:
+            ax.set_yscale('symlog', linthresh=1)
+        else:
+            ax.set_yscale('symlog', linthresh=1)
+    else:
+        if is_primary_axis:
+            ax.set_yscale('linear')
+        else:
+            ax.set_yscale('linear')
+    
+    ax.set_ylim(y_min, y_max)
+
+def calculate_symmetry_axis(coeffs):
+    """Calculate symmetry axis position for quadratic function"""
+    a, b, _ = coeffs
+    if a != 0:
+        return -b/(2*a)
+    return None
+
+def determine_best_fit_degree(x, y):
+    """Determine whether to use linear or quadratic fit based on R-squared values"""
+    # Fit both linear and quadratic
+    coeffs_linear = np.polyfit(x, y, 1)
+    coeffs_quad = np.polyfit(x, y, 2)
+    
+    # Calculate R-squared for both fits
+    y_linear = np.polyval(coeffs_linear, x)
+    y_quad = np.polyval(coeffs_quad, x)
+    
+    residuals_linear = y - y_linear
+    residuals_quad = y - y_quad
+    
+    ss_res_linear = np.sum(residuals_linear**2)
+    ss_res_quad = np.sum(residuals_quad**2)
+    ss_tot = np.sum((y - np.mean(y))**2)
+    
+    # Handle the case where all y values are the same (ss_tot = 0)
+    if ss_tot == 0:
+        # If all values are identical, use linear fit
+        return 1, coeffs_linear
+        
+    # Calculate R-squared values
+    r2_linear = 1 - (ss_res_linear / ss_tot)
+    r2_quad = 1 - (ss_res_quad / ss_tot)
+    
+    # Handle potential numerical instability
+    r2_linear = max(0, min(1, r2_linear))  # Clamp between 0 and 1
+    r2_quad = max(0, min(1, r2_quad))      # Clamp between 0 and 1
+    
+    # Compare the improvement in fit
+    improvement = r2_quad - r2_linear
+    
+    # Use quadratic only if it provides significantly better fit
+    # and both fits are valid
+    if np.isfinite(improvement) and improvement > 0.1:
+        return 2, coeffs_quad
+    return 1, coeffs_linear
+
+def format_equation(coeffs, degree):
+    """Format the equation string based on polynomial degree"""
+    if degree == 2:
+        return f"{coeffs[0]:.2e}x² + {coeffs[1]:.2e}x + {coeffs[2]:.2e}"
+    else:
+        return f"{coeffs[0]:.2e}x + {coeffs[1]:.2e}"
+
+def plot_fitting_curve(ax, x, y, color, label):
+    """Plot fitting curve with automatic degree selection"""
+    # Only use data points where RATE is between 0 and 100
+    mask = (x >= 0) & (x <= 100)
+    x_valid = x[mask]
+    y_valid = y[mask]
+    
+    if len(x_valid) < 2:
+        return None, None, None
+    
+    # Determine best fit degree and get coefficients
+    degree, coeffs = determine_best_fit_degree(x_valid, y_valid)
+    
+    # Generate smooth curve for plotting
+    x_smooth = np.linspace(0, 100, 100)
+    y_smooth = np.polyval(coeffs, x_smooth)
+    
+    # Plot fitting curve
+    fit_line = ax.plot(x_smooth, y_smooth,
+                    color=color,
+                    linestyle='--',
+                    alpha=0.5,
+                    label=label)[0]
+    
+    # Calculate symmetry axis for quadratic fit
+    sym_axis = calculate_symmetry_axis(coeffs) if degree == 2 else None
+    
+    return fit_line, coeffs, degree, sym_axis
+
+def plot_latency(data, benchmarks, output_path):
+    """Plot Latency(Syn) and Latency(Sim) on separate y-axes"""
+    n_benchmarks = len(benchmarks)
+    n_cols = 5
+    n_rows = int(np.ceil(n_benchmarks / n_cols))
+    
+    plt.figure(figsize=(n_cols * 6.0, n_rows * 5.0 + 2))
+    
+    latency_styles = {
+        'Latency(Syn)': {
+            'color': '#FF4500',  # Orange
+            'linestyle': '-',
+            'marker': 'o',
+            'markersize': 4,
+            'label': 'Synthesis Latency',
+            'zorder': 10,
+            'axis': 'left'
+        },
+        'Latency(Sim)': {
+            'color': '#FF6347',  # Red
+            'linestyle': '-',
+            'marker': 's',
+            'markersize': 4,
+            'label': 'Simulation Latency',
+            'zorder': 9,
+            'axis': 'right'
+        }
+    }
+
+    # Store legend elements
+    all_lines = []
+    all_labels = []
+
+    print("\n=== Latency Fitting Equations ===")
+    for idx, benchmark in enumerate(benchmarks):
+        benchmark_data = data[data['Benchmark'] == benchmark]
+        ax1 = plt.subplot(n_rows, n_cols, idx + 1)
+        ax2 = ax1.twinx()
+        
+        # Set axes limits
+        syn_data = benchmark_data['Latency(Syn)'].dropna()
+        sim_data = benchmark_data['Latency(Sim)'].dropna()
+        
+        if not syn_data.empty:
+            set_axis_scale_and_limits(ax1, syn_data, True)
+        
+        if not sim_data.empty:
+            set_axis_scale_and_limits(ax2, sim_data, False)
+
+        for latency_type, style in latency_styles.items():
+            latency_data = benchmark_data[latency_type].dropna()
+            if not latency_data.empty:
+                # Plot actual data
+                line = ax1.plot(benchmark_data['RATE'], latency_data,
+                           color=style['color'],
+                           label=style['label'],
+                           linestyle=style['linestyle'],
+                           marker=style['marker'],
+                           markersize=style['markersize'],
+                           linewidth=1.5,
+                           zorder=style['zorder'])[0]
+                
+                # Add fitting curve
+                valid_points = benchmark_data[(benchmark_data['RATE'] >= 0) & 
+                                           (benchmark_data['RATE'] <= 100)][['RATE', latency_type]].dropna()
+                if len(valid_points) >= 2:
+                    x = valid_points['RATE'].values
+                    y = valid_points[latency_type].values
+                    
+                    fit_line, coeffs, degree, sym_axis = plot_fitting_curve(
+                        ax1, x, y, 
+                        style['color'],
+                        f'{style["label"]} Fit'
+                    )
+                    
+                    if fit_line is not None:
+                        eq_str = format_equation(coeffs, degree)
+                        if sym_axis is not None and 0 <= sym_axis <= 100:
+                            print(f"{benchmark}-{latency_type}: {eq_str}  (axis: x = {sym_axis:.1f})")
+                        else:
+                            print(f"{benchmark}-{latency_type}: {eq_str}")
+                        
+                        if idx == 0:
+                            all_lines.extend([line, fit_line])
+                            all_labels.extend([style['label'], f'{style["label"]} Fit'])
+
+        # Customize plot appearance
+        ax1.set_title(benchmark, fontsize=10, pad=5)
+        ax1.set_xlabel('RATE', fontsize=9)
+        ax1.set_ylabel('Latency(Syn) (cycles)', fontsize=9)
+        ax2.set_ylabel('Latency(Sim) (cycles)', fontsize=9)
+        
+        # Set x-axis limits and ticks
+        ax1.set_xlim([-5, 115])
+        ax1.set_xticks([0, 25, 50, 75, 100, 110])
+        ax1.set_xticklabels(['0', '25', '50', '75', '100', 'org'])
+        
+        # Customize grid and spines
+        ax1.grid(True, linestyle=':', alpha=0.3)
+        ax1.spines['top'].set_visible(False)
+        ax2.spines['top'].set_visible(False)
+
+    # Add unified legend
+    fig = plt.gcf()
+    fig.legend(all_lines, all_labels,
+              loc='center',
+              bbox_to_anchor=(0.5, -0.05),
+              ncol=len(all_lines),
+              fontsize=9)
+
+    plt.subplots_adjust(hspace=0.4, wspace=0.4)
+    plt.savefig(output_path, dpi=300, bbox_inches='tight', pad_inches=0.2)
+    plt.close()
+
+def plot_resource_pair(data, benchmarks, resource1, resource2, output_path):
+    """Plot a pair of resources with similar ranges on separate y-axes"""
+    n_benchmarks = len(benchmarks)
+    n_cols = 5
+    n_rows = int(np.ceil(n_benchmarks / n_cols))
+    
+    plt.figure(figsize=(n_cols * 6.0, n_rows * 5.0 + 2))
+    
+    resource_styles = {
+        resource1: {
+            'color': '#FF4500',  # Orange
+            'marker': 'o',
+            'markersize': 4,
+            'linestyle': '-',
+            'axis': 'left'
+        },
+        resource2: {
+            'color': '#FF6347',  # Red
+            'marker': 's',
+            'markersize': 4,
+            'linestyle': '-',
+            'axis': 'right'
+        } if resource2 else None
+    }
+
+    # Store legend elements
+    all_lines = []
+    all_labels = []
+
+    print(f"\n=== Resource Fitting Equations ({resource1}" + 
+          (f" & {resource2}" if resource2 else "") + ") ===")
+    
+    for idx, benchmark in enumerate(benchmarks):
+        benchmark_data = data[data['Benchmark'] == benchmark]
+        ax1 = plt.subplot(n_rows, n_cols, idx + 1)
+        ax2 = ax1.twinx()
+        
+        # Set axes limits
+        res1_data = benchmark_data[resource1].dropna()
+        res2_data = benchmark_data[resource2].dropna() if resource2 else pd.Series()
+        
+        if not res1_data.empty:
+            set_axis_scale_and_limits(ax1, res1_data, True)
+        
+        if not res2_data.empty:
+            set_axis_scale_and_limits(ax2, res2_data, False)
+
+        for resource, style in resource_styles.items():
+            if not style:  # Skip if no style (happens when resource2 is None)
+                continue
+                
+            resource_data = benchmark_data[resource].dropna()
+            if not resource_data.empty:
+                # Plot actual data
+                line = ax1.plot(benchmark_data['RATE'], resource_data,
+                           color=style['color'],
+                           label=resource,
+                           marker=style['marker'],
+                           markersize=style['markersize'],
+                           linestyle=style['linestyle'],
+                           linewidth=1.5)[0]
+                
+                # Add fitting curve
+                valid_points = benchmark_data[(benchmark_data['RATE'] >= 0) & 
+                                           (benchmark_data['RATE'] <= 100)][['RATE', resource]].dropna()
+                if len(valid_points) >= 2:
+                    x = valid_points['RATE'].values
+                    y = valid_points[resource].values
+                    
+                    fit_line, coeffs, degree, sym_axis = plot_fitting_curve(
+                        ax1, x, y, 
+                        style['color'],
+                        f'{resource} Fit'
+                    )
+                    
+                    if fit_line is not None:
+                        eq_str = format_equation(coeffs, degree)
+                        if sym_axis is not None and 0 <= sym_axis <= 100:
+                            print(f"{benchmark}-{resource}: {eq_str}  (axis: x = {sym_axis:.1f})")
+                        else:
+                            print(f"{benchmark}-{resource}: {eq_str}")
+                        
+                        if idx == 0:
+                            all_lines.extend([line, fit_line])
+                            all_labels.extend([resource, f'{resource} Fit'])
+
+        # Customize plot appearance
+        ax1.set_title(benchmark, fontsize=10, pad=5)
+        ax1.set_xlabel('RATE', fontsize=9)
+        ax1.set_ylabel(f'{resource1} Usage', fontsize=9)
+        ax2.set_ylabel(f'{resource2} Usage', fontsize=9)
+        
+        ax1.set_xlim([-5, 115])
+        ax1.set_xticks([0, 25, 50, 75, 100, 110])
+        ax1.set_xticklabels(['0', '25', '50', '75', '100', 'org'])
+        
+        ax1.grid(True, linestyle=':', alpha=0.3)
+        ax1.spines['top'].set_visible(False)
+        ax2.spines['top'].set_visible(False)
+
+    # Add unified legend
+    fig = plt.gcf()
+    fig.legend(all_lines, all_labels,
+              loc='center',
+              bbox_to_anchor=(0.5, -0.05),
+              ncol=len(all_lines),
+              fontsize=9)
+
+    plt.subplots_adjust(hspace=0.4, wspace=0.4)
+    plt.savefig(output_path, dpi=300, bbox_inches='tight', pad_inches=0.2)
+    plt.close()
 
 def main():
     # Parse command line arguments
@@ -152,278 +513,27 @@ def main():
     cleaned_benchmarks = [b.replace(' ', '') for b in benchmarks]
     print(' '.join(cleaned_benchmarks))
 
-    # Plot configuration
-    n_benchmarks = len(benchmarks)
-    n_cols = 5  # Keep 5 columns
-    n_rows = int(np.ceil(n_benchmarks / n_cols))
-
-    # Set style for academic publication
-    plt.style.use('seaborn-v0_8-paper')
-
-    # Update plot style for better academic appearance
-    plt.rcParams.update({
-        'font.family': 'DejaVu Serif',
-        # Other fonts is good:
-        # 'font.family': 'Liberation Serif',
-        # 'font.family': 'Nimbus Roman',
-        'font.size': 8,
-        'axes.titlesize': 10,
-        'axes.labelsize': 9,
-        'xtick.labelsize': 8,
-        'ytick.labelsize': 8,
-        'lines.linewidth': 1.8,
-        'grid.linestyle': ':',
-        'grid.alpha': 0.3,
-        'axes.grid': True,
-        'axes.facecolor': 'white',
-        'figure.facecolor': 'white',
-        'figure.autolayout': True
-    })
-
-    # Define professional academic color scheme
-    resource_colors = [
-        '#9ECAE1',  # Light Blue (Fresh and Academic)
-        '#B2ABD2',  # Light Purple (Soft and Academic)
-        '#A1D99B',  # Light Green (Subtle and Calm)
-        '#C49C94',  # Light Brown (Neutral and Academic)
-        '#E377C2',  # Light Magenta (Soft and Elegant)
-    ]  # Scientific paper style colors
-
-    # Define styles for two types of latency
-    latency_styles = {
-        'Latency(Syn)': {
-            'color': '#D62728',  # Bright Red (Strong and Distinct)
-            'linestyle': '-',
-            'label': 'Latency (Synthesis)',
-            'zorder': 10
-        },
-        'Latency(Sim)': {
-            'color': '#FF7F0E',  # Bright Orange (Distinct and Visible)
-            'linestyle': '-',
-            'label': 'Latency (Simulation)',
-            'zorder': 9
-        }
-    }
-
-    # Create figure with larger size
-    plt.figure(figsize=(n_cols * 5.5, n_rows * 4 + 2))
-
-    # Store all legends from all subplots
-    all_legend_lines = []
-    all_legend_labels = []
-
-    # Add fitting equations for each benchmark
-    print("\n=== Fitting Equations ===")
-    print("Benchmark       Latency_type: ax² + bx + c (axis of symmetry: x = -b/2a)")
-
-    # Create subplots for each benchmark 
-    for idx, benchmark in enumerate(benchmarks):
-        benchmark_data = data[data['Benchmark'] == benchmark]
-        
-        ax1 = plt.subplot(n_rows, n_cols, idx + 1)
-        ax2 = ax1.twinx()
-        
-        # Track current subplot's legend elements
-        current_legend_lines = []
-        current_legend_labels = []
-        
-        # Process both types of latency data
-        for latency_type in ['Latency(Syn)', 'Latency(Sim)']:
-            latency_data = benchmark_data[latency_type]
-            valid_latency = latency_data.dropna()
-            if not valid_latency.empty:
-                # Draw latency line
-                style = latency_styles[latency_type]
-                latency_line = ax1.plot(benchmark_data['RATE'], latency_data,
-                        color=style['color'],
-                        label=style['label'],
-                        linestyle=style['linestyle'],
-                        linewidth=1.8,
-                        marker=None,
-                        zorder=style['zorder'])
-
-                current_legend_lines.extend(latency_line)
-                current_legend_labels.append(style['label'])
-
-                # Get available rates between 0 and 100 for this benchmark and latency type
-                available_rates = benchmark_data[
-                    (benchmark_data['RATE'] <= 100) &
-                    (benchmark_data['RATE'] >= 0) &
-                    (~benchmark_data[latency_type].isna())
-                ]['RATE'].sort_values().unique()
-
-                # If we have enough data points, select 10 evenly distributed rates
-                if len(available_rates) >= 10:
-                    indices = np.linspace(0, len(available_rates)-1, 10, dtype=int)
-                    target_rates = available_rates[indices]
-                else:
-                    # If we don't have enough points, use all available rates
-                    target_rates = available_rates
-
-                # Curve fitting section
-                fit_rates = []
-                fit_latencies = []
-                missing_rates = []
-                
-                for rate in target_rates:
-                    rate_data = benchmark_data[benchmark_data['RATE'] == rate]
-                    if not rate_data.empty and not rate_data[latency_type].isna().all():
-                        fit_rates.append(rate)
-                        fit_latencies.append(rate_data[latency_type].iloc[0])
-                    else:
-                        missing_rates.append(rate)
-
-                # Print warning for missing rates
-                if missing_rates:
-                    print(f"{benchmark} Warning: Missing RATE values {missing_rates}")
-
-                # Fit curve if we have enough points (at least 3)
-                if len(fit_rates) >= 3:
-                    # Generate smooth x points for the curve
-                    x_smooth = np.linspace(min(fit_rates), max(fit_rates), 100)
-                    # Fit a 2nd degree polynomial
-                    coeffs = np.polyfit(fit_rates, fit_latencies, 2)
-                    y_smooth = np.polyval(coeffs, x_smooth)
-
-                    # Calculate the axis of symmetry
-                    a, b, c = coeffs
-                    axis_of_symmetry = -b/(2*a) if a != 0 else None
-
-                    # Print equation and axis of symmetry in terminal
-                    eq = f"{benchmark} {latency_type}: {a:.3e}x² + {b:.3e}x + {c:.3e}"
-                    if axis_of_symmetry is not None:
-                        eq += f" (axis: x = {axis_of_symmetry:.2f})"
-                    print(eq)
-
-                    # Plot the fitting curve with lighter color
-                    curve_color = f"{style['color']}88"
-                    lc_line = ax1.plot(x_smooth, y_smooth,
-                            color=curve_color,
-                            label=f'{style["label"]} Curve',
-                            linestyle=':',
-                            linewidth=1.5,
-                            marker=None,
-                            alpha=0.7,
-                            zorder=style['zorder']-1)
-                    current_legend_lines.extend(lc_line)
-                    current_legend_labels.append(f'{style["label"]} Curve')
-
-        # Set y-axis range
-        valid_latencies = pd.concat([
-            benchmark_data['Latency(Syn)'].dropna(),
-            benchmark_data['Latency(Sim)'].dropna()
-        ])
-        if not valid_latencies.empty:
-            latency_scale = determine_scale(valid_latencies)
-            ax1.set_yscale(latency_scale)
-            
-            if latency_scale == 'linear':
-                y_min = valid_latencies.min()
-                y_max = valid_latencies.max()
-                if y_min != y_max:
-                    margin = (y_max - y_min) * 0.1
-                    ax1.set_ylim([y_min - margin, y_max + margin])
-
-        # Plot resources utilization (right y-axis)
-        primary_metrics = ['BRAM_18K', 'DSP', 'FF', 'LUT', 'URAM']
-        resource_data = benchmark_data[primary_metrics]
-        
-        if not resource_data.empty and not resource_data.isnull().all().all():
-            # Calculate resource utilization values
-            resource_percentages = pd.DataFrame()
-            for metric in primary_metrics:
-                if metric in AVAILABLE_RESOURCES and AVAILABLE_RESOURCES[metric] > 0:
-                    resource_percentages[metric] = resource_data[metric]  # Use actual values instead of percentages
-
-            if not resource_percentages.empty:
-                # Determine scale for resource data
-                resource_scale = determine_scale(resource_percentages.max())
-                ax2.set_yscale(resource_scale)
-
-                # Set y-axis range
-                if resource_scale == 'linear':
-                    y_min = resource_percentages.min().min()
-                    y_max = resource_percentages.max().max()
-                    if y_min != y_max:
-                        margin = (y_max - y_min) * 0.1
-                        ax2.set_ylim([max(0, y_min - margin), y_max + margin])
-                
-                # Plot resource utilization curves
-                markers = ['s', '^', 'D', 'v', 'o']  # Square, triangle up, diamond, triangle down, circle
-                for metric, color, marker in zip(primary_metrics, resource_colors, markers):
-                    if metric in resource_percentages.columns:
-                        line = ax2.plot(benchmark_data['RATE'], resource_percentages[metric],
-                                marker=marker, color=color, label=metric,
-                                linestyle='--', linewidth=1.2,
-                                markersize=4,
-                                markerfacecolor=color,
-                                markeredgecolor=color,
-                                markeredgewidth=1,
-                                alpha=0.8,
-                                zorder=5)[0]
-                        current_legend_lines.append(line)
-                        current_legend_labels.append(metric)
-
-        # Store this subplot's legend if it has more elements than previous ones
-        if len(current_legend_lines) > len(all_legend_lines):
-            all_legend_lines = current_legend_lines
-            all_legend_labels = current_legend_labels
-
-        # Customize axis appearance
-        ax1.set_title(benchmark, fontsize=10, pad=5, 
-                    fontfamily='DejaVu Serif', fontweight='bold')
-        ax1.set_xlabel('RATE', fontsize=9)
-        ax1.set_ylabel('Latency (cycles)', fontsize=9)
-        ax2.set_ylabel('Using Resource', fontsize=9)
-        
-        # Set x-axis range and ticks with custom labels
-        ax1.set_xlim([-5, 115])
-        ax1.set_xticks([0, 25, 50, 75, 100, 110])
-        ax1.set_xticklabels(['0', '25', '50', '75', '100', 'org'])
-
-        # Customize spine visibility
-        ax1.spines['top'].set_visible(False)
-        ax2.spines['top'].set_visible(False)
-        ax2.spines['right'].set_visible(True)
-        
-        # Set spine colors
-        ax2.spines['right'].set_color('gray')
-        ax1.spines['left'].set_color('black')
-        
-        # Enhanced grid appearance
-        ax1.grid(True, linestyle=':', alpha=0.3, color='gray')
-        
-        # Format axis ticks
-        if 'latency_scale' in locals() and latency_scale != 'linear':
-            ax1.yaxis.set_major_formatter(plt.ScalarFormatter())
-        if 'resource_scale' in locals() and resource_scale != 'linear':
-            ax2.yaxis.set_major_formatter(plt.ScalarFormatter())
-
-        # Enhanced tick parameters
-        ax1.tick_params(axis='both', which='major', labelsize=8, direction='out')
-        ax2.tick_params(axis='y', which='major', labelsize=8, direction='out', right=True)
-
-    # After all subplots are created, add the legend at the bottom
-    fig = plt.gcf()
-    # Calculate the legend position dynamically
-    legend = fig.legend(all_legend_lines, all_legend_labels,
-                    loc='center',
-                    bbox_to_anchor=(0.5, -0.02),
-                    ncol=7,
-                    fontsize=9,
-                    frameon=True,
-                    fancybox=False,
-                    edgecolor='black')
-
-    # Get the legend height for proper spacing
-    legend_height = legend.get_window_extent().height / fig.dpi
-    # Adjust bottom margin based on legend height
-    plt.subplots_adjust(bottom=0.1 + legend_height/fig.get_figheight())
-
-    # Save figure with tight layout using the specified output path
-    plt.savefig(output_path, dpi=300, bbox_inches='tight', pad_inches=0.2)
-    print(f"\nRun Over! Plot saved as {output_path}")
-    plt.close()
+    # Generate separate plots
+    base_output_path = output_path.parent
+    
+    # Plot Latency
+    latency_path = base_output_path / 'result_latency.png'
+    plot_latency(data, benchmarks, latency_path)
+    
+    # Plot BRAM and DSP
+    bram_dsp_path = base_output_path / 'result_bram_dsp.png'
+    plot_resource_pair(data, benchmarks, 'BRAM_18K', 'DSP', bram_dsp_path)
+    
+    # Plot FF and LUT
+    ff_lut_path = base_output_path / 'result_ff_lut.png'
+    plot_resource_pair(data, benchmarks, 'FF', 'LUT', ff_lut_path)
+    
+    # Check if URAM has meaningful values
+    if not (data['URAM'] == -1).all() and not data['URAM'].isna().all():
+        uram_path = base_output_path / 'result_uram.png'
+        plot_resource_pair(data, benchmarks, 'URAM', None, uram_path)
+    
+    print(f"\nRun Over! Plots saved in {base_output_path}")
 
 if __name__ == "__main__":
     main()
