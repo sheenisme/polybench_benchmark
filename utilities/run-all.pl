@@ -11,8 +11,9 @@ use XML::LibXML; # install XML cmd is: 'sudo apt-get install libxml-libxml-perl'
 #     - <option-string>: Must be one of the following:
 #         'all'
 #         'all RATE=<number>'
-#         'fpga'
-#         'fpga RATE=<number>'
+#         '<tool-name>'
+#         '<tool-name> RATE=<number>'
+#        where <tool-name> can be any alphanumeric string (e.g., prectuner, scalehls)
 #
 #  2) An optional third argument to enable parallel execution:
 #     - 'p', 'par', 'paral', or 'parallel' will enable parallel execution.
@@ -48,8 +49,9 @@ if (@ARGV < 2) {
         "       where <option-string> is one of the following:\n" .
         "         'all'\n" .
         "         'all RATE=<number>'\n" .
-        "         'fpga'\n" .
-        "         'fpga RATE=<number>'\n" .
+        "         '<tool-name>'\n" .
+        "         '<tool-name> RATE=<number>'\n" .
+        "       where <tool-name> can be any alphanumeric string (e.g., prectuner, scalehls)\n" .
         "       [parallel] is optional: 'p', 'par', 'paral', or 'parallel' to enable parallel execution.\n";
 }
 
@@ -68,13 +70,14 @@ if ($PARALLEL && $PARALLEL !~ /^(p|par|paral|parallel)$/i) {
 die "Error: '$TARGET_DIR' is not a valid directory.\n" unless (-d $TARGET_DIR);
 
 # 2. Check whether <option-string> matches the allowed patterns:
-#    'all', 'all RATE=<number>', 'fpga', 'fpga RATE=<number>'
-unless ($OPTION =~ /^(all(?:\s+RATE=\d+)?|fpga(?:\s+RATE=\d+)?)$/) {
+#    'all', 'all RATE=<number>', or '<tool-name>', '<tool-name> RATE=<number>'
+unless ($OPTION =~ /^(all|\w+)(?:\s+RATE=\d+)?$/) {
     die "Error: <option-string> must be one of the following:\n" .
         "       'all'\n" .
         "       'all RATE=<number>'\n" .
-        "       'fpga'\n" .
-        "       'fpga RATE=<number>'\n" .
+        "       '<tool-name>'\n" .
+        "       '<tool-name> RATE=<number>'\n" .
+        "       where <tool-name> can be any alphanumeric string\n" .
         "       Given: '$OPTION'\n";
 }
 
@@ -102,8 +105,14 @@ my $runSets = "ulimit -s unlimited;";
 print "$runSets\n";
 system($runSets);
 
-# Define some cases to skip
-my %skip_dirs = map { $_ => 1 } qw(correlation cholesky gramschmidt durbin);
+# Define tools that need to skip certain cases
+my @skip_tools = ('scalehls', 'all');
+
+# Define cases to skip for specific tools
+my %skip_dirs;
+if (grep { $OPTION =~ /^$_(?:\s+RATE=\d+)?$/ } @skip_tools) {
+    %skip_dirs = map { $_ => 1 } qw(correlation cholesky gramschmidt durbin);
+}
 
 # 6. Parse RATE value if present
 # Default RATE is 'ppcg'
@@ -136,7 +145,7 @@ if (!$file_exists) {
 }
 
 # Option determines if XML extraction is needed
-my $need_xml = ($OPTION =~ /^fpga/i) ? 1 : 0;
+my $need_xml = ($OPTION =~ /^(?:all|\d+)$/i) ? 0 : 1;
 
 # 8. Traverse each category's subdirectory and run "make <option-string>"
 foreach my $cat (@categories) {
@@ -151,9 +160,10 @@ foreach my $cat (@categories) {
         # Skip hidden directories (e.g., . and ..)
         next if ($subdir =~ /^\./);
 
-        # Skip directories in the skip list
-        if (exists $skip_dirs{$subdir}) {
-            print "Skipping directory '$subdir' as it's in the skip list.\n";
+        # Only check skip list if using tools that need skipping
+        if (%skip_dirs && exists $skip_dirs{$subdir}) {
+            my ($tool) = $OPTION =~ /^(\w+)/;  # Extract tool name
+            print "Skipping directory '$subdir' as it's in the skip list for $tool.\n";
             next;
         }
 
@@ -183,18 +193,24 @@ foreach my $cat (@categories) {
                     my $sim_dir = "sim_report_$RATE";
                     my $xml_file = "$full_subdir_path/$xml_dir/csynth.xml";
                     my $sim_file = "$full_subdir_path/$sim_dir/verilog/lat.rpt";
-                    if (-e $xml_file || -e $sim_file) {
+                    
+                    # Check if XML file exists
+                    if (-e $xml_file) {
                         eval {
-                            # Extract TOTAL_EXECUTE_TIME in sim report
+                            # Set default simulation latency
                             my $sim_total_time = -1;
-                            open(my $fh, '<', $sim_file) or die "Cannot open file '$sim_file': $!";
-                            while (my $line = <$fh>) {
-                                if ($line =~ /\$TOTAL_EXECUTE_TIME\s*=\s*"(\d+)"/) {
-                                    $sim_total_time = $1;
-                                    last;
+                            
+                            # Only try to read sim file if it exists
+                            if (-e $sim_file) {
+                                open(my $fh, '<', $sim_file) or die "Cannot open file '$sim_file': $!";
+                                while (my $line = <$fh>) {
+                                    if ($line =~ /\$TOTAL_EXECUTE_TIME\s*=\s*"(\d+)"/) {
+                                        $sim_total_time = $1;
+                                        last;
+                                    }
                                 }
+                                close($fh);
                             }
-                            close($fh);
 
                             my $dom = XML::LibXML->load_xml(location => $xml_file);
 
@@ -289,18 +305,24 @@ foreach my $cat (@categories) {
                 my $sim_dir = "sim_report_$RATE";
                 my $xml_file = "$full_subdir_path/$xml_dir/csynth.xml";
                 my $sim_file = "$full_subdir_path/$sim_dir/verilog/lat.rpt";
-                if (-e $xml_file || -e $sim_file) {
+                
+                # Check if XML file exists
+                if (-e $xml_file) {
                     eval {
-                        # Extract TOTAL_EXECUTE_TIME in sim report
+                        # Set default simulation latency
                         my $sim_total_time = -1;
-                        open(my $fh, '<', $sim_file) or die "Cannot open file '$sim_file': $!";
-                        while (my $line = <$fh>) {
-                            if ($line =~ /\$TOTAL_EXECUTE_TIME\s*=\s*"(\d+)"/) {
-                                $sim_total_time = $1;
-                                last;
+                        
+                        # Only try to read sim file if it exists
+                        if (-e $sim_file) {
+                            open(my $fh, '<', $sim_file) or die "Cannot open file '$sim_file': $!";
+                            while (my $line = <$fh>) {
+                                if ($line =~ /\$TOTAL_EXECUTE_TIME\s*=\s*"(\d+)"/) {
+                                    $sim_total_time = $1;
+                                    last;
+                                }
                             }
+                            close($fh);
                         }
-                        close($fh);
 
                         my $dom = XML::LibXML->load_xml(location => $xml_file);
 

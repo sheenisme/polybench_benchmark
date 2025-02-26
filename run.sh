@@ -4,8 +4,7 @@
 function display_usage() {
     echo "Usage: $0 <option> [parallel]"
     echo "where <option> can be one of the following:"
-    echo "  fpga   - Execute with 'fpga RATE=' option"
-    echo "  all    - Execute with 'all RATE=' option"
+    echo "  prectuner/scalehls/all   - Execute with 'prectuner/scalehls/all RATE=' option"
     echo "  [parallel option] - 'p', 'paral', or 'parallel' will enable parallel execution."
 }
 
@@ -19,24 +18,27 @@ function handle_sigint() {
 # Trap Ctrl+C (SIGINT) signal to call handle_sigint function
 trap handle_sigint SIGINT
 
-# Store COMMAND_TYPE (fpga/all) for consistent logging
+# Store COMMAND_TYPE (prectuner/scalehls/all) for consistent logging
 COMMAND_TYPE=""
 
 # Check if the first argument is provided
 if [ -z "$1" ]; then
     echo "No option provided. Please enter an option:"
     display_usage
-    read -p "Enter 'fpga' or 'all': " USER_INPUT
-    if [ "$USER_INPUT" != "fpga" ] && [ "$USER_INPUT" != "all" ]; then
+    read -p "Enter 'prectuner' or 'scalehls' or 'all': " USER_INPUT
+    if [ "$USER_INPUT" != "prectuner" ] && [ "$USER_INPUT" != "scalehls" ] && [ "$USER_INPUT" != "all" ]; then
         echo "Invalid input. Exiting."
         exit 1
     fi
     COMMAND_TYPE="$USER_INPUT"
     BASE_OPTION="${USER_INPUT} RATE="
 else
-    if [ "$1" == "fpga" ]; then
-        COMMAND_TYPE="fpga"
-        BASE_OPTION="fpga RATE="
+    if [ "$1" == "prectuner" ]; then
+        COMMAND_TYPE="prectuner"
+        BASE_OPTION="prectuner RATE="
+    elif [ "$1" == "scalehls" ]; then
+        COMMAND_TYPE="scalehls"
+        BASE_OPTION="scalehls RATE="
     elif [ "$1" == "all" ]; then
         COMMAND_TYPE="all"
         BASE_OPTION="all RATE="

@@ -27,6 +27,7 @@ syn_report_amp_*
 sim_report_ppcg
 sim_report_amp_*
 csynth.tcl
+*_csynth.tcl
 vitis_hls.log
 kernel_func.tmp
 verify_*.h

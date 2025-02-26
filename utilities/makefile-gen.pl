@@ -57,6 +57,7 @@ foreach $key (keys %categories) {
 	my $kernel = $dir;
         my $file = $target.'/'.$dir.'/Makefile';
 		my $csynthFile = $target.'/'.$dir.'/csynth.tcl';
+		my $precTunerCsynthFile = $target.'/'.$dir.'/prectuner_csynth.tcl';
         my $polybenchRoot = '../'x$categories{$key};
         my $configFile = $polybenchRoot.'config.mk';
 		my $jsonConfigFile = $polybenchRoot.'config.json';
@@ -99,7 +100,23 @@ else
 	@ echo "[Step] Generating AMP version: \${KERNEL_TMP_FILE_STR}.c"
 	\${PPCG} \${PPCG_TARGET} \${PPCG_SCHED_FLAGS} \${PPCG_TILE_FLAGS} \${PPCG_OPENMP_FLAGS} -R \${RATE} ${kernel}.c -o \${KERNEL_TMP_FILE_STR}.c > /dev/null 2>&1
 endif
-	
+
+prectuner: get_cvariant
+	@ echo "[Step] Synthesis from Prectuner by using \${KERNEL_TMP_FILE_STR}.c..."
+	@ sed -i 's/static void kernel_/void kernel_/g' \${KERNEL_TMP_FILE_STR}.c
+ifeq (\$(strip \$(RATE)),)
+	-\${VITIS_HLS} -f prectuner_csynth.tcl > /dev/null 2>&1 || true
+	@ grep -i "error\\|critical\\|fatal" vitis_hls.log | grep -iv "0 error" | grep -iv "if errors" || true
+else
+	@ sed -i 's/_ppcg/_amp_\${RATE}/g' prectuner_csynth.tcl
+	-\${VITIS_HLS} -f prectuner_csynth.tcl  > /dev/null 2>&1 || true
+	@ grep -i "error\\|critical\\|fatal" vitis_hls.log | grep -iv "0 error" | grep -iv "if errors" || true
+	@ sed -i 's/_amp_\${RATE}/_ppcg/g' prectuner_csynth.tcl
+endif
+	@ rm -f \${KERNEL_TMP_FILE_STR}.c
+	@ echo ">>> [all] Done."
+
+
 clang2mlir: get_cvariant
 	@ echo "[Step] Translating C to MLIR with cgeist..."
 	\${CGEIST}  \${CGEIST_FLAGS} \${CGEIST_LIB} \${CGEIST_INC} -I$utilityDir \${KERNEL_TMP_FILE_STR}.c -o \${KERNEL_TMP_FILE_STR}.mlir
@@ -163,7 +180,7 @@ hGen:
 	@ sed -i "4r kernel_func.tmp" test_${kernel}.h
 	@ rm -f kernel_func.tmp
 
-fpga: init func_patch cppGen hGen
+scalehls: init func_patch cppGen hGen
 	@ awk -v new_str="kernel_\${KERNEL_FUNC_SAFE_STR}" '/Run kernel/ {print; getline; gsub(/kernel_${kernel_safe}/, new_str); print; next} {print}' test_${kernel}.cpp > __tmp_test_${kernel}.cpp
 	@ mv -f  __tmp_test_${kernel}.cpp test_${kernel}.cpp
 	@ sed -i 's/ap_int<8>/char/g' test_${kernel}.h
@@ -289,6 +306,42 @@ clean:
 EOF
 
         close FILE;
+		
+		open PRECSYNFILE, ">$precTunerCsynthFile" or die "failed to open $precTunerCsynthFile.";
+print PRECSYNFILE << "EOF";
+open_project hlsTest
+
+set_top kernel_${kernel_safe}
+# current path is: ${script_path}/../${key}/${kernel}/
+add_files ${kernel}_ppcg.c -cflags "-I${script_path} -DPOLYBENCH_STACK_ARRAYS -DNO_PENCIL_KILL -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+add_files -tb ${script_path}/polybench.c -cflags "-DPOLYBENCH_STACK_ARRAYS -Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+add_files -tb ${kernel}.h -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
+
+open_solution "solution1" -flow_target vivado
+set_part {xc7a100t-csg324-3}
+create_clock -period 10 -name default
+config_interface -m_axi_latency 0
+# set_directive_top -name kernel_${kernel_safe} "kernel_${kernel_safe}"
+
+# csim_design
+csynth_design
+# cosim_design -O
+# export_design -format ip_catalog
+
+file copy -force ./hlsTest/solution1/syn/report ./syn_report_ppcg
+# file copy -force ./hlsTest/solution1/sim/report ./sim_report_ppcg
+
+# Remove hlsTest directories
+if { [file exists ./hlsTest] } {
+    file delete -force ./hlsTest
+} else {
+    puts "Folder does not exist: ./hlsTest"
+}
+
+exit
+EOF
+
+		close PRECSYNFILE;
 
 		open SYNFILE, ">$csynthFile" or die "failed to open $csynthFile.";
 print SYNFILE << "EOF";
