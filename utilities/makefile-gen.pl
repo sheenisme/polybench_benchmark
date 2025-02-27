@@ -358,15 +358,15 @@ open_solution "solution1" -flow_target vivado
 set_part {xc7a100t-csg324-3}
 create_clock -period 10 -name default
 config_interface -m_axi_latency 0
-set_directive_top -name kernel_${kernel_safe}_ppcg "kernel_${kernel_safe}_ppcg"
+# set_directive_top -name kernel_${kernel_safe}_ppcg "kernel_${kernel_safe}_ppcg"
 
-csim_design
+# csim_design
 csynth_design
-cosim_design -O
-export_design -format ip_catalog
+# cosim_design -O
+# export_design -format ip_catalog
 
 file copy -force ./hlsTest/solution1/syn/report ./syn_report_ppcg
-file copy -force ./hlsTest/solution1/sim/report ./sim_report_ppcg
+# file copy -force ./hlsTest/solution1/sim/report ./sim_report_ppcg
 
 # Remove hlsTest directories
 if { [file exists ./hlsTest] } {
